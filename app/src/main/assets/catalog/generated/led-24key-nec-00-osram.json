@@ -1,0 +1,214 @@
+{
+ "formatVersion": 1,
+ "id": "led-24key-nec-00-osram",
+ "protocolId": "NEC",
+ "category": "LIGHT",
+ "brand": "Generic LED strip / bulb",
+ "models": [
+  "24-key RGBW bulb remote (NEC 0x00, Osram / Varilux style)"
+ ],
+ "commands": [
+  {
+   "name": "brightness_up",
+   "label": "Brightness +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 0
+  },
+  {
+   "name": "brightness_down",
+   "label": "Brightness -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 2
+  },
+  {
+   "name": "power_off",
+   "label": "Off",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 6
+  },
+  {
+   "name": "power_on",
+   "label": "On",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 7
+  },
+  {
+   "name": "color:red",
+   "label": "Red",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 8
+  },
+  {
+   "name": "color:green",
+   "label": "Green",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 9
+  },
+  {
+   "name": "color:blue",
+   "label": "Blue",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 10
+  },
+  {
+   "name": "color:white",
+   "label": "White",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 3
+  },
+  {
+   "name": "color:red_1",
+   "label": "Red 1",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 12
+  },
+  {
+   "name": "color:green_1",
+   "label": "Green 1",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 13
+  },
+  {
+   "name": "color:blue_1",
+   "label": "Blue 1",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 14
+  },
+  {
+   "name": "color:red_2",
+   "label": "Red 2",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 16
+  },
+  {
+   "name": "color:green_2",
+   "label": "Green 2",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 17
+  },
+  {
+   "name": "color:blue_2",
+   "label": "Blue 2",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 18
+  },
+  {
+   "name": "color:red_3",
+   "label": "Red 3",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 20
+  },
+  {
+   "name": "color:green_3",
+   "label": "Green 3",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 21
+  },
+  {
+   "name": "color:blue_3",
+   "label": "Blue 3",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 22
+  },
+  {
+   "name": "color:red_4",
+   "label": "Red 4",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 24
+  },
+  {
+   "name": "color:green_4",
+   "label": "Green 4",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 25
+  },
+  {
+   "name": "color:blue_4",
+   "label": "Blue 4",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 26
+  },
+  {
+   "name": "effect:flash",
+   "label": "Flash",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 15
+  },
+  {
+   "name": "effect:strobe",
+   "label": "Strobe",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 19
+  },
+  {
+   "name": "effect:smooth",
+   "label": "Smooth",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 23
+  },
+  {
+   "name": "mode",
+   "label": "Mode",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 27
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/LED_Lighting",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 LED_Lighting captures (cross-check of factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Two independent captured remotes in Flipper-IRDB (Osram 24-button, Varilux Lightme) agree on every shared key."
+ ]
+}

@@ -1,0 +1,119 @@
+{
+ "formatVersion": 1,
+ "id": "kernel-wetek-hub",
+ "protocolId": "NEC",
+ "category": "TV_BOX",
+ "brand": "WeTek",
+ "models": [
+  "Hub"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 119,
+   "command": 241
+  },
+  {
+   "name": "home",
+   "label": "Home",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 119,
+   "command": 242
+  },
+  {
+   "name": "mouse",
+   "label": "Mouse",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 119,
+   "command": 243
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 119,
+   "command": 244
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 119,
+   "command": 245
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 119,
+   "command": 246
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 119,
+   "command": 247
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 119,
+   "command": 248
+  },
+  {
+   "name": "back",
+   "label": "Back",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 119,
+   "command": 249
+  },
+  {
+   "name": "menu",
+   "label": "Menu",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 119,
+   "command": 250
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 119,
+   "command": 251
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 119,
+   "command": 252
+  }
+ ],
+ "source": {
+  "repository": "Linux kernel v7.3",
+  "url": "https://github.com/torvalds/linux/blob/v7.3/drivers/media/rc/keymaps/rc-wetek-hub.c",
+  "path": "drivers/media/rc/keymaps/rc-wetek-hub.c",
+  "license": "GPL-2.0-or-later (Linux kernel, v7.3)",
+  "attribution": "The Linux kernel contributors; see the file header for its author."
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Converted from the Linux kernel keymap drivers/media/rc/keymaps/rc-wetek-hub.c (v7.3, commit c03c1a14507d), RC_PROTO_NEC. Kernel key codes are mapped to this app's command names; unmapped keys keep their kernel name."
+ ]
+}

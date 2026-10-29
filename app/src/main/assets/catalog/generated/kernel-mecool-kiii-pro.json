@@ -1,0 +1,367 @@
+{
+ "formatVersion": 1,
+ "id": "kernel-mecool-kiii-pro",
+ "protocolId": "NEC",
+ "category": "TV_BOX",
+ "brand": "Mecool",
+ "models": [
+  "KIII Pro"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 89
+  },
+  {
+   "name": "digit_1",
+   "label": "Digit 1",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 82
+  },
+  {
+   "name": "digit_2",
+   "label": "Digit 2",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 80
+  },
+  {
+   "name": "digit_3",
+   "label": "Digit 3",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 16
+  },
+  {
+   "name": "digit_4",
+   "label": "Digit 4",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 86
+  },
+  {
+   "name": "digit_5",
+   "label": "Digit 5",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 84
+  },
+  {
+   "name": "digit_6",
+   "label": "Digit 6",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 20
+  },
+  {
+   "name": "digit_7",
+   "label": "Digit 7",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 78
+  },
+  {
+   "name": "digit_8",
+   "label": "Digit 8",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 76
+  },
+  {
+   "name": "digit_9",
+   "label": "Digit 9",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 12
+  },
+  {
+   "name": "info",
+   "label": "Info",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 2
+  },
+  {
+   "name": "digit_0",
+   "label": "Digit 0",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 15
+  },
+  {
+   "name": "delete",
+   "label": "Delete",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 81
+  },
+  {
+   "name": "favorites",
+   "label": "Favorites",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 31
+  },
+  {
+   "name": "subtitle",
+   "label": "Subtitle",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 9
+  },
+  {
+   "name": "audio",
+   "label": "Audio",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 1
+  },
+  {
+   "name": "red",
+   "label": "Red",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 66
+  },
+  {
+   "name": "green",
+   "label": "Green",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 64
+  },
+  {
+   "name": "yellow",
+   "label": "Yellow",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 0
+  },
+  {
+   "name": "blue",
+   "label": "Blue (RADIO)",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 3
+  },
+  {
+   "name": "home",
+   "label": "Home",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 13
+  },
+  {
+   "name": "guide",
+   "label": "Guide",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 77
+  },
+  {
+   "name": "menu",
+   "label": "Menu",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 69
+  },
+  {
+   "name": "exit",
+   "label": "Exit",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 5
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 90
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 27
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 6
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 22
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 26
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 19
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 23
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 25
+  },
+  {
+   "name": "mouse",
+   "label": "Mouse",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 18
+  },
+  {
+   "name": "ch_up",
+   "label": "Channel + (PAGE_UP)",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 85
+  },
+  {
+   "name": "ch_down",
+   "label": "Channel - (PAGE_DOWN)",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 21
+  },
+  {
+   "name": "rew",
+   "label": "Rewind",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 74
+  },
+  {
+   "name": "ff",
+   "label": "Fast forward",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 72
+  },
+  {
+   "name": "play",
+   "label": "Play / Pause",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 70
+  },
+  {
+   "name": "stop",
+   "label": "Stop",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 68
+  },
+  {
+   "name": "prev",
+   "label": "Previous",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 8
+  },
+  {
+   "name": "next",
+   "label": "Next",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 11
+  },
+  {
+   "name": "pvr",
+   "label": "Pvr",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 4
+  },
+  {
+   "name": "record",
+   "label": "Record",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 100
+  }
+ ],
+ "source": {
+  "repository": "Linux kernel v7.3",
+  "url": "https://github.com/torvalds/linux/blob/v7.3/drivers/media/rc/keymaps/rc-mecool-kiii-pro.c",
+  "path": "drivers/media/rc/keymaps/rc-mecool-kiii-pro.c",
+  "license": "GPL-2.0-or-later (Linux kernel, v7.3)",
+  "attribution": "The Linux kernel contributors; see the file header for its author."
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Converted from the Linux kernel keymap drivers/media/rc/keymaps/rc-mecool-kiii-pro.c (v7.3, commit c03c1a14507d), RC_PROTO_NEC. Kernel key codes are mapped to this app's command names; unmapped keys keep their kernel name."
+ ]
+}

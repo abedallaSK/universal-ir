@@ -1,0 +1,119 @@
+{
+ "formatVersion": 1,
+ "id": "kernel-geekbox",
+ "protocolId": "NEC",
+ "category": "TV_BOX",
+ "brand": "GeekBox",
+ "models": [
+  "GeekBox"
+ ],
+ "commands": [
+  {
+   "name": "back",
+   "label": "Back",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 1
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 2
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 3
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 7
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 11
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 14
+  },
+  {
+   "name": "menu",
+   "label": "Menu",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 19
+  },
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 20
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 26
+  },
+  {
+   "name": "home",
+   "label": "Home",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 72
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 88
+  },
+  {
+   "name": "aspect",
+   "label": "Aspect",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 92
+  }
+ ],
+ "source": {
+  "repository": "Linux kernel v7.3",
+  "url": "https://github.com/torvalds/linux/blob/v7.3/drivers/media/rc/keymaps/rc-geekbox.c",
+  "path": "drivers/media/rc/keymaps/rc-geekbox.c",
+  "license": "GPL-2.0-only (Linux kernel, v7.3)",
+  "attribution": "The Linux kernel contributors; see the file header for its author."
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Converted from the Linux kernel keymap drivers/media/rc/keymaps/rc-geekbox.c (v7.3, commit c03c1a14507d), RC_PROTO_NEC. Kernel key codes are mapped to this app's command names; unmapped keys keep their kernel name."
+ ]
+}

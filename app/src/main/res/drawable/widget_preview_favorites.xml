@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Picker preview for the favorites widget. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="250dp" android:height="180dp" android:viewportWidth="250" android:viewportHeight="180">
+    <path android:fillColor="#FFF6F7F9" android:pathData="M24,4h202a20,20 0 0 1 20,20v132a20,20 0 0 1 -20,20h-202a20,20 0 0 1 -20,-20v-132a20,20 0 0 1 20,-20z" />
+    <path android:fillColor="#FF0E1116" android:pathData="M22,20h70a4,4 0 0 1 0,8h-70a4,4 0 0 1 0,-8z" />
+    <path android:fillColor="#FF3B82F6" android:pathData="M30,42h28a8,8 0 0 1 8,8v28a8,8 0 0 1 -8,8h-28a8,8 0 0 1 -8,-8v-28a8,8 0 0 1 8,-8z" />
+    <path android:fillColor="#FF7C3AED" android:pathData="M86,42h28a8,8 0 0 1 8,8v28a8,8 0 0 1 -8,8h-28a8,8 0 0 1 -8,-8v-28a8,8 0 0 1 8,-8z" />
+    <path android:fillColor="#FFF59E0B" android:pathData="M142,42h28a8,8 0 0 1 8,8v28a8,8 0 0 1 -8,8h-28a8,8 0 0 1 -8,-8v-28a8,8 0 0 1 8,-8z" />
+    <path android:fillColor="#FFE9ECF1" android:pathData="M36,102h70a14,14 0 0 1 0,28h-70a14,14 0 0 1 0,-28z M136,102h78a14,14 0 0 1 0,28h-78a14,14 0 0 1 0,-28z M36,140h96a14,14 0 0 1 0,28h-96a14,14 0 0 1 0,-28z" />
+    <path android:fillColor="#FF2F6BFF" android:pathData="M36,110a6,6 0 1 1 0,12a6,6 0 1 1 0,-12z M136,110a6,6 0 1 1 0,12a6,6 0 1 1 0,-12z M36,148a6,6 0 1 1 0,12a6,6 0 1 1 0,-12z" />
+    <path android:fillColor="#FF4A5468" android:pathData="M50,114h46a2,2 0 0 1 0,4h-46a2,2 0 0 1 0,-4z M150,114h54a2,2 0 0 1 0,4h-54a2,2 0 0 1 0,-4z M50,152h72a2,2 0 0 1 0,4h-72a2,2 0 0 1 0,-4z" />
+</vector>

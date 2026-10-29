@@ -1,0 +1,214 @@
+{
+ "formatVersion": 1,
+ "id": "led-24key-nec-00-bulb",
+ "protocolId": "NEC",
+ "category": "LIGHT",
+ "brand": "Generic LED strip / bulb",
+ "models": [
+  "24-key RGBW bulb remote (NEC 0x00, keys 0x04-0x1B)"
+ ],
+ "commands": [
+  {
+   "name": "brightness_up",
+   "label": "Brightness +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 5
+  },
+  {
+   "name": "brightness_down",
+   "label": "Brightness -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 4
+  },
+  {
+   "name": "power_off",
+   "label": "Off",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 6
+  },
+  {
+   "name": "power_on",
+   "label": "On",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 7
+  },
+  {
+   "name": "color:red",
+   "label": "Red",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 9
+  },
+  {
+   "name": "color:green",
+   "label": "Green",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 8
+  },
+  {
+   "name": "color:blue",
+   "label": "Blue",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 10
+  },
+  {
+   "name": "color:white",
+   "label": "White",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 11
+  },
+  {
+   "name": "color:light_red",
+   "label": "Light red",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 13
+  },
+  {
+   "name": "color:light_green",
+   "label": "Light green",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 12
+  },
+  {
+   "name": "color:light_blue",
+   "label": "Light blue",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 14
+  },
+  {
+   "name": "color:orange",
+   "label": "Orange",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 21
+  },
+  {
+   "name": "color:light_cyan",
+   "label": "Light cyan",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 20
+  },
+  {
+   "name": "color:dark_purple",
+   "label": "Dark purple",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 22
+  },
+  {
+   "name": "color:light_orange",
+   "label": "Light orange",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 25
+  },
+  {
+   "name": "color:cyan",
+   "label": "Cyan",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 24
+  },
+  {
+   "name": "color:purple",
+   "label": "Purple",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 26
+  },
+  {
+   "name": "color:yellow",
+   "label": "Yellow",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 17
+  },
+  {
+   "name": "color:dark_cyan",
+   "label": "Dark cyan",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 16
+  },
+  {
+   "name": "color:pink",
+   "label": "Pink",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 18
+  },
+  {
+   "name": "effect:flash",
+   "label": "Flash",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 15
+  },
+  {
+   "name": "effect:strobe",
+   "label": "Strobe",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 23
+  },
+  {
+   "name": "effect:fade",
+   "label": "Fade",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 27
+  },
+  {
+   "name": "effect:smooth",
+   "label": "Smooth",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 19
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/LED_Lighting",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 LED_Lighting captures (cross-check of factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Layout agreed by 3 independent captured remotes in Flipper-IRDB (ISY, Warmoon, unbranded RGB bulb); a 4th (Kikilive) swaps colour keys. Colour names follow the ISY capture."
+ ]
+}

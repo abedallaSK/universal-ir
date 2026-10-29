@@ -1,0 +1,223 @@
+{
+ "formatVersion": 1,
+ "id": "kernel-pine64",
+ "protocolId": "NECext",
+ "category": "TV_BOX",
+ "brand": "Pine64",
+ "models": [
+  "Pine A64 remote"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 45645
+  },
+  {
+   "name": "www",
+   "label": "Www",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 57375
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 62730
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 59415
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 59160
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 61200
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 60945
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 62475
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 61710
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 61965
+  },
+  {
+   "name": "menu",
+   "label": "Menu",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 57885
+  },
+  {
+   "name": "home",
+   "label": "Home",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 58650
+  },
+  {
+   "name": "back",
+   "label": "Back",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 47685
+  },
+  {
+   "name": "digit_1",
+   "label": "Digit 1",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 65025
+  },
+  {
+   "name": "digit_2",
+   "label": "Digit 2",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 64770
+  },
+  {
+   "name": "digit_3",
+   "label": "Digit 3",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 64515
+  },
+  {
+   "name": "digit_4",
+   "label": "Digit 4",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 64260
+  },
+  {
+   "name": "digit_5",
+   "label": "Digit 5",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 64005
+  },
+  {
+   "name": "digit_6",
+   "label": "Digit 6",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 63750
+  },
+  {
+   "name": "digit_7",
+   "label": "Digit 7",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 63495
+  },
+  {
+   "name": "digit_8",
+   "label": "Digit 8",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 63240
+  },
+  {
+   "name": "digit_9",
+   "label": "Digit 9",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 62985
+  },
+  {
+   "name": "backspace",
+   "label": "Backspace",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 62220
+  },
+  {
+   "name": "digit_0",
+   "label": "Digit 0",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 65280
+  },
+  {
+   "name": "mouse",
+   "label": "Mouse",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 16448,
+   "command": 47175
+  }
+ ],
+ "source": {
+  "repository": "Linux kernel v7.3",
+  "url": "https://github.com/torvalds/linux/blob/v7.3/drivers/media/rc/keymaps/rc-pine64.c",
+  "path": "drivers/media/rc/keymaps/rc-pine64.c",
+  "license": "GPL-2.0-or-later (Linux kernel, v7.3)",
+  "attribution": "The Linux kernel contributors; see the file header for its author."
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Converted from the Linux kernel keymap drivers/media/rc/keymaps/rc-pine64.c (v7.3, commit c03c1a14507d), RC_PROTO_NECX. Kernel key codes are mapped to this app's command names; unmapped keys keep their kernel name."
+ ]
+}

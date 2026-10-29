@@ -1,0 +1,119 @@
+{
+ "formatVersion": 1,
+ "id": "kernel-minix-neo",
+ "protocolId": "NEC",
+ "category": "TV_BOX",
+ "brand": "Minix",
+ "models": [
+  "NEO series"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 1,
+   "command": 24
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 1,
+   "command": 70
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 1,
+   "command": 22
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 1,
+   "command": 71
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 1,
+   "command": 21
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 1,
+   "command": 85
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 1,
+   "command": 16
+  },
+  {
+   "name": "back",
+   "label": "Back",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 1,
+   "command": 64
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 1,
+   "command": 20
+  },
+  {
+   "name": "home",
+   "label": "Home",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 1,
+   "command": 13
+  },
+  {
+   "name": "menu",
+   "label": "Menu",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 1,
+   "command": 4
+  },
+  {
+   "name": "settings",
+   "label": "Settings",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 1,
+   "command": 18
+  }
+ ],
+ "source": {
+  "repository": "Linux kernel v7.3",
+  "url": "https://github.com/torvalds/linux/blob/v7.3/drivers/media/rc/keymaps/rc-minix-neo.c",
+  "path": "drivers/media/rc/keymaps/rc-minix-neo.c",
+  "license": "GPL-2.0-or-later (Linux kernel, v7.3)",
+  "attribution": "The Linux kernel contributors; see the file header for its author."
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Converted from the Linux kernel keymap drivers/media/rc/keymaps/rc-minix-neo.c (v7.3, commit c03c1a14507d), RC_PROTO_NEC. Kernel key codes are mapped to this app's command names; unmapped keys keep their kernel name."
+ ]
+}

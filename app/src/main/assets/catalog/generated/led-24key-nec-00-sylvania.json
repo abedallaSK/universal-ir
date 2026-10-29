@@ -1,0 +1,174 @@
+{
+ "formatVersion": 1,
+ "id": "led-24key-nec-00-sylvania",
+ "protocolId": "NEC",
+ "category": "LIGHT",
+ "brand": "Generic LED strip / bulb",
+ "models": [
+  "24-key RGB bulb remote (NEC 0x00, Sylvania / Panasonic / Calex style)"
+ ],
+ "commands": [
+  {
+   "name": "brightness_up",
+   "label": "Brightness +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 9
+  },
+  {
+   "name": "brightness_down",
+   "label": "Brightness -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 29
+  },
+  {
+   "name": "power_on",
+   "label": "On",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 13
+  },
+  {
+   "name": "power_off",
+   "label": "Off",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 31
+  },
+  {
+   "name": "color:red",
+   "label": "Red",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 25
+  },
+  {
+   "name": "color:green",
+   "label": "Green",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 27
+  },
+  {
+   "name": "color:blue",
+   "label": "Blue",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 17
+  },
+  {
+   "name": "color:white",
+   "label": "White",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 21
+  },
+  {
+   "name": "color:dark_orange",
+   "label": "Dark orange",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 23
+  },
+  {
+   "name": "color:light_orange",
+   "label": "Light orange",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 10
+  },
+  {
+   "name": "color:orange",
+   "label": "Orange",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 64
+  },
+  {
+   "name": "color:yellow",
+   "label": "Yellow",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 28
+  },
+  {
+   "name": "color:purple",
+   "label": "Purple",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 22
+  },
+  {
+   "name": "color:indigo",
+   "label": "Indigo",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 4
+  },
+  {
+   "name": "color:aqua",
+   "label": "Aqua",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 30
+  },
+  {
+   "name": "effect:flash",
+   "label": "Flash",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 77
+  },
+  {
+   "name": "effect:strobe",
+   "label": "Strobe",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 0
+  },
+  {
+   "name": "effect:fade",
+   "label": "Fade",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 26
+  },
+  {
+   "name": "effect:smooth",
+   "label": "Smooth",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 12
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/LED_Lighting",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 LED_Lighting captures (cross-check of factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Sylvania 24-button, Panasonic PBUM11070 and Calex strip captures in Flipper-IRDB agree on power, brightness, RGBW and effects; only colour keys that two captures name alike are included."
+ ]
+}

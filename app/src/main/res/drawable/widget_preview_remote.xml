@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Picker preview for the device remote widget. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="180dp" android:height="180dp" android:viewportWidth="180" android:viewportHeight="180">
+    <path android:fillColor="#FFF6F7F9" android:pathData="M24,4h132a20,20 0 0 1 20,20v132a20,20 0 0 1 -20,20h-132a20,20 0 0 1 -20,-20v-132a20,20 0 0 1 20,-20z" />
+    <path android:fillColor="#FF7C3AED" android:pathData="M26,16h24a6,6 0 0 1 6,6v24a6,6 0 0 1 -6,6h-24a6,6 0 0 1 -6,-6v-24a6,6 0 0 1 6,-6z" />
+    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="2.2" android:strokeLineCap="round" android:fillColor="#00000000" android:pathData="M30,25h16v10h-16z M38,35v4 M34,40h8" />
+    <path android:fillColor="#FF0E1116" android:pathData="M66,28h64a4,4 0 0 1 0,8h-64a4,4 0 0 1 0,-8z" />
+    <path android:fillColor="#FFE9ECF1" android:pathData="M28,64h52a12,12 0 0 1 12,12v26a12,12 0 0 1 -12,12h-52a12,12 0 0 1 -12,-12v-26a12,12 0 0 1 12,-12z M100,64h52a12,12 0 0 1 12,12v26a12,12 0 0 1 -12,12h-52a12,12 0 0 1 -12,-12v-26a12,12 0 0 1 12,-12z M28,122h52a12,12 0 0 1 12,12v18a12,12 0 0 1 -12,12h-52a12,12 0 0 1 -12,-12v-18a12,12 0 0 1 12,-12z M100,122h52a12,12 0 0 1 12,12v18a12,12 0 0 1 -12,12h-52a12,12 0 0 1 -12,-12v-18a12,12 0 0 1 12,-12z" />
+    <path android:fillColor="#FF2F6BFF" android:pathData="M28,64h52a12,12 0 0 1 12,12v26a12,12 0 0 1 -12,12h-52a12,12 0 0 1 -12,-12v-26a12,12 0 0 1 12,-12z" />
+    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="2.6" android:strokeLineCap="round" android:fillColor="#00000000" android:pathData="M54,79v9 M48,82a9,9 0 1 0 12,0" />
+    <path android:strokeColor="#FF0E1116" android:strokeWidth="2.4" android:strokeLineCap="round" android:fillColor="#00000000" android:pathData="M118,85l7,0 6,-5v16l-6,-5h-7z M136,84l6,6 M142,84l-6,6 M42,143h24 M54,131v24 M116,143h24" />
+</vector>

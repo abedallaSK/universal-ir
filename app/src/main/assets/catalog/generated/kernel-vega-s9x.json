@@ -1,0 +1,128 @@
+{
+ "formatVersion": 1,
+ "id": "kernel-vega-s9x",
+ "protocolId": "NEC",
+ "category": "TV_BOX",
+ "brand": "Tronsmart",
+ "models": [
+  "Vega S95",
+  "Vega S96"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 24
+  },
+  {
+   "name": "mouse",
+   "label": "Mouse",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 23
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 70
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 71
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 85
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 21
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 22
+  },
+  {
+   "name": "home",
+   "label": "Home",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 6
+  },
+  {
+   "name": "play",
+   "label": "Play / Pause",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 66
+  },
+  {
+   "name": "back",
+   "label": "Back",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 64
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 20
+  },
+  {
+   "name": "menu",
+   "label": "Menu",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 4
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 16
+  }
+ ],
+ "source": {
+  "repository": "Linux kernel v7.3",
+  "url": "https://github.com/torvalds/linux/blob/v7.3/drivers/media/rc/keymaps/rc-vega-s9x.c",
+  "path": "drivers/media/rc/keymaps/rc-vega-s9x.c",
+  "license": "GPL-2.0-or-later (Linux kernel, v7.3)",
+  "attribution": "The Linux kernel contributors; see the file header for its author."
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Converted from the Linux kernel keymap drivers/media/rc/keymaps/rc-vega-s9x.c (v7.3, commit c03c1a14507d), RC_PROTO_NEC. Kernel key codes are mapped to this app's command names; unmapped keys keep their kernel name."
+ ]
+}

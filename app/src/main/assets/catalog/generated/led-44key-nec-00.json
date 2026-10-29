@@ -1,0 +1,375 @@
+{
+ "formatVersion": 1,
+ "id": "led-44key-nec-00",
+ "protocolId": "NEC",
+ "category": "LIGHT",
+ "brand": "Generic LED strip / bulb",
+ "models": [
+  "44-key RGB strip remote (NEC 0x00)",
+  "RGB LED strip controller with DIY keys"
+ ],
+ "commands": [
+  {
+   "name": "brightness_up",
+   "label": "Brightness +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 92
+  },
+  {
+   "name": "brightness_down",
+   "label": "Brightness -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 93
+  },
+  {
+   "name": "play",
+   "label": "Play / Pause",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 65
+  },
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 64
+  },
+  {
+   "name": "color:red",
+   "label": "Red",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 88
+  },
+  {
+   "name": "color:green",
+   "label": "Green",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 89
+  },
+  {
+   "name": "color:blue",
+   "label": "Blue",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 69
+  },
+  {
+   "name": "color:white",
+   "label": "White",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 68
+  },
+  {
+   "name": "color:dark_orange",
+   "label": "Dark orange",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 84
+  },
+  {
+   "name": "color:light_green",
+   "label": "Light green",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 85
+  },
+  {
+   "name": "color:dark_blue",
+   "label": "Dark blue",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 73
+  },
+  {
+   "name": "color:pink",
+   "label": "Pink",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 72
+  },
+  {
+   "name": "color:orange",
+   "label": "Orange",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 80
+  },
+  {
+   "name": "color:cyan",
+   "label": "Cyan",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 81
+  },
+  {
+   "name": "color:violet",
+   "label": "Violet",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 77
+  },
+  {
+   "name": "color:light_pink",
+   "label": "Light pink",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 76
+  },
+  {
+   "name": "color:light_orange",
+   "label": "Light orange",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 28
+  },
+  {
+   "name": "color:light_cyan",
+   "label": "Light cyan",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 29
+  },
+  {
+   "name": "color:purple",
+   "label": "Purple",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 30
+  },
+  {
+   "name": "color:ice_blue",
+   "label": "Ice blue",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 31
+  },
+  {
+   "name": "color:yellow",
+   "label": "Yellow",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 24
+  },
+  {
+   "name": "color:sky_blue",
+   "label": "Sky blue",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 25
+  },
+  {
+   "name": "color:magenta",
+   "label": "Magenta",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 26
+  },
+  {
+   "name": "color:light_ice_blue",
+   "label": "Light ice blue",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 27
+  },
+  {
+   "name": "red_up",
+   "label": "Red +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 20
+  },
+  {
+   "name": "green_up",
+   "label": "Green +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 21
+  },
+  {
+   "name": "blue_up",
+   "label": "Blue +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 22
+  },
+  {
+   "name": "speed_up",
+   "label": "Quick",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 23
+  },
+  {
+   "name": "red_down",
+   "label": "Red -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 16
+  },
+  {
+   "name": "green_down",
+   "label": "Green -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 17
+  },
+  {
+   "name": "blue_down",
+   "label": "Blue -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 18
+  },
+  {
+   "name": "speed_down",
+   "label": "Slow",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 19
+  },
+  {
+   "name": "diy_1",
+   "label": "DIY 1",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 12
+  },
+  {
+   "name": "diy_2",
+   "label": "DIY 2",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 13
+  },
+  {
+   "name": "diy_3",
+   "label": "DIY 3",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 14
+  },
+  {
+   "name": "effect:auto",
+   "label": "Auto",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 15
+  },
+  {
+   "name": "diy_4",
+   "label": "DIY 4",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 8
+  },
+  {
+   "name": "diy_5",
+   "label": "DIY 5",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 9
+  },
+  {
+   "name": "diy_6",
+   "label": "DIY 6",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 10
+  },
+  {
+   "name": "effect:flash",
+   "label": "Flash",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 11
+  },
+  {
+   "name": "effect:jump3",
+   "label": "Jump 3",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 4
+  },
+  {
+   "name": "effect:jump7",
+   "label": "Jump 7",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 5
+  },
+  {
+   "name": "effect:fade3",
+   "label": "Fade 3",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 6
+  },
+  {
+   "name": "effect:fade7",
+   "label": "Fade 7",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 0,
+   "command": 7
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/LED_Lighting",
+  "license": "Factual protocol values",
+  "attribution": "Published 44-key NEC table; Flipper-IRDB d126fb1 LED_Lighting captures (cross-check of factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Widely published 44-key table (NEC 0x00/0xFF, e.g. 0xFF3AC5 = brightness up). Cross-checked against 9 captured 44-key remotes in Flipper-IRDB: 42 of 44 keys decoded from one complete capture; DIY 5 (0x09) confirmed by 4 captures; Play/Pause (0x41) by one capture only."
+ ]
+}

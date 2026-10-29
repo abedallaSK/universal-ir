@@ -1,0 +1,27 @@
+.gradle/
+build/
+/local.properties
+/.idea/
+*.iml
+.DS_Store
+/captures
+.externalNativeBuild
+.cxx
+*.keystore
+!debug.keystore
+/keystore.properties
+
+# Kotlin / tooling caches
+.kotlin/
+__pycache__/
+*.pyc
+
+# Build outputs and release files (APKs are attached to GitHub Releases, not committed)
+*.apk
+*.aab
+release/
+
+# Local secrets and machine settings
+keystore.properties
+*.jks
+.env

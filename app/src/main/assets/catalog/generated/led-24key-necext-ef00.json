@@ -1,0 +1,215 @@
+{
+ "formatVersion": 1,
+ "id": "led-24key-necext-ef00",
+ "protocolId": "NECext",
+ "category": "LIGHT",
+ "brand": "Generic LED strip / bulb",
+ "models": [
+  "24-key RGB remote (NECext 0xEF00)",
+  "RGB LED strip / bulb controller"
+ ],
+ "commands": [
+  {
+   "name": "brightness_up",
+   "label": "Brightness +",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 65280
+  },
+  {
+   "name": "brightness_down",
+   "label": "Brightness -",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 65025
+  },
+  {
+   "name": "power_off",
+   "label": "Off",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 64770
+  },
+  {
+   "name": "power_on",
+   "label": "On",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 64515
+  },
+  {
+   "name": "color:red",
+   "label": "Red",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 64260
+  },
+  {
+   "name": "color:green",
+   "label": "Green",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 64005
+  },
+  {
+   "name": "color:blue",
+   "label": "Blue",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 63750
+  },
+  {
+   "name": "color:white",
+   "label": "White",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 63495
+  },
+  {
+   "name": "color:orange",
+   "label": "Orange",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 63240
+  },
+  {
+   "name": "color:light_green",
+   "label": "Light green",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 62985
+  },
+  {
+   "name": "color:indigo",
+   "label": "Indigo",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 62730
+  },
+  {
+   "name": "color:light_orange",
+   "label": "Light orange",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 62220
+  },
+  {
+   "name": "color:cyan",
+   "label": "Cyan",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 61965
+  },
+  {
+   "name": "color:purple",
+   "label": "Purple",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 61710
+  },
+  {
+   "name": "color:gold",
+   "label": "Gold",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 61200
+  },
+  {
+   "name": "color:light_blue",
+   "label": "Light blue",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 60945
+  },
+  {
+   "name": "color:magenta",
+   "label": "Magenta",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 60690
+  },
+  {
+   "name": "color:yellow",
+   "label": "Yellow",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 60180
+  },
+  {
+   "name": "color:sky_blue",
+   "label": "Sky blue",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 59925
+  },
+  {
+   "name": "color:pink",
+   "label": "Pink",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 59670
+  },
+  {
+   "name": "effect:flash",
+   "label": "Flash",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 62475
+  },
+  {
+   "name": "effect:strobe",
+   "label": "Strobe",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 61455
+  },
+  {
+   "name": "effect:fade",
+   "label": "Fade",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 60435
+  },
+  {
+   "name": "effect:smooth",
+   "label": "Smooth",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 61184,
+   "command": 59415
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/LED_Lighting",
+  "license": "Factual protocol values",
+  "attribution": "SmartIR light/1070.json (litinoveweedle fork cbccf9c, MIT); Flipper-IRDB d126fb1 LED_Lighting captures (cross-check of factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "On, Off, Brightness +/- equal SmartIR (MIT) light/1070 'Aconic LED Controller 24Key' captures, decoded to NECext 0xEF00 0x03/0x02/0x00/0x01. All 24 values agree with captures of 43 independent remotes in Flipper-IRDB."
+ ]
+}

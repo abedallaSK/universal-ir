@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Device avatar gradient 4; mirrors deviceGradients[4] in core/ui/AppIcons.kt. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="12dp" />
+    <gradient android:angle="315" android:startColor="#FFF59E0B" android:endColor="#FFF97316" />
+</shape>
