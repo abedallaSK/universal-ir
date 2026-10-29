@@ -13,7 +13,7 @@
 - **Five button styles**: Classic, Modern, Minimal, Compact, Vivid.
 - **Touchpad mode** for the D‑pad: swipe to move, tap for OK.
 - **AC screen redesign**: draggable dial, mode/fan/feature tiles, presets, **off timer**; settings can be changed while the AC is off.
-- **Home**: customisable title, layout and sections; tile sizes, icons and colours; drag to rearrange; Wi‑Fi devices on home; bottom navigation.
+- **Home**: customisable title, layout and sections; tile sizes, icons and colours; drag to rearrange; Wi‑Fi devices on home.
 - **Rooms** redesign with quick‑add suggestions, a room page and a device checklist.
 - **Widgets**: device remote and favourites.
 - **More codes**: 470 code sets (from 153), LED strips and bulbs, generic Android TV boxes (X96, Tanix, Beelink, Mecool and more).
