@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -518,7 +519,7 @@ private fun androidx.compose.foundation.lazy.grid.LazyGridScope.wifiSection(
 private fun WifiTile(d: com.universalir.data.wifi.SavedWifiDevice, onClick: () -> Unit, onLongClick: () -> Unit) {
     val haptics = androidx.compose.ui.platform.LocalHapticFeedback.current
     Surface(shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surface,
-        modifier = Modifier.height(150.dp).clip(MaterialTheme.shapes.large)
+        modifier = Modifier.heightIn(min = 150.dp).clip(MaterialTheme.shapes.large)
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f), MaterialTheme.shapes.large)
             .combinedClickable(onClick = onClick, onLongClick = { haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress); onLongClick() })) {
         Column(Modifier.fillMaxSize().padding(16.dp)) {

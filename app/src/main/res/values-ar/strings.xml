@@ -611,4 +611,11 @@
     <string name="color_hue">درجة اللون</string>
     <string name="color_saturation">التشبع</string>
     <string name="color_brightness">السطوع</string>
+    <string name="set_github">الكود المصدري والإبلاغ عن مشكلة</string>
+    <string name="set_github_desc">فتح المشروع على GitHub</string>
+    <string name="order_title">ترتيب الأزرار</string>
+    <string name="order_smart">تلفاز ذكي</string>
+    <string name="order_classic">تلفاز كلاسيكي</string>
+    <string name="order_smart_desc">الأسهم وموافق أولاً والأرقام في الأسفل</string>
+    <string name="order_classic_desc">الأرقام أولاً ثم الصوت والقنوات والأسهم</string>
 </resources>

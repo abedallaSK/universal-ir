@@ -48,6 +48,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.focus.FocusRequester
@@ -330,4 +333,25 @@ fun KeyValueRow(key: String, value: String, ltrValue: Boolean = false) {
 @Composable
 fun LoadingBox(modifier: Modifier = Modifier) {
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) { androidx.compose.material3.CircularProgressIndicator() }
+}
+
+/** "24°C" or "75°F" for a Celsius value, following the temperature-unit setting. */
+fun formatTemp(celsius: Int, unit: com.universalir.data.repository.TemperatureUnit): String =
+    if (unit == com.universalir.data.repository.TemperatureUnit.FAHRENHEIT) "${Math.round(celsius * 9 / 5f + 32)}°F" else "${celsius}°C"
+
+/**
+ * Keeps content at a comfortable reading width on tablets, unfolded foldables and landscape:
+ * full width on phones, centred column up to [max] on wider windows.
+ */
+fun Modifier.readableWidth(max: androidx.compose.ui.unit.Dp = 640.dp): Modifier =
+    this.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally).widthIn(max = max)
+
+/**
+ * Caps the system font scale for fixed-size controls (remote keys, dial) so very large text
+ * doesn't overflow them. The rest of the app follows the user's text size fully.
+ */
+@Composable
+fun CappedFontScale(max: Float = 1.3f, content: @Composable () -> Unit) {
+    val d = androidx.compose.ui.platform.LocalDensity.current
+    CompositionLocalProvider(androidx.compose.ui.platform.LocalDensity provides androidx.compose.ui.unit.Density(d.density, d.fontScale.coerceAtMost(max)), content = content)
 }

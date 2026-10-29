@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Palette
 import com.universalir.domain.model.RemoteStyle
 import com.universalir.domain.model.CustomButton
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.material3.SegmentedButton
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -97,6 +98,7 @@ import androidx.lifecycle.viewModelScope
 import com.universalir.R
 import com.universalir.core.theme.LocalRemoteMetrics
 import com.universalir.core.ui.AppIcons
+import com.universalir.core.ui.readableWidth
 import com.universalir.core.ui.DeviceAvatar
 import com.universalir.core.ui.look
 import com.universalir.core.ui.categoryName
@@ -186,6 +188,7 @@ class CommandRemoteViewModel @Inject constructor(
 ) : ViewModel() {
     private val deviceId: Long = handle["deviceId"] ?: -1
 
+    fun setOrder(o: com.universalir.domain.model.LayoutOrder) = viewModelScope.launch { devices.updateSettings(deviceId) { it.copy(layoutOrder = o) } }
     fun setTouchpad(on: Boolean) = viewModelScope.launch { devices.updateSettings(deviceId) { it.copy(touchpad = on) } }
 
     /** forAll: becomes the app default and this remote follows it again. */
@@ -313,7 +316,7 @@ fun CommandRemoteScreen(onBack: () -> Unit, onDesigner: (Long) -> Unit, onDiagno
                 val available = set.commandNames - ui.settings.hiddenButtons
                 val labelOf: (String) -> String = { name -> set.codes.commands.firstOrNull { it.name == name }?.label ?: name }
                 val onLong: (String) -> Unit = { c -> longPressed = c }
-                Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).readableWidth(560.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     ui.device?.let { RemoteHeader(it, onClick = { info = true }) }
                     Spacer(Modifier.height(20.dp))
                     val custom = ui.settings.customButtons.filter { it.commandName in set.commandNames && it.commandName !in ui.settings.hiddenButtons }
@@ -321,8 +324,8 @@ fun CommandRemoteScreen(onBack: () -> Unit, onDesigner: (Long) -> Unit, onDiagno
                     val names = set.codes.commands.map { it.name }.filter { it in available }
                     val cols = if (custom.isEmpty()) standardColumns(names, category) else ui.settings.layoutColumns.coerceIn(3, 5)
                     // The standard remote is the same smart grid the layout editor starts from.
-                    val layout = remember(custom, names, cols, category) { custom.ifEmpty { defaultLayout(names, labelOf, cols, category) } }
-                    RemoteGrid(layout, cols, onSend = vm::send, onLong = onLong, style = style, touchpad = ui.settings.touchpad)
+                    val layout = remember(custom, names, cols, category, ui.settings.layoutOrder) { custom.ifEmpty { defaultLayout(names, labelOf, cols, category, ui.settings.layoutOrder) } }
+                    com.universalir.core.ui.CappedFontScale { RemoteGrid(layout, cols, onSend = vm::send, onLong = onLong, style = style, touchpad = ui.settings.touchpad) }
                     // A custom layout may leave commands out; they stay one tap away.
                     val extra = if (custom.isEmpty()) emptyList() else names.filter { n -> custom.none { it.commandName == n } }
                     if (extra.isNotEmpty()) {
@@ -337,7 +340,8 @@ fun CommandRemoteScreen(onBack: () -> Unit, onDesigner: (Long) -> Unit, onDiagno
             }
         }
     }
-    if (stylePicker) RemoteStyleSheet(style, onPick = { st, all -> vm.setStyle(st, all); stylePicker = false }, onDismiss = { stylePicker = false })
+    if (stylePicker) RemoteStyleSheet(style, onPick = { st, all -> vm.setStyle(st, all); stylePicker = false }, onDismiss = { stylePicker = false },
+        order = ui.settings.layoutOrder, onOrder = vm::setOrder, showOrder = ui.settings.customButtons.isEmpty())
     if (info) ui.device?.let { d -> DeviceInfoSheet(d, ui.set?.commandNames?.size ?: 0, style) { info = false } }
     longPressed?.let { cmd ->
         val label = ui.set?.codes?.commands?.firstOrNull { it.name == cmd }?.label ?: cmd
@@ -528,11 +532,28 @@ fun remoteStyleName(s: RemoteStyle): Int = styleNames.getValue(s)
 /** Picker for the button style, each option with a live sample of keys drawn in that style. */
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
-fun RemoteStyleSheet(current: RemoteStyle, onPick: (RemoteStyle, forAll: Boolean) -> Unit, onDismiss: () -> Unit) {
+fun RemoteStyleSheet(
+    current: RemoteStyle, onPick: (RemoteStyle, forAll: Boolean) -> Unit, onDismiss: () -> Unit,
+    order: com.universalir.domain.model.LayoutOrder? = null, onOrder: ((com.universalir.domain.model.LayoutOrder) -> Unit)? = null, showOrder: Boolean = false,
+) {
     var forAll by remember { mutableStateOf(false) }
     androidx.compose.material3.ModalBottomSheet(onDismissRequest = onDismiss, sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.verticalScroll(rememberScrollState()).navigationBarsPadding().padding(horizontal = 16.dp).padding(bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            if (showOrder && order != null && onOrder != null) {
+                Text(stringResource(R.string.order_title), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 4.dp))
+                val orders = listOf(com.universalir.domain.model.LayoutOrder.SMART to R.string.order_smart, com.universalir.domain.model.LayoutOrder.CLASSIC to R.string.order_classic)
+                androidx.compose.material3.SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+                    orders.forEachIndexed { i, (o, res) ->
+                        SegmentedButton(order == o, { onOrder(o) }, androidx.compose.material3.SegmentedButtonDefaults.itemShape(i, orders.size)) {
+                            Text(stringResource(res), maxLines = 1)
+                        }
+                    }
+                }
+                Text(stringResource(if (order == com.universalir.domain.model.LayoutOrder.CLASSIC) R.string.order_classic_desc else R.string.order_smart_desc),
+                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(horizontal = 4.dp))
+                Spacer(Modifier.height(8.dp))
+            }
             Text(stringResource(R.string.style_title), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 4.dp))
             RemoteStyle.entries.forEach { st ->
                 val selected = st == current

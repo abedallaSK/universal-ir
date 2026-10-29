@@ -759,4 +759,11 @@ S = {
     "color_hue": ('Hue', 'درجة اللون', 'גוון'),
     "color_saturation": ('Saturation', 'التشبع', 'רוויה'),
     "color_brightness": ('Brightness', 'السطوع', 'בהירות'),
+    "set_github": ('Source code & report a problem', 'الكود المصدري والإبلاغ عن مشكلة', 'קוד מקור ודיווח על בעיה'),
+    "set_github_desc": ('Open the project on GitHub', 'فتح المشروع على GitHub', 'פתיחת הפרויקט ב-GitHub'),
+    "order_title": ('Button order', 'ترتيب الأزرار', 'סדר הכפתורים'),
+    "order_smart": ('Smart TV', 'تلفاز ذكي', 'טלוויזיה חכמה'),
+    "order_classic": ('Classic TV', 'تلفاز كلاسيكي', 'טלוויזיה קלאסית'),
+    "order_smart_desc": ('Arrows and OK first, numbers at the bottom', 'الأسهم وموافق أولاً والأرقام في الأسفل', 'חצים ו-OK קודם, מספרים למטה'),
+    "order_classic_desc": ('Numbers first, then volume, channels and arrows', 'الأرقام أولاً ثم الصوت والقنوات والأسهم', 'מספרים קודם, אחר כך עוצמה, ערוצים וחצים'),
 }

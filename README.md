@@ -4,6 +4,7 @@
 
 **Every remote, one phone.** Control air conditioners, TVs, TV boxes, LED lights and more with your phone's built-in infrared emitter or over Wi‑Fi.
 
+[![Android CI](https://github.com/abedallaSK/universal-ir/actions/workflows/android.yml/badge.svg)](https://github.com/abedallaSK/universal-ir/actions/workflows/android.yml)
 ![Version](https://img.shields.io/badge/version-0.2.0-2F6BFF)
 ![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.2-7F52FF?logo=kotlin&logoColor=white)
@@ -86,9 +87,15 @@ licenses/   Third-party license texts (see NOTICE.md)
 
 UI strings live in `tools/strings_source.py`; regenerate them with `python -I tools/gen_strings.py`. See [`CLAUDE.md`](CLAUDE.md) for the code conventions.
 
-### In‑app updates
+### Releases and in‑app updates
 
-**Settings → Check for updates** reads `https://abedallask.netlify.app/universal-ir/update.json` (format in [`docs/update.json`](docs/update.json)). To publish an update, raise `versionCode` / `versionName` in `app/build.gradle.kts`, attach the APK to a GitHub release, and update that JSON file.
+[GitHub Actions](.github/workflows/android.yml) runs the tests and builds the APK on every push and pull request. To publish a release:
+
+1. Raise `versionCode` and `versionName` in `app/build.gradle.kts` (e.g. `0.2.1`) and commit.
+2. Push a matching tag: `git tag v0.2.1 && git push origin v0.2.1`.
+3. The workflow builds the APK and publishes the GitHub release.
+
+**Settings → Check for updates** reads the latest GitHub release, shows its notes and downloads the APK.
 
 ## Status
 

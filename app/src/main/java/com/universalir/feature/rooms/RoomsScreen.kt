@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -222,7 +223,7 @@ private fun RoomCard(r: RoomEntity, inRoom: List<SavedDeviceEntity>, onClick: ()
     val haptics = LocalHapticFeedback.current
     Surface(
         shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surface,
-        modifier = modifier.height(150.dp).clip(MaterialTheme.shapes.large)
+        modifier = modifier.heightIn(min = 150.dp).clip(MaterialTheme.shapes.large)
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f), MaterialTheme.shapes.large)
             .combinedClickable(onClick = onClick, onLongClick = { haptics.performHapticFeedback(HapticFeedbackType.LongPress); onLongClick() }),
     ) {

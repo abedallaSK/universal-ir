@@ -611,4 +611,11 @@
     <string name="color_hue">Hue</string>
     <string name="color_saturation">Saturation</string>
     <string name="color_brightness">Brightness</string>
+    <string name="set_github">Source code &amp; report a problem</string>
+    <string name="set_github_desc">Open the project on GitHub</string>
+    <string name="order_title">Button order</string>
+    <string name="order_smart">Smart TV</string>
+    <string name="order_classic">Classic TV</string>
+    <string name="order_smart_desc">Arrows and OK first, numbers at the bottom</string>
+    <string name="order_classic_desc">Numbers first, then volume, channels and arrows</string>
 </resources>

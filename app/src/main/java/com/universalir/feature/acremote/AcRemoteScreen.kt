@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import com.universalir.core.ui.AppIcons
+import com.universalir.core.ui.readableWidth
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.togetherWith
 import androidx.compose.animation.fadeIn
@@ -328,7 +329,7 @@ private fun AcContent(ui: AcUiState, expanded: Boolean, unit: TemperatureUnit, v
         }
     }
 
-    Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).readableWidth(600.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         ui.device?.let { com.universalir.feature.remote.RemoteHeader(it) }
         Spacer(Modifier.height(12.dp))
 
@@ -347,11 +348,11 @@ private fun AcContent(ui: AcUiState, expanded: Boolean, unit: TemperatureUnit, v
                     if (!s.power) Text(stringResource(R.string.ac_off_hint), style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 2.dp))
                     Spacer(Modifier.height(4.dp))
-                    TemperatureDial(
+                    com.universalir.core.ui.CappedFontScale { TemperatureDial(
                         value = s.temperatureCelsius, range = range, allowed = tempsForMode, ignored = ignored, power = s.power, color = modeColor,
                         unit = unit, size = if (expanded) 260.dp else 200.dp,
                         onPick = { t -> vm.update(debounce = true) { it.copy(temperatureCelsius = t) } },
-                    )
+                    ) }
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
                         RemoteButton(AppIcons.Minus, stringResource(R.string.ac_temp_down), onClick = { if (canDown) step(-1) })
                         RemoteButton(AppIcons.Power, stringResource(R.string.ac_power), emphasized = s.power, size = 88.dp, onClick = { vm.update { it.copy(power = !it.power) } })
@@ -425,7 +426,7 @@ private fun AcContent(ui: AcUiState, expanded: Boolean, unit: TemperatureUnit, v
                             Icon(p.icon, null, tint = acModeColor(p.mode), modifier = Modifier.size(22.dp))
                             Spacer(Modifier.height(4.dp))
                             Text(stringResource(p.label), style = MaterialTheme.typography.labelLarge, maxLines = 1)
-                            Text("${p.temp}°", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(com.universalir.core.ui.formatTemp(p.temp, unit), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }

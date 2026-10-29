@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -88,7 +89,7 @@ fun DeviceTile(
     Surface(
         shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surface,
         modifier = modifier
-            .height(when (tile) { TileSize.SMALL -> 76.dp; TileSize.MEDIUM -> 150.dp; TileSize.WIDE -> 104.dp; TileSize.LARGE -> 190.dp })
+            .heightIn(min = when (tile) { TileSize.SMALL -> 76.dp; TileSize.MEDIUM -> 150.dp; TileSize.WIDE -> 104.dp; TileSize.LARGE -> 190.dp })
             .clip(MaterialTheme.shapes.large)
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f), MaterialTheme.shapes.large)
             .combinedClickable(role = Role.Button, onClick = onClick,

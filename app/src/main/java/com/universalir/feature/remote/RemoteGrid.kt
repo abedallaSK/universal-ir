@@ -337,14 +337,23 @@ fun standardColumns(available: Collection<String>, category: DeviceCategory): In
     return if (isLight || category == DeviceCategory.FAN) 4 else 5
 }
 
-fun defaultLayout(available: List<String>, labelOf: (String) -> String, columns: Int = 4, category: DeviceCategory = DeviceCategory.OTHER): List<CustomButton> {
+fun defaultLayout(
+    available: List<String>, labelOf: (String) -> String, columns: Int = 4, category: DeviceCategory = DeviceCategory.OTHER,
+    order: com.universalir.domain.model.LayoutOrder = com.universalir.domain.model.LayoutOrder.SMART,
+): List<CustomButton> {
     val b = LayoutBuilder(columns.coerceIn(3, 5), available, labelOf)
     val isLight = category == DeviceCategory.LIGHT || available.any { it.startsWith("color:") }
     when {
         isLight -> b.light()
         category == DeviceCategory.FAN -> b.fan()
         else -> {
-            b.power(hasDpad = listOf(N.UP, N.DOWN, N.LEFT, N.RIGHT, N.OK).count { it in available } >= 3); b.dpad(); b.rockers(); b.media(); b.colourKeys(); b.apps(); b.keypad()
+            val hasDpad = listOf(N.UP, N.DOWN, N.LEFT, N.RIGHT, N.OK).count { it in available } >= 3
+            if (order == com.universalir.domain.model.LayoutOrder.CLASSIC) {
+                // Classic TV remote: numbers first, then volume/channel, then navigation and media.
+                b.power(hasDpad = false); b.keypad(); b.rockers(); b.dpad(); b.media(); b.colourKeys(); b.apps()
+            } else {
+                b.power(hasDpad = hasDpad); b.dpad(); b.rockers(); b.media(); b.colourKeys(); b.apps(); b.keypad()
+            }
             // Projector extras get their own row before the rest.
             b.flow(listOf(N.KEYSTONE_UP, N.KEYSTONE_DOWN, N.FOCUS_IN, N.FOCUS_OUT))
         }

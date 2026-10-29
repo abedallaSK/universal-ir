@@ -77,6 +77,7 @@ import com.universalir.R
 import com.universalir.core.theme.LocalStatusColors
 import com.universalir.core.ui.AppIcons
 import com.universalir.core.ui.AppScaffold
+import com.universalir.core.ui.readableWidth
 import com.universalir.data.repository.AppSettings
 import com.universalir.data.repository.ButtonSize
 import com.universalir.data.repository.RemoteLayout
@@ -151,7 +152,7 @@ fun SettingsScreen(
     if (stylePicker) com.universalir.feature.remote.RemoteStyleSheet(s.remoteStyle, onPick = { st, _ -> vm.style(st); stylePicker = false }, onDismiss = { stylePicker = false })
 
     AppScaffold(stringResource(R.string.nav_settings), onBack = onBack) { padding ->
-        LazyColumn(Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(16.dp, 4.dp, 16.dp, 40.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        LazyColumn(Modifier.fillMaxSize().padding(padding).readableWidth(720.dp), contentPadding = PaddingValues(16.dp, 4.dp, 16.dp, 40.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             // App card: version + update check
             item {
                 Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.surface) {
@@ -167,45 +168,6 @@ fun SettingsScreen(
                         }
                         Spacer(Modifier.height(14.dp))
                         UpdateRow(checking, update, onCheck = vm::checkUpdates, onDownload = openUrl)
-                    }
-                }
-            }
-            // Remote type: infrared, Wi-Fi or both
-            item {
-                Group(stringResource(R.string.set_remote_type), AppIcons.Remote) {
-                    val ok = vm.hasEmitter
-                    Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                        val c = if (ok) LocalStatusColors.current.success else LocalStatusColors.current.warning
-                        Box(Modifier.size(10.dp).clip(CircleShape).background(c))
-                        Spacer(Modifier.width(10.dp))
-                        Text(stringResource(if (ok) R.string.rt_ir_found else R.string.rt_ir_missing), style = MaterialTheme.typography.bodyMedium, color = c)
-                    }
-                    Divider()
-                    val modes = listOf(
-                        Triple(com.universalir.data.repository.ConnectionMode.AUTO, R.string.rt_auto, if (ok) R.string.rt_auto_ir else R.string.rt_auto_noir),
-                        Triple(com.universalir.data.repository.ConnectionMode.BOTH, R.string.rt_both, R.string.rt_both_desc),
-                        Triple(com.universalir.data.repository.ConnectionMode.WIFI_ONLY, R.string.rt_wifi, R.string.rt_wifi_desc),
-                    )
-                    modes.forEachIndexed { i, (m, title, desc) ->
-                        if (i > 0) Divider()
-                        Row(Modifier.fillMaxWidth().clickable { vm.connection(m) }.padding(horizontal = 16.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                            Column(Modifier.weight(1f)) {
-                                Text(stringResource(title), style = MaterialTheme.typography.bodyLarge)
-                                Text(stringResource(desc), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                            RadioButton(s.connectionMode == m, null)
-                        }
-                    }
-                    Divider()
-                    Column(Modifier.padding(16.dp)) {
-                        Text(stringResource(R.string.set_ir_repeat), style = MaterialTheme.typography.bodyLarge)
-                        Text(stringResource(R.string.set_ir_repeat_desc), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Spacer(Modifier.height(10.dp))
-                        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-                            (1..5).forEachIndexed { i, n ->
-                                SegmentedButton(s.irRepeat == n, { vm.irRepeat(n) }, SegmentedButtonDefaults.itemShape(i, 5)) { Text("${n}×") }
-                            }
-                        }
                     }
                 }
             }
@@ -248,6 +210,45 @@ fun SettingsScreen(
                     SwitchLine(Icons.Filled.VolumeUp, stringResource(R.string.set_sound), s.sound, vm::sound)
                 }
             }
+            // Remote type: infrared, Wi-Fi or both
+            item {
+                Group(stringResource(R.string.set_remote_type), AppIcons.Remote) {
+                    val ok = vm.hasEmitter
+                    Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                        val c = if (ok) LocalStatusColors.current.success else LocalStatusColors.current.warning
+                        Box(Modifier.size(10.dp).clip(CircleShape).background(c))
+                        Spacer(Modifier.width(10.dp))
+                        Text(stringResource(if (ok) R.string.rt_ir_found else R.string.rt_ir_missing), style = MaterialTheme.typography.bodyMedium, color = c)
+                    }
+                    Divider()
+                    val modes = listOf(
+                        Triple(com.universalir.data.repository.ConnectionMode.AUTO, R.string.rt_auto, if (ok) R.string.rt_auto_ir else R.string.rt_auto_noir),
+                        Triple(com.universalir.data.repository.ConnectionMode.BOTH, R.string.rt_both, R.string.rt_both_desc),
+                        Triple(com.universalir.data.repository.ConnectionMode.WIFI_ONLY, R.string.rt_wifi, R.string.rt_wifi_desc),
+                    )
+                    modes.forEachIndexed { i, (m, title, desc) ->
+                        if (i > 0) Divider()
+                        Row(Modifier.fillMaxWidth().clickable { vm.connection(m) }.padding(horizontal = 16.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Column(Modifier.weight(1f)) {
+                                Text(stringResource(title), style = MaterialTheme.typography.bodyLarge)
+                                Text(stringResource(desc), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            RadioButton(s.connectionMode == m, null)
+                        }
+                    }
+                    Divider()
+                    Column(Modifier.padding(16.dp)) {
+                        Text(stringResource(R.string.set_ir_repeat), style = MaterialTheme.typography.bodyLarge)
+                        Text(stringResource(R.string.set_ir_repeat_desc), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Spacer(Modifier.height(10.dp))
+                        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+                            (1..5).forEachIndexed { i, n ->
+                                SegmentedButton(s.irRepeat == n, { vm.irRepeat(n) }, SegmentedButtonDefaults.itemShape(i, 5)) { Text("${n}×") }
+                            }
+                        }
+                    }
+                }
+            }
             // Air conditioner defaults
             item {
                 Group(stringResource(R.string.cat_ac), Icons.Filled.Thermostat) {
@@ -269,7 +270,7 @@ fun SettingsScreen(
                             Text(stringResource(modeName(s.defaultAcMode)), Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             OutlinedButton(onClick = { vm.defaultAc(s.defaultAcTemp - 1, s.defaultAcMode) }, shape = CircleShape, contentPadding = PaddingValues(0.dp),
                                 modifier = Modifier.size(42.dp), enabled = s.defaultAcTemp > 16) { Icon(AppIcons.Minus, null, Modifier.size(18.dp)) }
-                            Text("${s.defaultAcTemp}°", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 16.dp))
+                            Text(com.universalir.core.ui.formatTemp(s.defaultAcTemp, s.temperatureUnit), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 16.dp))
                             OutlinedButton(onClick = { vm.defaultAc(s.defaultAcTemp + 1, s.defaultAcMode) }, shape = CircleShape, contentPadding = PaddingValues(0.dp),
                                 modifier = Modifier.size(42.dp), enabled = s.defaultAcTemp < 32) { Icon(AppIcons.Plus, null, Modifier.size(18.dp)) }
                         }
@@ -300,6 +301,9 @@ fun SettingsScreen(
                     LinkLine(Icons.Filled.Insights, stringResource(R.string.nav_protocols), onClick = onProtocols)
                     Divider()
                     LinkLine(AppIcons.Info, stringResource(R.string.nav_about), onClick = onAbout)
+                    Divider()
+                    LinkLine(Icons.Filled.Code, stringResource(R.string.set_github), stringResource(R.string.set_github_desc),
+                        onClick = { openUrl(UpdateChecker.REPO_URL) })
                 }
             }
             // Developer
@@ -322,7 +326,8 @@ private fun UpdateRow(checking: Boolean, update: AppUpdateResult?, onCheck: () -
                 Column(Modifier.padding(14.dp)) {
                     Text(stringResource(R.string.upd_available, update.manifest.versionName), style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer)
-                    if (update.manifest.notes.isNotBlank()) Text(update.manifest.notes, style = MaterialTheme.typography.bodyMedium,
+                    if (update.manifest.notes.isNotBlank()) Text(update.manifest.notes.replace(Regex("[#*>`]"), "").trim(), maxLines = 8,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis, style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer, modifier = Modifier.padding(top = 4.dp))
                 }
             }

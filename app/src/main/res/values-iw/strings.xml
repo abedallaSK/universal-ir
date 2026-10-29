@@ -611,4 +611,11 @@
     <string name="color_hue">גוון</string>
     <string name="color_saturation">רוויה</string>
     <string name="color_brightness">בהירות</string>
+    <string name="set_github">קוד מקור ודיווח על בעיה</string>
+    <string name="set_github_desc">פתיחת הפרויקט ב-GitHub</string>
+    <string name="order_title">סדר הכפתורים</string>
+    <string name="order_smart">טלוויזיה חכמה</string>
+    <string name="order_classic">טלוויזיה קלאסית</string>
+    <string name="order_smart_desc">חצים ו-OK קודם, מספרים למטה</string>
+    <string name="order_classic_desc">מספרים קודם, אחר כך עוצמה, ערוצים וחצים</string>
 </resources>

@@ -29,6 +29,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -137,6 +139,7 @@ class LayoutEditorViewModel @Inject constructor(
     val state = _state.asStateFlow()
     private var set: LoadedCodeSet.CommandSet? = null
     private var category = com.universalir.ir.protocol.DeviceCategory.OTHER
+    private var order = com.universalir.domain.model.LayoutOrder.SMART
 
     init {
         viewModelScope.launch {
@@ -145,12 +148,13 @@ class LayoutEditorViewModel @Inject constructor(
             val cs = (codes.load(d.codeSetId) as? LoadResult.Ok)?.set as? LoadedCodeSet.CommandSet
             set = cs
             category = com.universalir.domain.model.categoryOf(d.category)
+            order = ds.layoutOrder
             val commands = cs?.codes?.commands.orEmpty().map { LayoutCommand(it.name, it.label) }
             val columns = if (ds.customButtons.isEmpty()) standardColumns(commands.map { it.name }, category) else ds.layoutColumns.coerceIn(3, 5)
             val names = commands.map { it.name }
             val labelOf: (String) -> String = { n -> commands.firstOrNull { it.name == n }?.label ?: n }
             // First visit: start from the standard layout so the user edits instead of building from nothing.
-            val buttons = if (ds.customButtons.isEmpty()) defaultLayout(names.filter { it !in ds.hiddenButtons }, labelOf, columns, category)
+            val buttons = if (ds.customButtons.isEmpty()) defaultLayout(names.filter { it !in ds.hiddenButtons }, labelOf, columns, category, order)
             else packLayout(ds.customButtons.filter { it.commandName in names }, columns)
             _state.value = LayoutEditorState(false, d.displayName, commands, buttons, columns)
         }
@@ -255,7 +259,7 @@ class LayoutEditorViewModel @Inject constructor(
         s.copy(columns = n, buttons = packLayout(next, n))
     }
 
-    fun autoLayout() = edit { s -> s.copy(buttons = defaultLayout(s.commands.map { it.name }, ::label, s.columns, category)) }
+    fun autoLayout() = edit { s -> s.copy(buttons = defaultLayout(s.commands.map { it.name }, ::label, s.columns, category, order)) }
     fun clear() = edit { it.copy(buttons = emptyList()) }
 
     fun test(command: String) = viewModelScope.launch {
@@ -296,7 +300,7 @@ fun LayoutEditorScreen(onBack: () -> Unit, vm: LayoutEditorViewModel = hiltViewM
         }
     }) { padding ->
         if (s.loading) { LoadingBox(Modifier.padding(padding)); return@AppScaffold }
-        Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
+        Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).then(Modifier.fillMaxWidth().wrapContentWidth().widthIn(max = 560.dp))) {
             Text(stringResource(R.string.layout_hint), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
