@@ -110,7 +110,7 @@ The app builds and its unit tests pass. Codes are labelled by how much evidence 
 
 ## Contributing
 
-Bug reports, device test results, translations and code are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md), the [Code of Conduct](CODE_OF_CONDUCT.md) and the [Security policy](SECURITY.md).
+Bug reports, device test results, translations and code are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md), the [Code of Conduct](CODE_OF_CONDUCT.md), the [Security policy](SECURITY.md) and the [Accessibility statement](ACCESSIBILITY.md).
 
 ## Author
 

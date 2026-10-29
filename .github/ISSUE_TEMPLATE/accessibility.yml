@@ -1,0 +1,34 @@
+name: ♿ Accessibility barrier
+description: Something is hard or impossible to use with a screen reader, large text or other assistive technology
+labels: [accessibility]
+body:
+  - type: markdown
+    attributes:
+      value: Thank you. Accessibility problems are treated as bugs. See [ACCESSIBILITY.md](https://github.com/abedallaSK/universal-ir/blob/main/ACCESSIBILITY.md) for what is supported and known limitations.
+  - type: textarea
+    id: barrier
+    attributes:
+      label: What were you trying to do, and what got in the way?
+      placeholder: "I tried to … but TalkBack reads … / the text is cut off / I can't reach …"
+    validations:
+      required: true
+  - type: dropdown
+    id: tech
+    attributes:
+      label: Assistive technology or setting
+      multiple: true
+      options: [TalkBack / screen reader, Large font size, Display size / zoom, Switch Access, Voice Access, High contrast / colour settings, Right-to-left language, Other]
+    validations:
+      required: true
+  - type: input
+    id: screen
+    attributes:
+      label: Screen or feature
+      placeholder: "AC remote, layout editor, home tiles, Wi-Fi pairing, widget…"
+  - type: input
+    id: phone
+    attributes:
+      label: Phone model, Android version and app version
+      placeholder: "vivo X200 Ultra, Android 15, 0.2.1"
+    validations:
+      required: true
