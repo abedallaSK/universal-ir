@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                 onDispose {}
             }
             CompositionLocalProvider(LocalAppSettings provides settings) {
-                UniversalIrTheme(themeMode = settings.theme, buttonSize = settings.buttonSize) {
+                UniversalIrTheme(themeMode = settings.theme, buttonSize = settings.buttonSize, accent = settings.accent, pureBlack = settings.pureBlack) {
                     val pending by openDevice.collectAsStateWithLifecycle()
                     // One themed surface under every screen: sets the default text colour (onBackground),
                     // so screens without their own Scaffold/Surface never fall back to black text in dark mode.

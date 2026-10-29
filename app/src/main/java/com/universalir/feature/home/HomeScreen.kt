@@ -42,6 +42,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -168,7 +169,7 @@ fun HomeScreen(nav: NavController, vm: HomeViewModel = hiltViewModel()) {
     val query by vm.query.collectAsStateWithLifecycle()
     val hits by vm.catalogHits.collectAsStateWithLifecycle()
     val hardware by vm.hardware.collectAsStateWithLifecycle()
-    var roomFilter by rememberSaveable { mutableStateOf<Long?>(null) }
+    var filter by rememberSaveable { mutableStateOf("all") }
     var searching by rememberSaveable { mutableStateOf(false) }
     var customizing by rememberSaveable { mutableStateOf(false) }
     var arranging by rememberSaveable { mutableStateOf(false) }
@@ -189,7 +190,6 @@ fun HomeScreen(nav: NavController, vm: HomeViewModel = hiltViewModel()) {
             if (!arranging) ExtendedFloatingActionButton(onClick = { if (irOn) adding = true else nav.navigate(Routes.WIFI) },
                 icon = { Icon(Icons.Filled.Add, null) }, text = { Text(stringResource(R.string.action_add)) })
         },
-        bottomBar = { if (!arranging) HomeNavBar(irOn) { nav.navigate(it) } },
     ) { padding ->
         val all = devices
         val shownAll = all.orEmpty().filter { it.settings().showOnHome }
@@ -235,7 +235,9 @@ fun HomeScreen(nav: NavController, vm: HomeViewModel = hiltViewModel()) {
                         DropdownMenu(menu, { menu = false }) {
                             listOf(
                                 Triple(R.string.nav_devices, Icons.Filled.ViewList, Routes.DEVICES),
-                                Triple(R.string.nav_hardware, Icons.Filled.Build, Routes.HARDWARE),
+                                Triple(R.string.nav_rooms, Icons.Filled.MeetingRoom, Routes.ROOMS),
+                                Triple(R.string.fav_commands, Icons.Filled.Favorite, Routes.FAVORITES),
+                                Triple(R.string.nav_wifi, Icons.Filled.Wifi, Routes.WIFI),
                                 Triple(R.string.nav_settings, Icons.Filled.Settings, Routes.SETTINGS),
                                 Triple(R.string.nav_about, Icons.Filled.Info, Routes.ABOUT),
                             ).forEach { (label, icon, route) ->
@@ -317,37 +319,38 @@ fun HomeScreen(nav: NavController, vm: HomeViewModel = hiltViewModel()) {
                 return@LazyVerticalGrid
             }
 
-            val favorites = all.filter { it.favorite }
-            if (all.isNotEmpty() && settings.homeShowFavorites && favorites.isNotEmpty()) {
-                item(span = { GridItemSpan(maxLineSpan) }) { HomeSection(stringResource(R.string.home_favorites)) }
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        items(favorites, key = { it.id }) { d -> QuickChip(d) { open(d.id) } }
+            // One row of filters gives access to everything: favourites, Wi-Fi, each room, room management.
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                HomeFilters(filter, hasFavorites = all.any { it.favorite }, hasWifi = wifi.isNotEmpty() && all.isNotEmpty(),
+                    rooms = if (settings.homeShowRooms) rooms else emptyList(), onManageRooms = { nav.navigate(Routes.ROOMS) }) { filter = it }
+            }
+            val shown = when {
+                filter == "fav" -> shownAll.filter { it.favorite }
+                filter == "wifi" -> emptyList()
+                filter.startsWith("room:") -> shownAll.filter { it.roomId == filter.removePrefix("room:").toLongOrNull() }
+                else -> shownAll
+            }
+            if (shown.isNotEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
+                HomeSection(stringResource(R.string.home_your_devices), count = shown.size) {
+                    if (filter == "all" && shownAll.size > 1) TextButton(onClick = { arranging = true }) {
+                        Icon(AppIcons.Arrange, null, Modifier.size(18.dp)); Spacer(Modifier.width(6.dp)); Text(stringResource(R.string.home_arrange_short))
                     }
                 }
+            } else if (filter != "wifi" && filter != "all") item(span = { GridItemSpan(maxLineSpan) }) {
+                Text(stringResource(R.string.home_filter_empty), Modifier.fillMaxWidth().padding(24.dp), textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            if (all.isNotEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
-                Column {
-                    HomeSection(stringResource(R.string.home_your_devices), count = shownAll.size) {
-                        if (shownAll.size > 1) TextButton(onClick = { arranging = true }) {
-                            Icon(AppIcons.Arrange, null, Modifier.size(18.dp)); Spacer(Modifier.width(6.dp)); Text(stringResource(R.string.home_arrange_short))
-                        }
-                    }
-                    if (settings.homeShowRooms) RoomFilter(rooms, roomFilter, onManage = { nav.navigate(Routes.ROOMS) }) { roomFilter = it }
-                }
-            }
-            val shown = if (roomFilter == null) shownAll else shownAll.filter { it.roomId == roomFilter }
             items(shown, key = { it.id }, span = { d -> GridItemSpan(if (list) maxLineSpan else d.settings().tileSize.span(maxLineSpan)) }) { d ->
                 if (list) DeviceRow(d, rooms, onClick = { open(d.id) }, onLongClick = { selected = d }, modifier = Modifier.animateItem())
                 else DeviceTile(d, rooms, onClick = { open(d.id) }, onLongClick = { selected = d }, modifier = Modifier.animateItem())
             }
             val hidden = all.size - shownAll.size
-            if (hidden > 0) item(span = { GridItemSpan(maxLineSpan) }) {
+            if (filter == "all" && hidden > 0) item(span = { GridItemSpan(maxLineSpan) }) {
                 TextButton(onClick = { nav.navigate(Routes.DEVICES) }, Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.home_hidden_count, hidden))
                 }
             }
-            if (wifi.isNotEmpty()) wifiSection(wifi, title = titleWifi, onOpen = wifiOpen, onLong = { wifiSelected = it })
+            if (wifi.isNotEmpty() && (filter == "all" || filter == "wifi")) wifiSection(wifi, title = titleWifi, onOpen = wifiOpen, onLong = { wifiSelected = it })
         }
     }
     selected?.let { d ->
@@ -381,16 +384,25 @@ private fun HomeSection(title: String, count: Int? = null, trailing: @Composable
     }
 }
 
+/** Home filter chips: all, favourites, Wi-Fi, each room, then a shortcut to manage rooms. */
 @Composable
-private fun RoomFilter(rooms: List<RoomEntity>, selected: Long?, onManage: () -> Unit, onSelect: (Long?) -> Unit) {
+private fun HomeFilters(selected: String, hasFavorites: Boolean, hasWifi: Boolean, rooms: List<RoomEntity>, onManageRooms: () -> Unit, onSelect: (String) -> Unit) {
     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), contentPadding = PaddingValues(vertical = 4.dp)) {
-        if (rooms.isNotEmpty()) item { FilterChip(selected == null, { onSelect(null) }, label = { Text(stringResource(R.string.rooms_all)) }) }
+        item { FilterChip(selected == "all", { onSelect("all") }, label = { Text(stringResource(R.string.filter_all)) }) }
+        if (hasFavorites) item {
+            FilterChip(selected == "fav", { onSelect("fav") }, label = { Text(stringResource(R.string.home_favorites)) },
+                leadingIcon = { Icon(AppIcons.Star, null, Modifier.size(18.dp), tint = LocalStatusColors.current.warning) })
+        }
+        if (hasWifi) item {
+            FilterChip(selected == "wifi", { onSelect("wifi") }, label = { Text(stringResource(R.string.nav_wifi_short)) },
+                leadingIcon = { Icon(AppIcons.Wifi, null, Modifier.size(18.dp)) })
+        }
         items(rooms, key = { it.id }) { r ->
-            FilterChip(selected == r.id, { onSelect(r.id) }, label = { Text(r.name) },
+            FilterChip(selected == "room:${r.id}", { onSelect("room:${r.id}") }, label = { Text(r.name) },
                 leadingIcon = { Icon(com.universalir.feature.rooms.roomIcon(r.icon), null, Modifier.size(18.dp), tint = Color(r.color)) })
         }
         item {
-            androidx.compose.material3.AssistChip(onClick = onManage, label = { Text(stringResource(if (rooms.isEmpty()) R.string.rooms_create else R.string.nav_rooms)) },
+            androidx.compose.material3.AssistChip(onClick = onManageRooms, label = { Text(stringResource(if (rooms.isEmpty()) R.string.rooms_create else R.string.nav_rooms)) },
                 leadingIcon = { Icon(if (rooms.isEmpty()) Icons.Filled.Add else Icons.Filled.MeetingRoom, null, Modifier.size(18.dp)) })
         }
     }
@@ -458,18 +470,6 @@ private fun SwitchLine(label: String, checked: Boolean, onChange: (Boolean) -> U
     Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(label, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
         Switch(checked, onChange)
-    }
-}
-
-/** Bottom navigation shown on home: the places that used to be shortcut cards. */
-@Composable
-private fun HomeNavBar(irOn: Boolean, onNavigate: (String) -> Unit) {
-    NavigationBar(containerColor = MaterialTheme.colorScheme.surface, tonalElevation = 0.dp) {
-        NavigationBarItem(selected = true, onClick = {}, icon = { Icon(AppIcons.Home, null) }, label = { Text(stringResource(R.string.nav_home)) })
-        // Rooms and favourites organise infrared remotes, so Wi-Fi-only phones don't need them.
-        if (irOn) NavigationBarItem(selected = false, onClick = { onNavigate(Routes.ROOMS) }, icon = { Icon(Icons.Filled.MeetingRoom, null) }, label = { Text(stringResource(R.string.nav_rooms)) })
-        if (irOn) NavigationBarItem(selected = false, onClick = { onNavigate(Routes.FAVORITES) }, icon = { Icon(AppIcons.Star, null) }, label = { Text(stringResource(R.string.nav_favorites)) })
-        NavigationBarItem(selected = false, onClick = { onNavigate(Routes.WIFI) }, icon = { Icon(AppIcons.Wifi, null) }, label = { Text(stringResource(R.string.nav_wifi_short)) })
     }
 }
 

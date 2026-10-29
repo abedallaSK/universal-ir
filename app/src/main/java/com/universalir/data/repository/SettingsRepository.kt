@@ -23,6 +23,9 @@ enum class RemoteLayout { COMPACT, EXPANDED }
 enum class TemperatureUnit { CELSIUS, FAHRENHEIT }
 enum class HomeLayout { GRID, LIST }
 
+/** App accent colour; DYNAMIC uses the wallpaper colours (Android 12+) and falls back to BLUE. */
+enum class AccentTheme { BLUE, TEAL, VIOLET, ORANGE, ROSE, GREEN, DYNAMIC }
+
 /** Which kinds of remote the app offers. AUTO = infrared only when the phone has an IR emitter. */
 enum class ConnectionMode { AUTO, BOTH, WIFI_ONLY }
 
@@ -49,6 +52,10 @@ data class AppSettings(
     val homeShowRooms: Boolean = true,
     val remoteStyle: com.universalir.domain.model.RemoteStyle = com.universalir.domain.model.RemoteStyle.CLASSIC,
     val connectionMode: ConnectionMode = ConnectionMode.AUTO,
+    val accent: AccentTheme = AccentTheme.BLUE,
+    val pureBlack: Boolean = false,
+    /** How many times each button press is transmitted (1..5). */
+    val irRepeat: Int = 1,
 ) {
     /** Whether infrared features are shown, given whether this phone has a usable emitter. */
     fun irEnabled(hasEmitter: Boolean): Boolean = when (connectionMode) {
@@ -82,6 +89,9 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
         val homeRooms = booleanPreferencesKey("home_rooms")
         val remoteStyle = stringPreferencesKey("remote_style")
         val connectionMode = stringPreferencesKey("connection_mode")
+        val accent = stringPreferencesKey("accent")
+        val pureBlack = booleanPreferencesKey("pure_black")
+        val irRepeat = intPreferencesKey("ir_repeat")
     }
 
     val settings: Flow<AppSettings> = context.dataStore.data.map { it.toSettings() }
@@ -110,6 +120,9 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
         homeShowRooms = this[K.homeRooms] ?: true,
         remoteStyle = enumOr(this[K.remoteStyle], com.universalir.domain.model.RemoteStyle.CLASSIC),
         connectionMode = enumOr(this[K.connectionMode], ConnectionMode.AUTO),
+        accent = enumOr(this[K.accent], AccentTheme.BLUE),
+        pureBlack = this[K.pureBlack] ?: false,
+        irRepeat = this[K.irRepeat] ?: 1,
     )
 
     private inline fun <reified E : Enum<E>> enumOr(name: String?, default: E): E =
@@ -127,6 +140,9 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
     suspend fun setCatalogSeedVersion(v: Int) = context.dataStore.edit { it[K.seed] = v }
     suspend fun setSavedDevicesAsGrid(v: Boolean) = context.dataStore.edit { it[K.grid] = v }
 
+    suspend fun setIrRepeat(v: Int) = context.dataStore.edit { it[K.irRepeat] = v.coerceIn(1, 5) }
+    suspend fun setAccent(v: AccentTheme) = context.dataStore.edit { it[K.accent] = v.name }
+    suspend fun setPureBlack(v: Boolean) = context.dataStore.edit { it[K.pureBlack] = v }
     suspend fun setConnectionMode(v: ConnectionMode) = context.dataStore.edit { it[K.connectionMode] = v.name }
     suspend fun setRemoteStyle(v: com.universalir.domain.model.RemoteStyle) = context.dataStore.edit { it[K.remoteStyle] = v.name }
     suspend fun setHomeTitle(v: String) = context.dataStore.edit { it[K.homeTitle] = v.trim() }

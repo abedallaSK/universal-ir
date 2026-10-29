@@ -28,6 +28,7 @@ import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.ManageSearch
@@ -110,6 +111,9 @@ class SettingsViewModel @Inject constructor(
     val update = MutableStateFlow<AppUpdateResult?>(null)
 
     fun theme(t: ThemeMode) = viewModelScope.launch { repo.setTheme(t) }
+    fun accent(a: com.universalir.data.repository.AccentTheme) = viewModelScope.launch { repo.setAccent(a) }
+    fun pureBlack(v: Boolean) = viewModelScope.launch { repo.setPureBlack(v) }
+    fun irRepeat(v: Int) = viewModelScope.launch { repo.setIrRepeat(v) }
     fun style(v: com.universalir.domain.model.RemoteStyle) = viewModelScope.launch { repo.setRemoteStyle(v) }
     fun haptics(v: Boolean) = viewModelScope.launch { repo.setHaptics(v) }
     fun sound(v: Boolean) = viewModelScope.launch { repo.setSound(v) }
@@ -136,6 +140,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     val openUrl: (String) -> Unit = { url -> runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) } }
     val currentLang = AppCompatDelegate.getApplicationLocales().toLanguageTags().substringBefore('-').ifBlank { "system" }
+        .let { when (it) { "iw" -> "he"; "id" -> "in"; else -> it } }
     var privacyOpen by remember { mutableStateOf(false) }
     var stylePicker by remember { mutableStateOf(false) }
     if (stylePicker) com.universalir.feature.remote.RemoteStyleSheet(s.remoteStyle, onPick = { st, _ -> vm.style(st); stylePicker = false }, onDismiss = { stylePicker = false })
@@ -186,6 +191,17 @@ fun SettingsScreen(
                             RadioButton(s.connectionMode == m, null)
                         }
                     }
+                    Divider()
+                    Column(Modifier.padding(16.dp)) {
+                        Text(stringResource(R.string.set_ir_repeat), style = MaterialTheme.typography.bodyLarge)
+                        Text(stringResource(R.string.set_ir_repeat_desc), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Spacer(Modifier.height(10.dp))
+                        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+                            (1..5).forEachIndexed { i, n ->
+                                SegmentedButton(s.irRepeat == n, { vm.irRepeat(n) }, SegmentedButtonDefaults.itemShape(i, 5)) { Text("${n}×") }
+                            }
+                        }
+                    }
                 }
             }
             // Appearance
@@ -196,6 +212,10 @@ fun SettingsScreen(
                         ThemeCard(ThemeMode.DARK, R.string.set_dark, s.theme, Modifier.weight(1f)) { vm.theme(it) }
                         ThemeCard(ThemeMode.SYSTEM, R.string.set_system, s.theme, Modifier.weight(1f)) { vm.theme(it) }
                     }
+                    Divider()
+                    AccentPicker(s.accent, vm::accent)
+                    Divider()
+                    SwitchLine(Icons.Filled.DarkMode, stringResource(R.string.set_pure_black), s.pureBlack, vm::pureBlack)
                     Divider()
                     LinkLine(Icons.Filled.Palette, stringResource(R.string.style_title), stringResource(com.universalir.feature.remote.remoteStyleName(s.remoteStyle))) { stylePicker = true }
                     Divider()
@@ -209,7 +229,10 @@ fun SettingsScreen(
             // Language
             item {
                 Group(stringResource(R.string.set_language), Icons.Filled.Language) {
-                    val langs = listOf("system" to R.string.set_system, "en" to R.string.lang_en, "ar" to R.string.lang_ar, "he" to R.string.lang_he)
+                    val langs = listOf("system" to R.string.set_system, "en" to R.string.lang_en, "ar" to R.string.lang_ar, "he" to R.string.lang_he,
+                        "fr" to R.string.lang_fr, "es" to R.string.lang_es, "de" to R.string.lang_de, "pt" to R.string.lang_pt, "it" to R.string.lang_it,
+                        "ru" to R.string.lang_ru, "tr" to R.string.lang_tr, "fa" to R.string.lang_fa, "hi" to R.string.lang_hi, "zh" to R.string.lang_zh,
+                        "in" to R.string.lang_id, "ur" to R.string.lang_ur)
                     langs.forEachIndexed { i, (tag, res) ->
                         if (i > 0) Divider()
                         Row(Modifier.fillMaxWidth().clickable {
@@ -444,3 +467,32 @@ private fun DeveloperCard(onClick: () -> Unit) {
 
 /** The developer's name stays in Latin letters in every language. */
 const val DEVELOPER_NAME = "Abdullah Sheikh Khalil"
+
+/** Accent colour swatches; wallpaper colours only on Android 12+ where Material You exists. */
+@Composable
+private fun AccentPicker(selected: com.universalir.data.repository.AccentTheme, onPick: (com.universalir.data.repository.AccentTheme) -> Unit) {
+    val options = listOf(
+        com.universalir.data.repository.AccentTheme.BLUE to Color(0xFF2F6BFF), com.universalir.data.repository.AccentTheme.TEAL to Color(0xFF00897B),
+        com.universalir.data.repository.AccentTheme.VIOLET to Color(0xFF6D4AFF), com.universalir.data.repository.AccentTheme.ORANGE to Color(0xFFE8590C),
+        com.universalir.data.repository.AccentTheme.ROSE to Color(0xFFD6336C), com.universalir.data.repository.AccentTheme.GREEN to Color(0xFF2B8A3E),
+    )
+    Column(Modifier.padding(16.dp)) {
+        Text(stringResource(R.string.set_accent), style = MaterialTheme.typography.bodyLarge)
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+            options.forEach { (a, c) ->
+                Box(Modifier.size(38.dp).clip(CircleShape).background(c).clickable { onPick(a) }, contentAlignment = Alignment.Center) {
+                    if (a == selected) Icon(Icons.Filled.Check, null, tint = Color.White, modifier = Modifier.size(20.dp))
+                }
+            }
+            if (android.os.Build.VERSION.SDK_INT >= 31) {
+                val a = com.universalir.data.repository.AccentTheme.DYNAMIC
+                Box(Modifier.size(38.dp).clip(CircleShape)
+                    .background(androidx.compose.ui.graphics.Brush.sweepGradient(listOf(Color(0xFF2F6BFF), Color(0xFF2B8A3E), Color(0xFFE8590C), Color(0xFFD6336C), Color(0xFF2F6BFF))))
+                    .clickable { onPick(a) }, contentAlignment = Alignment.Center) {
+                    Icon(if (a == selected) Icons.Filled.Check else Icons.Filled.Palette, stringResource(R.string.accent_dynamic), tint = Color.White, modifier = Modifier.size(20.dp))
+                }
+            }
+        }
+    }
+}

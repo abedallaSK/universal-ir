@@ -33,7 +33,10 @@ data class TransmissionEvent(
  * UI state → encoder (protocol or captured table) → validation → transmitter → result.
  */
 @Singleton
-class RemoteController @Inject constructor(private val transmitter: IrTransmitter) {
+class RemoteController @Inject constructor(
+    private val transmitter: IrTransmitter,
+    private val settings: com.universalir.data.repository.SettingsRepository? = null,
+) {
 
     private val _last = MutableStateFlow<TransmissionEvent?>(null)
     val lastEvent: StateFlow<TransmissionEvent?> = _last.asStateFlow()
@@ -54,8 +57,21 @@ class RemoteController @Inject constructor(private val transmitter: IrTransmitte
         is LoadedCodeSet.CommandSet -> EncodeResult.Failure(listOf("This code set is not an air-conditioner code set."))
     }
 
-    suspend fun sendCommand(set: LoadedCodeSet, commandName: String): SendOutcome =
-        send(set.title, commandName, encodeCommand(set, commandName))
+    /**
+     * Sends a button command, repeated per the "IR repeat" setting for devices that miss single
+     * presses. Stops at the first failure. AC states are never repeated (some power codes toggle).
+     */
+    suspend fun sendCommand(set: LoadedCodeSet, commandName: String): SendOutcome {
+        val times = (settings?.current()?.irRepeat ?: 1).coerceIn(1, 5)
+        val encoded = encodeCommand(set, commandName)
+        var outcome = send(set.title, commandName, encoded)
+        repeat(times - 1) {
+            if (outcome !is SendOutcome.Success) return outcome
+            kotlinx.coroutines.delay(REPEAT_GAP_MS)
+            outcome = send(set.title, commandName, encoded)
+        }
+        return outcome
+    }
 
     suspend fun sendAc(set: LoadedCodeSet, state: AcState, previous: AcState?): SendOutcome =
         send(set.title, AcTable.key(state), encodeAc(set, state, previous))
@@ -79,3 +95,5 @@ class RemoteController @Inject constructor(private val transmitter: IrTransmitte
         }
     }
 }
+
+private const val REPEAT_GAP_MS = 90L

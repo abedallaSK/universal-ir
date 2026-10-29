@@ -3,4 +3,16 @@
     <locale android:name="en" />
     <locale android:name="ar" />
     <locale android:name="he" />
+    <locale android:name="fr" />
+    <locale android:name="es" />
+    <locale android:name="de" />
+    <locale android:name="pt" />
+    <locale android:name="it" />
+    <locale android:name="ru" />
+    <locale android:name="tr" />
+    <locale android:name="fa" />
+    <locale android:name="hi" />
+    <locale android:name="zh" />
+    <locale android:name="in" />
+    <locale android:name="ur" />
 </locale-config>

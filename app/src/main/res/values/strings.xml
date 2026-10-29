@@ -583,4 +583,25 @@
     <string name="timer_hours">%1$d h</string>
     <string name="touchpad_hint">Swipe to move · tap for OK</string>
     <string name="touchpad_toggle">Touchpad / buttons</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_pt">Português</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_tr">Türkçe</string>
+    <string name="lang_fa">فارسی</string>
+    <string name="lang_hi">हिन्दी</string>
+    <string name="lang_zh">简体中文</string>
+    <string name="lang_id">Bahasa Indonesia</string>
+    <string name="lang_ur">اردو</string>
+    <string name="set_accent">Accent color</string>
+    <string name="accent_dynamic">Wallpaper colors</string>
+    <string name="set_pure_black">Pure black dark mode</string>
+    <string name="set_pure_black_desc">Saves battery on OLED screens</string>
+    <string name="filter_all">All</string>
+    <string name="home_filter_empty">Nothing here yet</string>
+    <string name="set_ir_repeat">Send each press</string>
+    <string name="set_ir_repeat_desc">Send more times if a device misses presses</string>
+    <string name="onb_personal_title">Make it yours</string>
 </resources>

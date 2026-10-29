@@ -3,6 +3,10 @@
 ## 0.2.0
 
 ### New
+- **15 languages** (added French, Spanish, German, Portuguese, Italian, Russian, Turkish, Persian, Hindi, Chinese, Indonesian, Urdu).
+- **Themes**: six accent colours, wallpaper colours (Android 12+), pure‑black dark mode; pick language and theme on the first screen.
+- **Home filters** (All, Favourites, Wi‑Fi, rooms) replace the bottom bar; everything is reachable from Home.
+- **IR repeat** setting (1–5 sends per press).
 - **Wi‑Fi remotes**: Android TV / Google TV (pairing code), Samsung, LG, Roku; Wi‑Fi ACs (Gree/Tadiran, Daikin, Electra Smart, Sensibo); discovery and add by IP.
 - **Remote type** setting: Automatic / Infrared + Wi‑Fi / Wi‑Fi only. Phones without an IR emitter show only Wi‑Fi devices.
 - **Layout editor** for every remote: icons, labels, colours, shapes, sizes, drag, swap, undo/redo, auto layout.

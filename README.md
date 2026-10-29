@@ -8,7 +8,7 @@
 ![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.2-7F52FF?logo=kotlin&logoColor=white)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4)
-![Languages](https://img.shields.io/badge/languages-English%20%7C%20العربية%20%7C%20עברית-orange)
+![Languages](https://img.shields.io/badge/languages-15-orange)
 
 [**Download the APK**](../../releases/latest) · [Features](#features) · [Supported devices](#supported-devices) · [Build](#build-from-source) · [Licensing](#licensing)
 
@@ -41,7 +41,9 @@
 - 470 bundled code sets, about 120 AC brands, and a **code wizard** that tries codes one by one until your device responds.
 - Import Flipper Zero `.ir`, IRDB CSV and SmartIR JSON files, or build a remote from raw / Pronto / Broadlink codes.
 - Works **offline**. No account, no analytics, no ads.
-- English, Arabic and Hebrew with full right‑to‑left support. Light and dark themes.
+- **15 languages**: English, العربية, עברית, Français, Español, Deutsch, Português, Italiano, Русский, Türkçe, فارسی, हिन्दी, 简体中文, Bahasa Indonesia, اردو, with full right‑to‑left support.
+- **Themes**: light / dark / system, six accent colours, wallpaper colours (Material You) and a pure‑black AMOLED mode.
+- **IR repeat**: send each button press 1–5 times for devices that miss single presses.
 
 ## Supported devices
 

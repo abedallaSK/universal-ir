@@ -24,6 +24,10 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -175,6 +179,9 @@ class OnboardingViewModel @Inject constructor(
     val hardware = _hw.asStateFlow()
 
     fun check() { _hw.value = transmitter.checkHardwareSupport() }
+    val prefs = settings.settings
+    fun theme(t: com.universalir.data.repository.ThemeMode) = viewModelScope.launch { settings.setTheme(t) }
+    fun accent(a: com.universalir.data.repository.AccentTheme) = viewModelScope.launch { settings.setAccent(a) }
 
     fun finish(onDone: () -> Unit) = viewModelScope.launch {
         settings.setOnboardingDone(true)
@@ -196,11 +203,12 @@ fun OnboardingScreen(onDone: () -> Unit, vm: OnboardingViewModel = hiltViewModel
         OnboardingPage(DeviceLook(AppIcons.Remote, deviceGradients[4], "aim", 4), R.string.onb_3_title, R.string.onb_3_body,
             listOf(AppIcons.Up, AppIcons.Television, AppIcons.Power)),
     )
-    val pager = rememberPagerState { pages.size + 1 }
+    // Page 0 is "make it yours" (language, theme, colour); then the feature pages; then the hardware check.
+    val pager = rememberPagerState { pages.size + 2 }
     val scope = rememberCoroutineScope()
     val hw by vm.hardware.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val last = pager.currentPage == pages.size
+    val last = pager.currentPage == pages.size + 1
 
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).systemBarsPadding().padding(horizontal = 24.dp, vertical = 12.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -209,9 +217,11 @@ fun OnboardingScreen(onDone: () -> Unit, vm: OnboardingViewModel = hiltViewModel
         }
         HorizontalPager(pager, Modifier.weight(1f)) { index ->
             Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                if (index < pages.size) {
-                    val p = pages[index]
-                    Hero(p.look, p.satellites, tilt = if (index == 3) -20f else 0f)
+                if (index == 0) {
+                    PersonalizePage(vm)
+                } else if (index - 1 < pages.size) {
+                    val p = pages[index - 1]
+                    Hero(p.look, p.satellites, tilt = if (index == 4) -20f else 0f)
                     Spacer(Modifier.height(36.dp))
                     Text(stringResource(p.title), style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
                     Spacer(Modifier.height(12.dp))
@@ -238,7 +248,7 @@ fun OnboardingScreen(onDone: () -> Unit, vm: OnboardingViewModel = hiltViewModel
         }
         // Progress dots
         Row(Modifier.fillMaxWidth().padding(vertical = 16.dp), horizontalArrangement = Arrangement.Center) {
-            repeat(pages.size + 1) { i ->
+            repeat(pages.size + 2) { i ->
                 val active = i == pager.currentPage
                 val w by animateDpAsState(if (active) 24.dp else 8.dp, label = "dot")
                 Box(Modifier.padding(3.dp).size(w, 8.dp).clip(CircleShape)
@@ -273,6 +283,58 @@ private fun Hero(look: DeviceLook, satellites: List<ImageVector>, tilt: Float) {
             Box(Modifier.offset(o.x.dp, (o.y + if (i % 2 == 0) -float else float).dp).size(48.dp).shadow(6.dp, CircleShape).clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surface), contentAlignment = Alignment.Center) {
                 Icon(icon, null, Modifier.size(24.dp), tint = ring)
+            }
+        }
+    }
+}
+
+/** First page: pick language, theme and accent colour before anything else. */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun PersonalizePage(vm: OnboardingViewModel) {
+    val prefs by vm.prefs.collectAsStateWithLifecycle(initialValue = com.universalir.data.repository.AppSettings())
+    val current = androidx.appcompat.app.AppCompatDelegate.getApplicationLocales().toLanguageTags().substringBefore('-')
+        .let { when (it) { "iw" -> "he"; "id" -> "in"; else -> it } }
+    val langs = listOf("en" to R.string.lang_en, "ar" to R.string.lang_ar, "he" to R.string.lang_he, "fr" to R.string.lang_fr, "es" to R.string.lang_es,
+        "de" to R.string.lang_de, "pt" to R.string.lang_pt, "it" to R.string.lang_it, "ru" to R.string.lang_ru, "tr" to R.string.lang_tr,
+        "fa" to R.string.lang_fa, "hi" to R.string.lang_hi, "zh" to R.string.lang_zh, "in" to R.string.lang_id, "ur" to R.string.lang_ur)
+    Column(Modifier.fillMaxSize().verticalScroll(androidx.compose.foundation.rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
+        Spacer(Modifier.height(8.dp))
+        AppMark(88.dp)
+        Spacer(Modifier.height(16.dp))
+        Text(stringResource(R.string.onb_personal_title), style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
+        Spacer(Modifier.height(20.dp))
+        Text(stringResource(R.string.set_language), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary, modifier = Modifier.fillMaxWidth())
+        Spacer(Modifier.height(8.dp))
+        androidx.compose.foundation.layout.FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            langs.forEach { (tag, res) ->
+                androidx.compose.material3.FilterChip(current == tag || (current.isBlank() && tag == "en"), {
+                    androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(androidx.core.os.LocaleListCompat.forLanguageTags(tag))
+                }, label = { Text(stringResource(res)) })
+            }
+        }
+        Spacer(Modifier.height(20.dp))
+        Text(stringResource(R.string.set_appearance), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary, modifier = Modifier.fillMaxWidth())
+        Spacer(Modifier.height(8.dp))
+        val themes = listOf(com.universalir.data.repository.ThemeMode.SYSTEM to R.string.set_system, com.universalir.data.repository.ThemeMode.LIGHT to R.string.set_light,
+            com.universalir.data.repository.ThemeMode.DARK to R.string.set_dark)
+        androidx.compose.material3.SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+            themes.forEachIndexed { i, (t, res) ->
+                SegmentedButton(prefs.theme == t, { vm.theme(t) }, androidx.compose.material3.SegmentedButtonDefaults.itemShape(i, themes.size)) {
+                    Text(stringResource(res))
+                }
+            }
+        }
+        Spacer(Modifier.height(16.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            listOf(
+                com.universalir.data.repository.AccentTheme.BLUE to Color(0xFF2F6BFF), com.universalir.data.repository.AccentTheme.TEAL to Color(0xFF00897B),
+                com.universalir.data.repository.AccentTheme.VIOLET to Color(0xFF6D4AFF), com.universalir.data.repository.AccentTheme.ORANGE to Color(0xFFE8590C),
+                com.universalir.data.repository.AccentTheme.ROSE to Color(0xFFD6336C), com.universalir.data.repository.AccentTheme.GREEN to Color(0xFF2B8A3E),
+            ).forEach { (a, c) ->
+                Box(Modifier.size(40.dp).clip(CircleShape).background(c).clickable { vm.accent(a) }, contentAlignment = Alignment.Center) {
+                    if (prefs.accent == a) Icon(Icons.Filled.Check, null, tint = Color.White, modifier = Modifier.size(20.dp))
+                }
             }
         }
     }

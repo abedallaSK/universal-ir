@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.universalir.data.repository.AccentTheme
 import com.universalir.data.repository.ButtonSize
 import com.universalir.data.repository.ThemeMode
 
@@ -165,10 +166,42 @@ fun ThemeMode.isDark(): Boolean = when (this) {
     ThemeMode.DARK -> true
 }
 
+/** Accent palettes: (light primary, light container, dark primary, dark container). */
+private fun accentColors(a: AccentTheme): List<Color> = when (a) {
+    AccentTheme.BLUE, AccentTheme.DYNAMIC -> listOf(Palette.Accent, Color(0xFFDCE5FF), Palette.AccentDark, Color(0xFF1D3A8A))
+    AccentTheme.TEAL -> listOf(Color(0xFF00897B), Color(0xFFCDEFEA), Color(0xFF5EDDD6), Color(0xFF0B4F4B))
+    AccentTheme.VIOLET -> listOf(Color(0xFF6D4AFF), Color(0xFFE6DEFF), Color(0xFFB9A7FF), Color(0xFF3F2A9E))
+    AccentTheme.ORANGE -> listOf(Color(0xFFE8590C), Color(0xFFFFE1CF), Color(0xFFFFA472), Color(0xFF7A2E05))
+    AccentTheme.ROSE -> listOf(Color(0xFFD6336C), Color(0xFFFFD9E4), Color(0xFFFF8FB1), Color(0xFF7A1A3C))
+    AccentTheme.GREEN -> listOf(Color(0xFF2B8A3E), Color(0xFFD3F5DA), Color(0xFF7BE08F), Color(0xFF155724))
+}
+
+/** Colour scheme for a theme choice: accent on the base palette, wallpaper colours, optional pure black. */
+@Composable
+fun appColorScheme(dark: Boolean, accent: AccentTheme, pureBlack: Boolean): ColorScheme {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val base = if (accent == AccentTheme.DYNAMIC && android.os.Build.VERSION.SDK_INT >= 31) {
+        if (dark) androidx.compose.material3.dynamicDarkColorScheme(context) else androidx.compose.material3.dynamicLightColorScheme(context)
+    } else {
+        val (lp, lc, dp, dc) = accentColors(accent)
+        if (dark) DarkColors.copy(primary = dp, primaryContainer = dc, onPrimaryContainer = Color.White, surfaceTint = dp, inversePrimary = lp)
+        else LightColors.copy(primary = lp, primaryContainer = lc, onPrimaryContainer = Color(0xFF101418), surfaceTint = lp, inversePrimary = dp)
+    }
+    if (!dark || !pureBlack) return base
+    // AMOLED: true black backgrounds, slightly lifted cards so surfaces stay distinguishable.
+    return base.copy(
+        background = Color.Black, surface = Color(0xFF0A0A0A), surfaceDim = Color.Black,
+        surfaceContainerLowest = Color.Black, surfaceContainerLow = Color(0xFF080808), surfaceContainer = Color(0xFF0E0E0E),
+        surfaceContainerHigh = Color(0xFF161616), surfaceContainerHighest = Color(0xFF1E1E1E), surfaceVariant = Color(0xFF161616),
+    )
+}
+
 @Composable
 fun UniversalIrTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
     buttonSize: ButtonSize = ButtonSize.MEDIUM,
+    accent: AccentTheme = AccentTheme.BLUE,
+    pureBlack: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val dark = themeMode.isDark()
@@ -180,6 +213,6 @@ fun UniversalIrTheme(
         ButtonSize.LARGE -> RemoteMetrics(76.dp, 252.dp, 30.dp)
     }
     CompositionLocalProvider(LocalStatusColors provides status, LocalSpacing provides Spacing(), LocalRemoteMetrics provides metrics) {
-        MaterialTheme(colorScheme = if (dark) DarkColors else LightColors, typography = AppTypography, shapes = AppShapes, content = content)
+        MaterialTheme(colorScheme = appColorScheme(dark, accent, pureBlack), typography = AppTypography, shapes = AppShapes, content = content)
     }
 }
