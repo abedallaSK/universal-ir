@@ -1,0 +1,103 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-sony-soundbar",
+ "protocolId": "mixed",
+ "category": "AUDIO",
+ "brand": "Sony",
+ "models": [
+  "All Sony soundbars (basic remote)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 48,
+   "command": 21
+  },
+  {
+   "name": "input",
+   "label": "Input",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 176,
+   "command": 105
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 48,
+   "command": 20
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 48,
+   "command": 18
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 48,
+   "command": 19
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 176,
+   "command": 120
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 176,
+   "command": 121
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 48,
+   "command": 12
+  },
+  {
+   "name": "back",
+   "label": "Back",
+   "kind": "parsed",
+   "protocol": "SIRC20",
+   "address": 272,
+   "command": 125
+  },
+  {
+   "name": "audio",
+   "label": "Sound field",
+   "kind": "parsed",
+   "protocol": "SIRC20",
+   "address": 272,
+   "command": 18
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 captures (3 files) (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 3 Flipper-IRDB file(s). Keys without that agreement are left out.",
+  "Agreeing files per key (* = also in irdb): power 2, input 2, mute 3, vol_up 3, vol_down 3, up 3, down 3, ok 3, back 2, audio 2"
+ ]
+}

@@ -127,6 +127,10 @@ fun DeviceActionsHost(
                     Button(onClick = { onDismiss(); onOpen(device.id) }) { Text(stringResource(R.string.action_open)) }
                 }
                 Spacer(Modifier.height(8.dp))
+                // One tap: tile size and colour apply immediately, the sheet stays open to try more.
+                QuickLook(settings.tileSize, look.colorIndex,
+                    onSize = { vm.setLook(device.id, look.iconKey, look.colorIndex, it) },
+                    onColor = { vm.setLook(device.id, look.iconKey, it, settings.tileSize) })
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 ActionRow(if (device.favorite) Icons.Filled.Star else Icons.Filled.StarBorder,
                     stringResource(if (device.favorite) R.string.action_unfavorite else R.string.action_favorite),
@@ -223,5 +227,27 @@ private fun AppearanceSheet(device: SavedDeviceEntity, settings: DeviceSettings,
             Spacer(Modifier.height(24.dp))
             Button(onClick = { onSave(icon, color, size) }, Modifier.fillMaxWidth().height(52.dp)) { Text(stringResource(R.string.action_save)) }
         }
+    }
+}
+
+/** Size chips and colour dots that apply with a single tap. */
+@Composable
+private fun QuickLook(size: TileSize, color: Int, onSize: (TileSize) -> Unit, onColor: (Int) -> Unit) {
+    Column(Modifier.padding(horizontal = 20.dp, vertical = 6.dp)) {
+        val sizes = listOf(TileSize.SMALL to R.string.size_small, TileSize.MEDIUM to R.string.size_medium, TileSize.WIDE to R.string.size_wide, TileSize.LARGE to R.string.size_large)
+        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+            sizes.forEachIndexed { i, (v, res) ->
+                SegmentedButton(size == v, { onSize(v) }, SegmentedButtonDefaults.itemShape(i, sizes.size)) { Text(stringResource(res), maxLines = 1) }
+            }
+        }
+        Spacer(Modifier.height(12.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            deviceGradients.forEachIndexed { i, (a, b) ->
+                Box(Modifier.size(30.dp).clip(CircleShape).background(Brush.linearGradient(listOf(a, b)))
+                    .border(if (i == color) 3.dp else 0.dp, MaterialTheme.colorScheme.onSurface, CircleShape).clickable { onColor(i) },
+                    contentAlignment = Alignment.Center) { if (i == color) Icon(Icons.Filled.Check, null, tint = Color.White, modifier = Modifier.size(16.dp)) }
+            }
+        }
+        Spacer(Modifier.height(10.dp))
     }
 }

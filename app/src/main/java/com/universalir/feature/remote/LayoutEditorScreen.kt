@@ -40,6 +40,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.AutoFixHigh
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DeleteOutline
@@ -125,6 +126,7 @@ data class LayoutEditorState(
     val outcome: SendOutcome? = null,
     val canUndo: Boolean = false,
     val canRedo: Boolean = false,
+    val profiles: List<com.universalir.domain.model.LayoutProfile> = emptyList(),
 )
 
 @HiltViewModel
@@ -156,7 +158,7 @@ class LayoutEditorViewModel @Inject constructor(
             // First visit: start from the standard layout so the user edits instead of building from nothing.
             val buttons = if (ds.customButtons.isEmpty()) defaultLayout(names.filter { it !in ds.hiddenButtons }, labelOf, columns, category, order)
             else packLayout(ds.customButtons.filter { it.commandName in names }, columns)
-            _state.value = LayoutEditorState(false, d.displayName, commands, buttons, columns)
+            _state.value = LayoutEditorState(false, d.displayName, commands, buttons, columns, profiles = ds.layoutProfiles)
         }
     }
 
@@ -186,6 +188,24 @@ class LayoutEditorViewModel @Inject constructor(
         val s = _state.value
         undoStack.addLast(s.buttons to s.columns)
         _state.value = s.copy(buttons = b, columns = c, canUndo = true, canRedo = redoStack.isNotEmpty())
+    }
+
+    /** Saves the current layout as a named profile (replacing one with the same name). */
+    fun saveProfile(name: String) = viewModelScope.launch {
+        val s = _state.value
+        val p = com.universalir.domain.model.LayoutProfile(name.trim(), s.columns, s.buttons, System.currentTimeMillis())
+        val list = s.profiles.filterNot { it.name.equals(p.name, ignoreCase = true) } + p
+        devices.updateSettings(deviceId) { it.copy(layoutProfiles = list) }
+        _state.update { it.copy(profiles = list) }
+    }
+
+    /** Loads a profile into the editor (undoable; still needs Save to apply to the remote). */
+    fun loadProfile(p: com.universalir.domain.model.LayoutProfile) = edit { s -> s.copy(buttons = packLayout(p.buttons, p.columns), columns = p.columns) }
+
+    fun deleteProfile(p: com.universalir.domain.model.LayoutProfile) = viewModelScope.launch {
+        val list = _state.value.profiles.filterNot { it.name == p.name }
+        devices.updateSettings(deviceId) { it.copy(layoutProfiles = list) }
+        _state.update { it.copy(profiles = list) }
     }
 
     /** Pushes every key at [row] or below one row down, opening an empty row. */
@@ -290,6 +310,7 @@ fun LayoutEditorScreen(onBack: () -> Unit, vm: LayoutEditorViewModel = hiltViewM
     val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }
     var editing by remember { mutableStateOf<KeyEdit?>(null) }
+    var profilesOpen by remember { mutableStateOf(false) }
     LaunchedEffect(s.outcome) { val o = s.outcome; if (o != null && o !is SendOutcome.Success) snackbar.showSnackbar(describeOutcome(context, o)) }
 
     AppScaffold(stringResource(R.string.layout_title), onBack = onBack, snackbar = snackbar, actions = {
@@ -313,6 +334,8 @@ fun LayoutEditorScreen(onBack: () -> Unit, vm: LayoutEditorViewModel = hiltViewM
             }
             Spacer(Modifier.height(8.dp))
             Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                AssistChip({ profilesOpen = true }, { Text(stringResource(R.string.profiles_title)) },
+                    leadingIcon = { Icon(Icons.Filled.Bookmarks, null, Modifier.size(18.dp)) })
                 AssistChip({ vm.tidy() }, { Text(stringResource(R.string.layout_tidy)) }, leadingIcon = { Icon(Icons.Filled.VerticalAlignTop, null, Modifier.size(18.dp)) })
                 AssistChip({ vm.autoLayout() }, { Text(stringResource(R.string.layout_auto)) }, leadingIcon = { Icon(Icons.Filled.AutoFixHigh, null, Modifier.size(18.dp)) })
                 AssistChip({ vm.clear() }, { Text(stringResource(R.string.layout_clear)) }, leadingIcon = { Icon(Icons.Filled.DeleteSweep, null, Modifier.size(18.dp)) })
@@ -331,6 +354,8 @@ fun LayoutEditorScreen(onBack: () -> Unit, vm: LayoutEditorViewModel = hiltViewM
             Spacer(Modifier.height(32.dp))
         }
     }
+    if (profilesOpen) ProfilesSheet(s.profiles, onSave = vm::saveProfile, onLoad = { vm.loadProfile(it); profilesOpen = false },
+        onDelete = vm::deleteProfile, onDismiss = { profilesOpen = false })
     editing?.let { e ->
         KeyEditorSheet(e.button, e.isNew, s.commands, s.columns,
             onTest = vm::test,
@@ -574,5 +599,41 @@ private fun Stepper(label: String, value: Int, range: IntRange, onChange: (Int) 
         Text("$value", style = MaterialTheme.typography.titleMedium, modifier = Modifier.width(40.dp), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
         OutlinedButton(onClick = { onChange(value + 1) }, enabled = value < range.last, shape = CircleShape,
             contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp), modifier = Modifier.size(40.dp)) { Text("+") }
+    }
+}
+
+/** Saved layouts: save the current one under a name, load or delete others. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ProfilesSheet(
+    profiles: List<com.universalir.domain.model.LayoutProfile>, onSave: (String) -> Unit,
+    onLoad: (com.universalir.domain.model.LayoutProfile) -> Unit, onDelete: (com.universalir.domain.model.LayoutProfile) -> Unit, onDismiss: () -> Unit,
+) {
+    var name by remember { mutableStateOf("") }
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+        Column(Modifier.navigationBarsPadding().padding(horizontal = 20.dp).padding(bottom = 16.dp)) {
+            Text(stringResource(R.string.profiles_title), style = MaterialTheme.typography.titleLarge)
+            Spacer(Modifier.height(12.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                OutlinedTextField(name, { name = it }, Modifier.weight(1f), singleLine = true, label = { Text(stringResource(R.string.profiles_name)) })
+                Spacer(Modifier.width(8.dp))
+                Button(onClick = { onSave(name); name = "" }, enabled = name.isNotBlank()) { Text(stringResource(R.string.action_save)) }
+            }
+            Spacer(Modifier.height(12.dp))
+            if (profiles.isEmpty()) Text(stringResource(R.string.profiles_empty), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            profiles.sortedByDescending { it.savedAt }.forEach { p ->
+                Surface(shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surfaceContainerHigh, modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                    Row(Modifier.padding(start = 16.dp, end = 4.dp, top = 6.dp, bottom = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f)) {
+                            Text(p.name, style = MaterialTheme.typography.titleMedium)
+                            Text(stringResource(R.string.profiles_info, p.buttons.size, p.columns), style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        TextButton(onClick = { onLoad(p) }) { Text(stringResource(R.string.profiles_load)) }
+                        IconButton(onClick = { onDelete(p) }) { Icon(Icons.Filled.DeleteOutline, stringResource(R.string.action_delete), tint = MaterialTheme.colorScheme.error) }
+                    }
+                }
+            }
+        }
     }
 }

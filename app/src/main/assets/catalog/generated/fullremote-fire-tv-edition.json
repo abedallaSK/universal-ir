@@ -1,0 +1,191 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-fire-tv-edition",
+ "protocolId": "NECext",
+ "category": "TELEVISION",
+ "brand": "Amazon",
+ "models": [
+  "All Fire TV Edition TVs (full remote)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 47430
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 45900
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 62220
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 58905
+  },
+  {
+   "name": "ch_up",
+   "label": "Channel +",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 61455
+  },
+  {
+   "name": "ch_down",
+   "label": "Channel -",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 42330
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 46920
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 45645
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 45390
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 46665
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 46410
+  },
+  {
+   "name": "back",
+   "label": "Back",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 61965
+  },
+  {
+   "name": "home",
+   "label": "Home",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 24735
+  },
+  {
+   "name": "menu",
+   "label": "Menu",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 47685
+  },
+  {
+   "name": "settings",
+   "label": "Settings",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 27030
+  },
+  {
+   "name": "guide",
+   "label": "Guide",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 60180
+  },
+  {
+   "name": "netflix",
+   "label": "Netflix",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 41055
+  },
+  {
+   "name": "prime_video",
+   "label": "Prime Video",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 24225
+  },
+  {
+   "name": "ff",
+   "label": "Fast forward",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 59415
+  },
+  {
+   "name": "rew",
+   "label": "Rewind",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 59670
+  },
+  {
+   "name": "play",
+   "label": "Play / Pause",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 42075
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 captures (5 files) (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 5 Flipper-IRDB file(s). Keys without that agreement are left out.",
+  "Agreeing files per key (* = also in irdb): power 5, mute 4, vol_up 4, vol_down 4, ch_up 3, ch_down 3, up 4, down 4, left 4, right 4, ok 4, back 3, home 4, menu 2, settings 3, guide 2, netflix 2, prime_video 2, ff 3, rew 3, play 3"
+ ]
+}

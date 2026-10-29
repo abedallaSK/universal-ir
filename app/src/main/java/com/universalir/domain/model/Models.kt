@@ -35,6 +35,8 @@ data class DeviceSettings(
     /** Show the D-pad as a swipe touchpad. */
     val touchpad: Boolean = false,
     val layoutOrder: LayoutOrder = LayoutOrder.SMART,
+    /** Named layouts the user saved for this remote. */
+    val layoutProfiles: List<LayoutProfile> = emptyList(),
 ) {
     fun encode(): String = json.encodeToString(serializer(), this)
 
@@ -78,6 +80,10 @@ enum class KeyShape { ROUND, SQUARE, PILL }
 /** Order of the standard remote: SMART = Android TV / box style (D-pad first), CLASSIC = TV style (numbers first). */
 @Serializable
 enum class LayoutOrder { SMART, CLASSIC }
+
+/** A saved button layout (custom keys and grid width) the user can load again later. */
+@Serializable
+data class LayoutProfile(val name: String, val columns: Int, val buttons: List<CustomButton>, val savedAt: Long = 0)
 
 /** Visual style of remote buttons: shapes, fills, D-pad and rocker look. */
 @Serializable

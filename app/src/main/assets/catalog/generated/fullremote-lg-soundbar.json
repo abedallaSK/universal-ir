@@ -1,0 +1,199 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-lg-soundbar",
+ "protocolId": "Samsung32",
+ "category": "AUDIO",
+ "brand": "LG",
+ "models": [
+  "All LG soundbars (full remote)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 30
+  },
+  {
+   "name": "input",
+   "label": "Function",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 138
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 31
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 23
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 22
+  },
+  {
+   "name": "settings",
+   "label": "Settings",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 152
+  },
+  {
+   "name": "info",
+   "label": "Info",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 163
+  },
+  {
+   "name": "digit_0",
+   "label": "0",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 75
+  },
+  {
+   "name": "digit_1",
+   "label": "1",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 65
+  },
+  {
+   "name": "digit_2",
+   "label": "2",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 66
+  },
+  {
+   "name": "digit_3",
+   "label": "3",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 67
+  },
+  {
+   "name": "digit_4",
+   "label": "4",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 68
+  },
+  {
+   "name": "digit_5",
+   "label": "5",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 69
+  },
+  {
+   "name": "digit_6",
+   "label": "6",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 70
+  },
+  {
+   "name": "digit_7",
+   "label": "7",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 71
+  },
+  {
+   "name": "digit_8",
+   "label": "8",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 72
+  },
+  {
+   "name": "digit_9",
+   "label": "9",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 73
+  },
+  {
+   "name": "stop",
+   "label": "Stop",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 5
+  },
+  {
+   "name": "next",
+   "label": "Next",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 7
+  },
+  {
+   "name": "prev",
+   "label": "Previous",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 6
+  },
+  {
+   "name": "sleep",
+   "label": "Sleep",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 194
+  },
+  {
+   "name": "play",
+   "label": "Play / Pause",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 44,
+   "command": 79
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 captures (8 files); probonopd/irdb 11aa5eb codes/LG (2 files) (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 8 Flipper-IRDB file(s) and 2 probonopd/irdb file(s). Keys without that agreement are left out.",
+  "Agreeing files per key (* = also in irdb): power 10*, input 4*, mute 10*, vol_up 9*, vol_down 8*, settings 2, info 5*, digit_0 3*, digit_1 3*, digit_2 3*, digit_3 3*, digit_4 3*, digit_5 3*, digit_6 3*, digit_7 3*, digit_8 3*, digit_9 3*, stop 2*, next 3, prev 3, sleep 2*, play 4"
+ ]
+}

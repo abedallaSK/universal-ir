@@ -1,0 +1,423 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-samsung-tv",
+ "protocolId": "Samsung32",
+ "category": "TELEVISION",
+ "brand": "Samsung",
+ "models": [
+  "All Samsung TVs (full remote)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 2
+  },
+  {
+   "name": "power_off",
+   "label": "Power off",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 152
+  },
+  {
+   "name": "input",
+   "label": "Source",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 1
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 15
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 7
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 11
+  },
+  {
+   "name": "ch_up",
+   "label": "Channel +",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 18
+  },
+  {
+   "name": "ch_down",
+   "label": "Channel -",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 16
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 96
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 97
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 101
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 98
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 104
+  },
+  {
+   "name": "back",
+   "label": "Return",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 88
+  },
+  {
+   "name": "exit",
+   "label": "Exit",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 45
+  },
+  {
+   "name": "home",
+   "label": "Smart Hub",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 121
+  },
+  {
+   "name": "menu",
+   "label": "Menu",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 26
+  },
+  {
+   "name": "settings",
+   "label": "Tools",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 75
+  },
+  {
+   "name": "info",
+   "label": "Info",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 31
+  },
+  {
+   "name": "guide",
+   "label": "Guide",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 79
+  },
+  {
+   "name": "netflix",
+   "label": "Netflix",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 243
+  },
+  {
+   "name": "prime_video",
+   "label": "Prime Video",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 244
+  },
+  {
+   "name": "digit_0",
+   "label": "0",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 17
+  },
+  {
+   "name": "digit_1",
+   "label": "1",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 4
+  },
+  {
+   "name": "digit_2",
+   "label": "2",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 5
+  },
+  {
+   "name": "digit_3",
+   "label": "3",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 6
+  },
+  {
+   "name": "digit_4",
+   "label": "4",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 8
+  },
+  {
+   "name": "digit_5",
+   "label": "5",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 9
+  },
+  {
+   "name": "digit_6",
+   "label": "6",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 10
+  },
+  {
+   "name": "digit_7",
+   "label": "7",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 12
+  },
+  {
+   "name": "digit_8",
+   "label": "8",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 13
+  },
+  {
+   "name": "digit_9",
+   "label": "9",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 14
+  },
+  {
+   "name": "red",
+   "label": "Red",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 108
+  },
+  {
+   "name": "green",
+   "label": "Green",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 20
+  },
+  {
+   "name": "yellow",
+   "label": "Yellow",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 21
+  },
+  {
+   "name": "blue",
+   "label": "Blue",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 22
+  },
+  {
+   "name": "play",
+   "label": "Play",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 71
+  },
+  {
+   "name": "pause",
+   "label": "Pause",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 74
+  },
+  {
+   "name": "play_pause",
+   "label": "Play / Pause",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 185
+  },
+  {
+   "name": "stop",
+   "label": "Stop",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 70
+  },
+  {
+   "name": "ff",
+   "label": "Fast forward",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 72
+  },
+  {
+   "name": "rew",
+   "label": "Rewind",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 69
+  },
+  {
+   "name": "record",
+   "label": "Record",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 73
+  },
+  {
+   "name": "subtitle",
+   "label": "AD / Subtitles",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 37
+  },
+  {
+   "name": "audio",
+   "label": "Audio",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 0
+  },
+  {
+   "name": "aspect",
+   "label": "Picture size",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 62
+  },
+  {
+   "name": "sleep",
+   "label": "Sleep",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 3
+  },
+  {
+   "name": "list",
+   "label": "Channel list",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 107
+  },
+  {
+   "name": "last",
+   "label": "Previous channel",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 19
+  },
+  {
+   "name": "text",
+   "label": "Teletext",
+   "kind": "parsed",
+   "protocol": "Samsung32",
+   "address": 7,
+   "command": 44
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 captures (55 files); probonopd/irdb 11aa5eb codes/Samsung (29 files) (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 55 Flipper-IRDB file(s) and 29 probonopd/irdb file(s). Keys without that agreement are left out.",
+  "Agreeing files per key (* = also in irdb): power 64*, power_off 5*, input 41*, mute 74*, vol_up 73*, vol_down 70*, ch_up 59*, ch_down 57*, up 58*, down 58*, left 58*, right 58*, ok 53*, back 39*, exit 50*, home 24*, menu 54*, settings 32*, info 57*, guide 23*, netflix 8, prime_video 8, digit_0 51*, digit_1 53*, digit_2 53*, digit_3 53*, digit_4 53*, digit_5 53*, digit_6 53*, digit_7 53*, digit_8 53*, digit_9 53*, red 21*, green 23*, yellow 23*, blue 23*, play 30*, pause 31*, play_pause 4, stop 32*, ff 26*, rew 27*, record 21*, subtitle 29*, audio 11*, aspect 24*, sleep 24*, list 25*, last 38*, text 3*"
+ ]
+}

@@ -1,0 +1,79 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-apple-tv",
+ "protocolId": "NECext",
+ "category": "TV_BOX",
+ "brand": "Apple",
+ "models": [
+  "All Apple TV models (IR remote)"
+ ],
+ "commands": [
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 34798,
+   "command": 35850
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 34798,
+   "command": 35852
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 34798,
+   "command": 35849
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 34798,
+   "command": 35846
+  },
+  {
+   "name": "ok",
+   "label": "Select",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 34798,
+   "command": 35932
+  },
+  {
+   "name": "back",
+   "label": "Menu / Back",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 34798,
+   "command": 35843
+  },
+  {
+   "name": "play",
+   "label": "Play / Pause",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 34798,
+   "command": 35935
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 Streaming_Devices/Apple captures (5 files); probonopd/irdb 11aa5eb codes/Apple/Apple TV (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Apple remote protocol (NEC timing, address 0x87EE). Function numbers agree between probonopd/irdb and 5 Flipper-IRDB Apple TV captures; values are one complete capture (remote id 0x8C). An Apple TV paired to its own remote may ignore other remote ids.",
+  "Agreeing files per key (* = also in irdb): up 5*, down 5*, left 5*, right 5*, ok 3*, back 5*, play 4*"
+ ]
+}

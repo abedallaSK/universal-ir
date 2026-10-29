@@ -1,0 +1,52 @@
+name: 📺 Device compatibility report
+description: Tell us whether a TV, AC or other device works with the app
+labels: [device-report]
+body:
+  - type: markdown
+    attributes:
+      value: These reports are the most valuable contribution, because they turn "should work" into "confirmed working". Thank you!
+  - type: input
+    id: device
+    attributes:
+      label: Device brand and model
+      placeholder: "Tadiran Alpha Inverter / Samsung UE55TU7000 / X96 Max"
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Device type
+      options: [Air conditioner, TV, TV box / media player, Projector, Audio / soundbar, Fan, Light / LED strip, Other]
+    validations:
+      required: true
+  - type: dropdown
+    id: connection
+    attributes:
+      label: Connection
+      options: [Infrared, Wi‑Fi]
+    validations:
+      required: true
+  - type: input
+    id: codeset
+    attributes:
+      label: Code set or Wi‑Fi type used
+      description: The name shown when you added the device (or the Wi‑Fi device type).
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result
+      options: [Everything works, Most buttons work, Only some buttons work, Nothing works]
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Which buttons or features worked or failed? For ACs, did power, mode, temperature, fan and swing work?
+  - type: input
+    id: phone
+    attributes:
+      label: Phone model, Android version and app version
+      placeholder: "vivo X200 Ultra, Android 15, 0.2.0"
+    validations:
+      required: true

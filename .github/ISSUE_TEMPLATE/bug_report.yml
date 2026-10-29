@@ -1,0 +1,53 @@
+name: 🐞 Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting! Please fill in as much as you can, because it makes the fix much faster.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: A clear description of the problem. Screenshots or screen recordings help a lot.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open …
+        2. Tap …
+        3. See …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+  - type: input
+    id: app
+    attributes:
+      label: App version
+      description: Settings → the top card.
+      placeholder: "0.2.0"
+    validations:
+      required: true
+  - type: input
+    id: phone
+    attributes:
+      label: Phone model and Android version
+      placeholder: "vivo X200 Ultra, Android 15"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [Infrared remote, AC remote, Wi‑Fi remote, Layout editor, Home / rooms / widgets, Settings / languages / themes, Other]
+  - type: textarea
+    id: device
+    attributes:
+      label: Device being controlled (if any)
+      placeholder: "Samsung UE55TU7000, code set 'Samsung …'"

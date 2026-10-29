@@ -766,4 +766,12 @@ S = {
     "order_classic": ('Classic TV', 'تلفاز كلاسيكي', 'טלוויזיה קלאסית'),
     "order_smart_desc": ('Arrows and OK first, numbers at the bottom', 'الأسهم وموافق أولاً والأرقام في الأسفل', 'חצים ו-OK קודם, מספרים למטה'),
     "order_classic_desc": ('Numbers first, then volume, channels and arrows', 'الأرقام أولاً ثم الصوت والقنوات والأسهم', 'מספרים קודם, אחר כך עוצמה, ערוצים וחצים'),
+    "back_again_exit": ('Press back again to exit', 'اضغط رجوع مرة أخرى للخروج', 'לחצו שוב על חזרה כדי לצאת'),
+    "home_edit": ('Edit home', 'تعديل الرئيسية', 'עריכת דף הבית'),
+    "home_edit_hint": ('Drag to move · tap ⤢ to resize · tap 👁 to hide', 'اسحب للنقل · ⤢ لتغيير الحجم · 👁 للإخفاء', 'גררו להזזה · ⤢ לשינוי גודל · 👁 להסתרה'),
+    "profiles_title": ('Profiles', 'الملفات الشخصية', 'פרופילים'),
+    "profiles_name": ('Profile name', 'اسم الملف الشخصي', 'שם הפרופיל'),
+    "profiles_empty": ('No saved profiles yet. Save this layout to load it again later.', 'لا توجد ملفات محفوظة بعد. احفظ هذا التخطيط لتحميله لاحقًا.', 'אין עדיין פרופילים שמורים. שמרו את הפריסה כדי לטעון אותה שוב.'),
+    "profiles_info": ('%1$d buttons · %2$d columns', '%1$d زر · %2$d أعمدة', '%1$d כפתורים · %2$d עמודות'),
+    "profiles_load": ('Load', 'تحميل', 'טעינה'),
 }

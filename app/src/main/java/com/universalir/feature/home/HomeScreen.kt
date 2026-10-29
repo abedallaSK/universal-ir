@@ -117,6 +117,8 @@ import com.universalir.feature.devices.DeviceRow
 import com.universalir.feature.devices.DeviceTile
 import com.universalir.feature.devices.settings
 import com.universalir.feature.devices.span
+import com.universalir.feature.devices.next
+import com.universalir.core.ui.lookOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -179,6 +181,18 @@ fun HomeScreen(nav: NavController, vm: HomeViewModel = hiltViewModel()) {
     var menu by remember { mutableStateOf(false) }
     var adding by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { vm.refreshHardware() }
+    // Back: leave edit mode / search first; on plain Home, a second press within 2 s exits the app.
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var lastBack by remember { mutableStateOf(0L) }
+    val exitHint = stringResource(R.string.back_again_exit)
+    androidx.activity.compose.BackHandler {
+        when {
+            arranging -> { arranging = false; pendingOrder = null }
+            searching -> { searching = false; vm.query.value = "" }
+            System.currentTimeMillis() - lastBack < 2000 -> (context as? android.app.Activity)?.finish()
+            else -> { lastBack = System.currentTimeMillis(); android.widget.Toast.makeText(context, exitHint, android.widget.Toast.LENGTH_SHORT).show() }
+        }
+    }
     val open: (Long) -> Unit = { nav.navigate(Routes.remote(it)) }
     val wifi by vm.wifi.collectAsStateWithLifecycle()
     // Until the check has run, assume an emitter so the screen doesn't flash into Wi-Fi-only mode.
@@ -198,15 +212,18 @@ fun HomeScreen(nav: NavController, vm: HomeViewModel = hiltViewModel()) {
             Column(Modifier.fillMaxSize().padding(padding)) {
                 Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 8.dp, top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
-                        Text(stringResource(R.string.home_arrange), style = MaterialTheme.typography.headlineSmall)
-                        Text(stringResource(R.string.home_arrange_hint), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.home_edit), style = MaterialTheme.typography.headlineSmall)
+                        Text(stringResource(R.string.home_edit_hint), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     TextButton(onClick = { pendingOrder?.let { vm.reorderShown(it, all) }; pendingOrder = null; arranging = false }) {
                         Icon(Icons.Filled.Check, null); Spacer(Modifier.width(6.dp)); Text(stringResource(R.string.action_done))
                     }
                 }
                 Spacer(Modifier.height(12.dp))
-                ArrangeGrid(shownAll, rooms, onOrderChanged = { pendingOrder = it })
+                ArrangeGrid(shownAll, rooms, onOrderChanged = { pendingOrder = it },
+                    onResize = { d -> val st = d.settings(); val lk = lookOf(com.universalir.domain.model.categoryOf(d.category), st)
+                        vm.setLook(d.id, lk.iconKey, lk.colorIndex, st.tileSize.next()) },
+                    onHide = { d -> vm.setShowOnHome(d.id, false) })
             }
             return@Scaffold
         }
@@ -230,6 +247,7 @@ fun HomeScreen(nav: NavController, vm: HomeViewModel = hiltViewModel()) {
                     IconButton(onClick = { searching = !searching; if (!searching) vm.query.value = "" }) {
                         Icon(if (searching) Icons.Filled.Close else Icons.Filled.Search, stringResource(R.string.action_search))
                     }
+                    if (!devices.isNullOrEmpty()) IconButton(onClick = { arranging = true }) { Icon(Icons.Filled.Edit, stringResource(R.string.home_edit)) }
                     IconButton(onClick = { customizing = true }) { Icon(Icons.Filled.Tune, stringResource(R.string.home_customize)) }
                     Box {
                         IconButton(onClick = { menu = true }) { Icon(Icons.Filled.MoreVert, stringResource(R.string.action_more)) }

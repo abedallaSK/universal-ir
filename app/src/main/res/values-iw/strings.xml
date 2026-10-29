@@ -618,4 +618,12 @@
     <string name="order_classic">טלוויזיה קלאסית</string>
     <string name="order_smart_desc">חצים ו-OK קודם, מספרים למטה</string>
     <string name="order_classic_desc">מספרים קודם, אחר כך עוצמה, ערוצים וחצים</string>
+    <string name="back_again_exit">לחצו שוב על חזרה כדי לצאת</string>
+    <string name="home_edit">עריכת דף הבית</string>
+    <string name="home_edit_hint">גררו להזזה · ⤢ לשינוי גודל · 👁 להסתרה</string>
+    <string name="profiles_title">פרופילים</string>
+    <string name="profiles_name">שם הפרופיל</string>
+    <string name="profiles_empty">אין עדיין פרופילים שמורים. שמרו את הפריסה כדי לטעון אותה שוב.</string>
+    <string name="profiles_info">%1$d כפתורים · %2$d עמודות</string>
+    <string name="profiles_load">טעינה</string>
 </resources>

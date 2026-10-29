@@ -24,7 +24,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.DragIndicator
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +51,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -128,8 +133,13 @@ fun DeviceTile(
  * The new order is reported once, when the user taps Done (handled by the caller via [order]).
  */
 @Composable
-fun ArrangeGrid(devices: List<SavedDeviceEntity>, rooms: List<RoomEntity>, onOrderChanged: (List<Long>) -> Unit, modifier: Modifier = Modifier) {
-    val items = remember(devices.map { it.id }) { devices.toMutableStateList() }
+fun ArrangeGrid(
+    devices: List<SavedDeviceEntity>, rooms: List<RoomEntity>, onOrderChanged: (List<Long>) -> Unit, modifier: Modifier = Modifier,
+    onResize: ((SavedDeviceEntity) -> Unit)? = null, onHide: ((SavedDeviceEntity) -> Unit)? = null,
+) {
+    // The grid owns only the order; tiles are drawn from the live device rows so resizes show at once.
+    val items = remember(devices.map { it.id }.toSet()) { devices.map { it.id }.toMutableStateList() }
+    val byId = devices.associateBy { it.id }
     val state = rememberLazyGridState()
     val haptics = LocalHapticFeedback.current
     var dragging by remember { mutableStateOf<Long?>(null) }
@@ -152,12 +162,12 @@ fun ArrangeGrid(devices: List<SavedDeviceEntity>, rooms: List<RoomEntity>, onOrd
                     val current = state.layoutInfo.visibleItemsInfo.firstOrNull { it.key == key } ?: return@detectDragGesturesAfterLongPress
                     val center = start + delta + Offset(current.size.width / 2f, current.size.height / 2f)
                     val target = state.itemAt(center)?.takeIf { it.key != key } ?: return@detectDragGesturesAfterLongPress
-                    val from = items.indexOfFirst { it.id == key }
-                    val to = items.indexOfFirst { it.id == target.key }
+                    val from = items.indexOf(key)
+                    val to = items.indexOf(target.key as Long)
                     if (from >= 0 && to >= 0) {
                         items.add(to, items.removeAt(from))
                         haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        onOrderChanged(items.map { it.id })
+                        onOrderChanged(items.toList())
                     }
                 },
                 onDragEnd = { dragging = null },
@@ -168,7 +178,8 @@ fun ArrangeGrid(devices: List<SavedDeviceEntity>, rooms: List<RoomEntity>, onOrd
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        items(items, key = { it.id }) { d ->
+        items(items.filter { it in byId }, key = { it }, span = { id -> GridItemSpan(byId.getValue(id).settings().tileSize.span(maxLineSpan)) }) { id ->
+            val d = byId.getValue(id)
             val isDragged = dragging == d.id
             Box(
                 (if (isDragged) Modifier else Modifier.animateItem())
@@ -184,8 +195,13 @@ fun ArrangeGrid(devices: List<SavedDeviceEntity>, rooms: List<RoomEntity>, onOrd
                         }
                     },
             ) {
-                DeviceTile(d, rooms, onClick = {}, onLongClick = null, size = TileSize.MEDIUM)
-                Icon(Icons.Filled.DragIndicator, null, Modifier.align(Alignment.TopEnd).padding(10.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                DeviceTile(d, rooms, onClick = { onResize?.invoke(d) }, onLongClick = null)
+                // Edit controls: one tap to resize (cycles the four sizes) or hide from home.
+                Row(Modifier.align(Alignment.TopEnd).padding(6.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    if (onResize != null) EditBadge(Icons.Filled.AspectRatio, androidx.compose.ui.res.stringResource(com.universalir.R.string.device_tile_size)) { onResize(d) }
+                    if (onHide != null) EditBadge(Icons.Filled.VisibilityOff, androidx.compose.ui.res.stringResource(com.universalir.R.string.device_hide_home)) { onHide(d) }
+                }
+                Icon(Icons.Filled.DragIndicator, null, Modifier.align(Alignment.BottomEnd).padding(10.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     }
@@ -196,3 +212,15 @@ private fun LazyGridState.itemAt(pos: Offset) = layoutInfo.visibleItemsInfo.firs
 }
 
 private fun IntOffset.toOffset() = Offset(x.toFloat(), y.toFloat())
+
+@Composable
+private fun EditBadge(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, onClick: () -> Unit) {
+    Box(
+        Modifier.size(34.dp).clip(androidx.compose.foundation.shape.CircleShape).background(MaterialTheme.colorScheme.primaryContainer)
+            .combinedClickable(onClick = onClick).semantics { contentDescription = label },
+        contentAlignment = Alignment.Center,
+    ) { Icon(icon, null, Modifier.size(18.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer) }
+}
+
+/** Next tile size in the one-tap resize cycle. */
+fun TileSize.next(): TileSize = TileSize.entries[(ordinal + 1) % TileSize.entries.size]

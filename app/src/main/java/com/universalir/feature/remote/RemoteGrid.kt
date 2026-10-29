@@ -483,6 +483,14 @@ fun RemoteGrid(
     val chLabel = androidx.compose.ui.res.stringResource(com.universalir.R.string.btn_channel)
     val rockers = remember(placed, volLabel, chLabel) { findRockers(placed, volLabel, chLabel) }
     val pad = remember(placed) { dpadCentre(placed) }
+    // Only the five keys forming the cross are drawn by the pad; any other key with the same action
+    // (e.g. a second OK the user added elsewhere) is still drawn as a normal key.
+    val padIds = remember(placed, pad) {
+        pad?.let { (r, c) ->
+            val cross = mapOf(N.OK to (r to c), N.UP to (r - 1 to c), N.DOWN to (r + 1 to c), N.LEFT to (r to c - 1), N.RIGHT to (r to c + 1))
+            placed.filter { b -> cross[b.commandName] == (b.row to b.col) }.map { it.id }.toSet()
+        } ?: emptySet()
+    }
     val padKeys = setOf(N.UP, N.DOWN, N.LEFT, N.RIGHT, N.OK)
     BoxWithConstraints(modifier.fillMaxWidth()) {
         val gap = if (style == RemoteStyle.COMPACT) 6.dp else 12.dp
@@ -511,7 +519,7 @@ fun RemoteGrid(
             }
             val onRocker = rockers.flatMap { it.keys }.toSet()
             placed.forEach { b ->
-                if (pad != null && b.commandName in padKeys) return@forEach
+                if (b.id in padIds) return@forEach
                 GridKey(
                     b, cell * b.w + gap * (b.w - 1), cell * b.h + gap * (b.h - 1),
                     onClick = { onSend(b.commandName) }, onLongClick = { onLong(b.commandName) },

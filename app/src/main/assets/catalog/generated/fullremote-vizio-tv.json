@@ -1,0 +1,319 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-vizio-tv",
+ "protocolId": "NEC",
+ "category": "TELEVISION",
+ "brand": "Vizio",
+ "models": [
+  "All Vizio TVs (full remote)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 8
+  },
+  {
+   "name": "input",
+   "label": "Input",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 47
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 9
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 2
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 3
+  },
+  {
+   "name": "ch_up",
+   "label": "Channel +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 0
+  },
+  {
+   "name": "ch_down",
+   "label": "Channel -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 1
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 69
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 70
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 71
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 72
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 68
+  },
+  {
+   "name": "back",
+   "label": "Back",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 74
+  },
+  {
+   "name": "exit",
+   "label": "Exit",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 73
+  },
+  {
+   "name": "home",
+   "label": "Home",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 45
+  },
+  {
+   "name": "info",
+   "label": "Info",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 27
+  },
+  {
+   "name": "guide",
+   "label": "Guide",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 28
+  },
+  {
+   "name": "netflix",
+   "label": "Netflix",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 235
+  },
+  {
+   "name": "prime_video",
+   "label": "Prime Video",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 234
+  },
+  {
+   "name": "disney_plus",
+   "label": "Disney+",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 31
+  },
+  {
+   "name": "digit_0",
+   "label": "0",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 16
+  },
+  {
+   "name": "digit_1",
+   "label": "1",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 17
+  },
+  {
+   "name": "digit_2",
+   "label": "2",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 18
+  },
+  {
+   "name": "digit_3",
+   "label": "3",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 19
+  },
+  {
+   "name": "digit_4",
+   "label": "4",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 20
+  },
+  {
+   "name": "digit_5",
+   "label": "5",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 21
+  },
+  {
+   "name": "digit_6",
+   "label": "6",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 22
+  },
+  {
+   "name": "digit_7",
+   "label": "7",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 23
+  },
+  {
+   "name": "digit_8",
+   "label": "8",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 24
+  },
+  {
+   "name": "digit_9",
+   "label": "9",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 25
+  },
+  {
+   "name": "play",
+   "label": "Play",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 51
+  },
+  {
+   "name": "pause",
+   "label": "Pause",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 55
+  },
+  {
+   "name": "stop",
+   "label": "Stop",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 48
+  },
+  {
+   "name": "subtitle",
+   "label": "Subtitles",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 57
+  },
+  {
+   "name": "aspect",
+   "label": "Picture size",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 119
+  },
+  {
+   "name": "sleep",
+   "label": "Sleep",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 14
+  },
+  {
+   "name": "last",
+   "label": "Last",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 26
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 captures (13 files); probonopd/irdb 11aa5eb codes/Vizio (2 files) (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 13 Flipper-IRDB file(s) and 2 probonopd/irdb file(s). Keys without that agreement are left out.",
+  "Agreeing files per key (* = also in irdb): power 13*, input 13*, mute 14*, vol_up 14*, vol_down 13*, ch_up 13*, ch_down 10, up 14*, down 13*, left 13*, right 13*, ok 12*, back 9, exit 7*, home 6, info 10*, guide 3, netflix 7, prime_video 7, disney_plus 2, digit_0 12*, digit_1 12*, digit_2 12*, digit_3 11*, digit_4 12*, digit_5 12*, digit_6 11*, digit_7 11*, digit_8 11*, digit_9 12*, play 2, pause 2, stop 2, subtitle 10*, aspect 7*, sleep 3*, last 4*"
+ ]
+}

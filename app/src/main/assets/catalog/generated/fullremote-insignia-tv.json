@@ -1,0 +1,231 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-insignia-tv",
+ "protocolId": "NECext",
+ "category": "TELEVISION",
+ "brand": "Insignia",
+ "models": [
+  "All Insignia TVs (full remote)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 61455
+  },
+  {
+   "name": "input",
+   "label": "Input",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 57885
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 61710
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 62220
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 61965
+  },
+  {
+   "name": "ch_up",
+   "label": "Channel +",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 62730
+  },
+  {
+   "name": "ch_down",
+   "label": "Channel -",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 62475
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 48450
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 48195
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 59670
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 59925
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 59160
+  },
+  {
+   "name": "exit",
+   "label": "Exit",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 58395
+  },
+  {
+   "name": "menu",
+   "label": "Menu",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 60180
+  },
+  {
+   "name": "info",
+   "label": "Info",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 59415
+  },
+  {
+   "name": "digit_0",
+   "label": "0",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 62985
+  },
+  {
+   "name": "digit_1",
+   "label": "1",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 65280
+  },
+  {
+   "name": "digit_2",
+   "label": "2",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 65025
+  },
+  {
+   "name": "digit_3",
+   "label": "3",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 64770
+  },
+  {
+   "name": "digit_4",
+   "label": "4",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 64515
+  },
+  {
+   "name": "digit_5",
+   "label": "5",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 64260
+  },
+  {
+   "name": "digit_6",
+   "label": "6",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 64005
+  },
+  {
+   "name": "digit_7",
+   "label": "7",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 63750
+  },
+  {
+   "name": "digit_8",
+   "label": "8",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 63495
+  },
+  {
+   "name": "digit_9",
+   "label": "9",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 63240
+  },
+  {
+   "name": "sleep",
+   "label": "Sleep",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 1414,
+   "command": 60435
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 captures (2 files); probonopd/irdb 11aa5eb codes/Insignia (1 files) (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 2 Flipper-IRDB file(s) and 1 probonopd/irdb file(s). Keys without that agreement are left out.",
+  "Agreeing files per key (* = also in irdb): power 3*, input 3*, mute 3*, vol_up 3*, vol_down 2, ch_up 3*, ch_down 2, up 2*, down 2*, left 2*, right 2*, ok 3*, exit 3*, menu 3*, info 2*, digit_0 2*, digit_1 2*, digit_2 2*, digit_3 2*, digit_4 2*, digit_5 2*, digit_6 2*, digit_7 2*, digit_8 2*, digit_9 2*, sleep 2*"
+ ]
+}

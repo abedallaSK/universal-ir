@@ -1,0 +1,399 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-sony-tv",
+ "protocolId": "mixed",
+ "category": "TELEVISION",
+ "brand": "Sony",
+ "models": [
+  "All Sony TVs (full remote)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 21
+  },
+  {
+   "name": "power_off",
+   "label": "Power off",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 47
+  },
+  {
+   "name": "input",
+   "label": "Input",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 37
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 20
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 18
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 19
+  },
+  {
+   "name": "ch_up",
+   "label": "Channel +",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 16
+  },
+  {
+   "name": "ch_down",
+   "label": "Channel -",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 17
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 116
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 117
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 52
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 51
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 101
+  },
+  {
+   "name": "back",
+   "label": "Return",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 151,
+   "command": 35
+  },
+  {
+   "name": "exit",
+   "label": "Exit",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 99
+  },
+  {
+   "name": "home",
+   "label": "Home",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 96
+  },
+  {
+   "name": "settings",
+   "label": "Options",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 151,
+   "command": 54
+  },
+  {
+   "name": "info",
+   "label": "Info",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 58
+  },
+  {
+   "name": "guide",
+   "label": "Guide",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 164,
+   "command": 91
+  },
+  {
+   "name": "netflix",
+   "label": "Netflix",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 26,
+   "command": 124
+  },
+  {
+   "name": "digit_0",
+   "label": "0",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 9
+  },
+  {
+   "name": "digit_1",
+   "label": "1",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 0
+  },
+  {
+   "name": "digit_2",
+   "label": "2",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 1
+  },
+  {
+   "name": "digit_3",
+   "label": "3",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 2
+  },
+  {
+   "name": "digit_4",
+   "label": "4",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 3
+  },
+  {
+   "name": "digit_5",
+   "label": "5",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 4
+  },
+  {
+   "name": "digit_6",
+   "label": "6",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 5
+  },
+  {
+   "name": "digit_7",
+   "label": "7",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 6
+  },
+  {
+   "name": "digit_8",
+   "label": "8",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 7
+  },
+  {
+   "name": "digit_9",
+   "label": "9",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 8
+  },
+  {
+   "name": "red",
+   "label": "Red",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 151,
+   "command": 37
+  },
+  {
+   "name": "green",
+   "label": "Green",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 151,
+   "command": 38
+  },
+  {
+   "name": "yellow",
+   "label": "Yellow",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 151,
+   "command": 39
+  },
+  {
+   "name": "blue",
+   "label": "Blue",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 151,
+   "command": 36
+  },
+  {
+   "name": "play",
+   "label": "Play",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 151,
+   "command": 26
+  },
+  {
+   "name": "pause",
+   "label": "Pause",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 151,
+   "command": 25
+  },
+  {
+   "name": "stop",
+   "label": "Stop",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 151,
+   "command": 24
+  },
+  {
+   "name": "ff",
+   "label": "Fast forward",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 151,
+   "command": 28
+  },
+  {
+   "name": "rew",
+   "label": "Rewind",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 151,
+   "command": 27
+  },
+  {
+   "name": "next",
+   "label": "Next",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 151,
+   "command": 61
+  },
+  {
+   "name": "prev",
+   "label": "Previous",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 151,
+   "command": 60
+  },
+  {
+   "name": "record",
+   "label": "Record",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 151,
+   "command": 32
+  },
+  {
+   "name": "audio",
+   "label": "Audio",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 23
+  },
+  {
+   "name": "aspect",
+   "label": "Picture size",
+   "kind": "parsed",
+   "protocol": "SIRC15",
+   "address": 164,
+   "command": 61
+  },
+  {
+   "name": "sleep",
+   "label": "Sleep",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 54
+  },
+  {
+   "name": "last",
+   "label": "Previous channel",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 59
+  },
+  {
+   "name": "text",
+   "label": "Teletext",
+   "kind": "parsed",
+   "protocol": "SIRC",
+   "address": 1,
+   "command": 63
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 captures (24 files); probonopd/irdb 11aa5eb codes/Sony (19 files) (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 24 Flipper-IRDB file(s) and 19 probonopd/irdb file(s). Keys without that agreement are left out.",
+  "Agreeing files per key (* = also in irdb): power 32*, power_off 2*, input 31*, mute 34*, vol_up 37*, vol_down 34*, ch_up 25*, ch_down 25*, up 26*, down 24*, left 25*, right 25*, ok 26*, back 18, exit 5*, home 14, settings 10, info 19*, guide 6, netflix 3, digit_0 21*, digit_1 23*, digit_2 23*, digit_3 23*, digit_4 23*, digit_5 23*, digit_6 23*, digit_7 23*, digit_8 23*, digit_9 23*, red 7, green 7, yellow 7, blue 7, play 13*, pause 12*, stop 11*, ff 10*, rew 7, next 6*, prev 6*, record 5*, audio 12*, aspect 5*, sleep 12*, last 10*, text 5*"
+ ]
+}

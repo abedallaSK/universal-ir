@@ -5,7 +5,8 @@
 **Every remote, one phone.** Control air conditioners, TVs, TV boxes, LED lights and more with your phone's built-in infrared emitter or over Wi‑Fi.
 
 [![Android CI](https://github.com/abedallaSK/universal-ir/actions/workflows/android.yml/badge.svg)](https://github.com/abedallaSK/universal-ir/actions/workflows/android.yml)
-![Version](https://img.shields.io/badge/version-0.2.0-2F6BFF)
+![Version](https://img.shields.io/badge/version-0.2.1-2F6BFF)
+[![License: GPL v3](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 ![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.2-7F52FF?logo=kotlin&logoColor=white)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4)
@@ -39,7 +40,7 @@
 - **Wi‑Fi‑only mode**: on phones without an infrared emitter the app automatically shows only Wi‑Fi devices (Settings → Remote type).
 
 ### Everything else
-- 470 bundled code sets, about 120 AC brands, and a **code wizard** that tries codes one by one until your device responds.
+- 490 bundled code sets, full remotes for 13 TV brands,, about 120 AC brands, and a **code wizard** that tries codes one by one until your device responds.
 - Import Flipper Zero `.ir`, IRDB CSV and SmartIR JSON files, or build a remote from raw / Pronto / Broadlink codes.
 - Works **offline**. No account, no analytics, no ads.
 - **15 languages**: English, العربية, עברית, Français, Español, Deutsch, Português, Italiano, Русский, Türkçe, فارسی, हिन्दी, 简体中文, Bahasa Indonesia, اردو, with full right‑to‑left support.
@@ -61,7 +62,7 @@ Android 8.0 (API 26) or newer.
 2. Open it on your phone and allow installing from this source.
 3. Open **Universal IR**, then tap **Add**.
 
-The current release is a test build signed with a debug key. When a store‑signed version comes out, uninstall the test build first.
+Releases are signed release builds (about 10 MB). If you installed an earlier test build, uninstall it first: Android won't update an app signed with a different key.
 
 ## Build from source
 
@@ -93,7 +94,7 @@ UI strings live in `tools/strings_source.py`; regenerate them with `python -I to
 
 1. Raise `versionCode` and `versionName` in `app/build.gradle.kts` (e.g. `0.2.1`) and commit.
 2. Push a matching tag: `git tag v0.2.1 && git push origin v0.2.1`.
-3. The workflow builds the APK and publishes the GitHub release.
+3. The workflow runs the tests, builds the **signed, optimized APK** (signing key from encrypted repository secrets) and publishes the GitHub release.
 
 **Settings → Check for updates** reads the latest GitHub release, shows its notes and downloads the APK.
 
@@ -105,7 +106,11 @@ The app builds and its unit tests pass. Codes are labelled by how much evidence 
 
 - `ir-core/` is **LGPL-2.1-or-later** because it contains ports of LGPL-2.1 code (IRremoteESP8266).
 - Bundled code data comes from SmartIR (MIT), Flipper-IRDB (CC0), Linux kernel remote keymaps (GPL-2.0) and others. Every source and its obligations are listed in [`NOTICE.md`](NOTICE.md), and the license texts are in [`licenses/`](licenses/).
-- No license has been chosen yet for the `app/` module itself.
+- The app (`app/`) is licensed under the **[GNU GPL v3.0 or later](LICENSE)**.
+
+## Contributing
+
+Bug reports, device test results, translations and code are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md), the [Code of Conduct](CODE_OF_CONDUCT.md) and the [Security policy](SECURITY.md).
 
 ## Author
 

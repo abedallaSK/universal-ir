@@ -15,7 +15,8 @@ Sources (each optional except the first; each entry records its own source and l
                       (GPL-2.0), converted to canonical JSON.
   --flipper-irdb      Lucaslhm/Flipper-IRDB: CC0-1.0 applies only to files added after commit 2319685,
                       so only FLIPPER_FILES are copied and every commit of each is re-checked with git.
-Protocol-defined LED remotes (LED_REMOTES) are always generated as canonical JSON.
+Protocol-defined LED remotes (LED_REMOTES) and full TV / box / soundbar remotes (TV_REMOTES, ids "fullremote-*")
+are always generated as canonical JSON.
 
 Only Broadlink Base64/Pronto and ESPHome Raw files are copied (a phone cannot use other controller
 formats). Files over the importers' 2 MB cap are skipped, and a file is bundled only when its codes
@@ -34,7 +35,7 @@ import subprocess
 import sys
 
 # Bump when catalogue content changes; CatalogSeeder re-seeds when this (or its own logic) changes.
-CATALOG_VERSION = 4
+CATALOG_VERSION = 5
 
 # Importer / validator limits (ir-core Importers.kt and PatternValidator.kt).
 MAX_FILE_CHARS = 2_000_000
@@ -64,6 +65,7 @@ GENERIC_BOX_BRAND = "Unknown / generic Chinese box"
 # Primary-source (zephyrx47) TV-box brands that are Chinese / generic Android boxes.
 GENERIC_BOX_SOURCES = {"xiaomi"}
 GENERIC_LED_BRAND = "Generic LED strip / bulb"
+FULL_REMOTE_URL = "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs"
 # Brand that groups the remotes of Android / Google TV sets (plus the Mi Box / Mi TV remote), so the
 # wizard can try all of them for an unlisted or rebadged Android TV.
 GENERIC_ANDROID_TV_BRAND = "Generic Android TV"
@@ -276,6 +278,317 @@ LED_REMOTES = [
 ]
 
 
+# Full TV / box / soundbar remotes generated from factual protocol values ("fullremote-*"). Each key was cross-checked
+# across independent public captures (scratch tooling, not part of the build): Flipper-IRDB d126fb1 (TVs, Streaming_Devices,
+# SoundBars) and probonopd/irdb 11aa5eb (codes/<brand>, JP1 / LIRC-derived tables, mapped as IrdbCsvImporter.mapIrdb does).
+# A key is kept only when at least two independent files (identical copies counted once) give the same protocol, address and
+# command and that value outvotes any other value for the key at least 2:1; a code already taken by a better-supported key is
+# not reused. No third-party file is bundled for these. Rows: (command name, label, protocol, address, command); NECext
+# commands are stored as Flipper does (command | ~command << 8, or the raw 16-bit command for Apple).
+TV_REMOTES = [
+    {
+        "id": 'fullremote-samsung-tv', "category": 'TELEVISION', "brand": 'Samsung', "models": ['All Samsung TVs (full remote)'],
+        "commands": [
+            ('power', 'Power', 'Samsung32', 0x07, 0x02), ('power_off', 'Power off', 'Samsung32', 0x07, 0x98), ('input', 'Source', 'Samsung32', 0x07, 0x01),
+            ('mute', 'Mute', 'Samsung32', 0x07, 0x0F), ('vol_up', 'Volume +', 'Samsung32', 0x07, 0x07), ('vol_down', 'Volume -', 'Samsung32', 0x07, 0x0B),
+            ('ch_up', 'Channel +', 'Samsung32', 0x07, 0x12), ('ch_down', 'Channel -', 'Samsung32', 0x07, 0x10), ('up', 'Up', 'Samsung32', 0x07, 0x60),
+            ('down', 'Down', 'Samsung32', 0x07, 0x61), ('left', 'Left', 'Samsung32', 0x07, 0x65), ('right', 'Right', 'Samsung32', 0x07, 0x62),
+            ('ok', 'OK', 'Samsung32', 0x07, 0x68), ('back', 'Return', 'Samsung32', 0x07, 0x58), ('exit', 'Exit', 'Samsung32', 0x07, 0x2D),
+            ('home', 'Smart Hub', 'Samsung32', 0x07, 0x79), ('menu', 'Menu', 'Samsung32', 0x07, 0x1A), ('settings', 'Tools', 'Samsung32', 0x07, 0x4B),
+            ('info', 'Info', 'Samsung32', 0x07, 0x1F), ('guide', 'Guide', 'Samsung32', 0x07, 0x4F), ('netflix', 'Netflix', 'Samsung32', 0x07, 0xF3),
+            ('prime_video', 'Prime Video', 'Samsung32', 0x07, 0xF4), ('digit_0', '0', 'Samsung32', 0x07, 0x11), ('digit_1', '1', 'Samsung32', 0x07, 0x04),
+            ('digit_2', '2', 'Samsung32', 0x07, 0x05), ('digit_3', '3', 'Samsung32', 0x07, 0x06), ('digit_4', '4', 'Samsung32', 0x07, 0x08),
+            ('digit_5', '5', 'Samsung32', 0x07, 0x09), ('digit_6', '6', 'Samsung32', 0x07, 0x0A), ('digit_7', '7', 'Samsung32', 0x07, 0x0C),
+            ('digit_8', '8', 'Samsung32', 0x07, 0x0D), ('digit_9', '9', 'Samsung32', 0x07, 0x0E), ('red', 'Red', 'Samsung32', 0x07, 0x6C),
+            ('green', 'Green', 'Samsung32', 0x07, 0x14), ('yellow', 'Yellow', 'Samsung32', 0x07, 0x15), ('blue', 'Blue', 'Samsung32', 0x07, 0x16),
+            ('play', 'Play', 'Samsung32', 0x07, 0x47), ('pause', 'Pause', 'Samsung32', 0x07, 0x4A), ('play_pause', 'Play / Pause', 'Samsung32', 0x07, 0xB9),
+            ('stop', 'Stop', 'Samsung32', 0x07, 0x46), ('ff', 'Fast forward', 'Samsung32', 0x07, 0x48), ('rew', 'Rewind', 'Samsung32', 0x07, 0x45),
+            ('record', 'Record', 'Samsung32', 0x07, 0x49), ('subtitle', 'AD / Subtitles', 'Samsung32', 0x07, 0x25), ('audio', 'Audio', 'Samsung32', 0x07, 0x00),
+            ('aspect', 'Picture size', 'Samsung32', 0x07, 0x3E), ('sleep', 'Sleep', 'Samsung32', 0x07, 0x03), ('list', 'Channel list', 'Samsung32', 0x07, 0x6B),
+            ('last', 'Previous channel', 'Samsung32', 0x07, 0x13), ('text', 'Teletext', 'Samsung32', 0x07, 0x2C),
+        ],
+        "evidence": 'Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 55 Flipper-IRDB file(s) and 29 probonopd/irdb file(s). Keys without that agreement are left out.',
+        "sources": 'Flipper-IRDB d126fb1 captures (55 files); probonopd/irdb 11aa5eb codes/Samsung (29 files) (factual values only, files not bundled)',
+        "support": 'power 64*, power_off 5*, input 41*, mute 74*, vol_up 73*, vol_down 70*, ch_up 59*, ch_down 57*, up 58*, down 58*, left 58*, right 58*, ok 53*, back 39*, exit 50*, home 24*, menu 54*, settings 32*, info 57*, guide 23*, netflix 8, prime_video 8, digit_0 51*, digit_1 53*, digit_2 53*, digit_3 53*, digit_4 53*, digit_5 53*, digit_6 53*, digit_7 53*, digit_8 53*, digit_9 53*, red 21*, green 23*, yellow 23*, blue 23*, play 30*, pause 31*, play_pause 4, stop 32*, ff 26*, rew 27*, record 21*, subtitle 29*, audio 11*, aspect 24*, sleep 24*, list 25*, last 38*, text 3*',
+    },
+    {
+        "id": 'fullremote-lg-tv', "category": 'TELEVISION', "brand": 'LG', "models": ['All LG TVs (full remote)'],
+        "commands": [
+            ('power', 'Power', 'NEC', 0x04, 0x08), ('power_on', 'Power on', 'NEC', 0x04, 0xC4), ('power_off', 'Power off', 'NEC', 0x04, 0xC5),
+            ('input', 'Input', 'NEC', 0x04, 0x0B), ('mute', 'Mute', 'NEC', 0x04, 0x09), ('vol_up', 'Volume +', 'NEC', 0x04, 0x02),
+            ('vol_down', 'Volume -', 'NEC', 0x04, 0x03), ('ch_up', 'Channel +', 'NEC', 0x04, 0x00), ('ch_down', 'Channel -', 'NEC', 0x04, 0x01),
+            ('up', 'Up', 'NEC', 0x04, 0x40), ('down', 'Down', 'NEC', 0x04, 0x41), ('left', 'Left', 'NEC', 0x04, 0x07),
+            ('right', 'Right', 'NEC', 0x04, 0x06), ('ok', 'OK', 'NEC', 0x04, 0x44), ('back', 'Back', 'NEC', 0x04, 0x28),
+            ('exit', 'Exit', 'NEC', 0x04, 0x5B), ('home', 'Home', 'NEC', 0x04, 0x7C), ('settings', 'Settings', 'NEC', 0x04, 0x43),
+            ('q_menu', 'Q.Menu', 'NEC', 0x04, 0x45), ('info', 'Info', 'NEC', 0x04, 0xAA), ('guide', 'Guide', 'NEC', 0x04, 0xAB),
+            ('netflix', 'Netflix', 'NEC', 0x04, 0x56), ('prime_video', 'Prime Video', 'NEC', 0x04, 0x5C), ('disney_plus', 'Disney+', 'NEC', 0x04, 0x31),
+            ('digit_0', '0', 'NEC', 0x04, 0x10), ('digit_1', '1', 'NEC', 0x04, 0x11), ('digit_2', '2', 'NEC', 0x04, 0x12),
+            ('digit_3', '3', 'NEC', 0x04, 0x13), ('digit_4', '4', 'NEC', 0x04, 0x14), ('digit_5', '5', 'NEC', 0x04, 0x15),
+            ('digit_6', '6', 'NEC', 0x04, 0x16), ('digit_7', '7', 'NEC', 0x04, 0x17), ('digit_8', '8', 'NEC', 0x04, 0x18),
+            ('digit_9', '9', 'NEC', 0x04, 0x19), ('red', 'Red', 'NEC', 0x04, 0x72), ('green', 'Green', 'NEC', 0x04, 0x71),
+            ('yellow', 'Yellow', 'NEC', 0x04, 0x63), ('blue', 'Blue', 'NEC', 0x04, 0x61), ('play', 'Play', 'NEC', 0x04, 0xB0),
+            ('pause', 'Pause', 'NEC', 0x04, 0xBA), ('stop', 'Stop', 'NEC', 0x04, 0xB1), ('ff', 'Fast forward', 'NEC', 0x04, 0x8E),
+            ('rew', 'Rewind', 'NEC', 0x04, 0x8F), ('record', 'Record', 'NEC', 0x04, 0xBD), ('subtitle', 'Subtitles', 'NEC', 0x04, 0x39),
+            ('audio', 'Audio', 'NEC', 0x04, 0x0A), ('aspect', 'Picture size', 'NEC', 0x04, 0x79), ('sleep', 'Sleep', 'NEC', 0x04, 0x0E),
+            ('last', 'Q.View', 'NEC', 0x04, 0x1A), ('text', 'Teletext', 'NEC', 0x04, 0x20),
+        ],
+        "evidence": 'Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 34 Flipper-IRDB file(s) and 13 probonopd/irdb file(s). Keys without that agreement are left out.',
+        "sources": 'Flipper-IRDB d126fb1 captures (34 files); probonopd/irdb 11aa5eb codes/LG (13 files) (factual values only, files not bundled)',
+        "support": 'power 44*, power_on 2*, power_off 2*, input 36*, mute 41*, vol_up 43*, vol_down 38*, ch_up 37*, ch_down 33*, up 35*, down 34*, left 34*, right 34*, ok 38*, back 29*, exit 23*, home 16*, settings 18*, q_menu 10*, info 21*, guide 15*, netflix 11, prime_video 11, disney_plus 3, digit_0 34*, digit_1 33*, digit_2 33*, digit_3 33*, digit_4 33*, digit_5 34*, digit_6 34*, digit_7 33*, digit_8 33*, digit_9 34*, red 19*, green 18*, yellow 18*, blue 18*, play 21*, pause 21*, stop 16*, ff 14*, rew 11*, record 4*, subtitle 16*, audio 4*, aspect 9*, sleep 8*, last 11*, text 12*',
+    },
+    {
+        "id": 'fullremote-sony-tv', "category": 'TELEVISION', "brand": 'Sony', "models": ['All Sony TVs (full remote)'],
+        "commands": [
+            ('power', 'Power', 'SIRC', 0x01, 0x15), ('power_off', 'Power off', 'SIRC', 0x01, 0x2F), ('input', 'Input', 'SIRC', 0x01, 0x25),
+            ('mute', 'Mute', 'SIRC', 0x01, 0x14), ('vol_up', 'Volume +', 'SIRC', 0x01, 0x12), ('vol_down', 'Volume -', 'SIRC', 0x01, 0x13),
+            ('ch_up', 'Channel +', 'SIRC', 0x01, 0x10), ('ch_down', 'Channel -', 'SIRC', 0x01, 0x11), ('up', 'Up', 'SIRC', 0x01, 0x74),
+            ('down', 'Down', 'SIRC', 0x01, 0x75), ('left', 'Left', 'SIRC', 0x01, 0x34), ('right', 'Right', 'SIRC', 0x01, 0x33),
+            ('ok', 'OK', 'SIRC', 0x01, 0x65), ('back', 'Return', 'SIRC15', 0x97, 0x23), ('exit', 'Exit', 'SIRC', 0x01, 0x63),
+            ('home', 'Home', 'SIRC', 0x01, 0x60), ('settings', 'Options', 'SIRC15', 0x97, 0x36), ('info', 'Info', 'SIRC', 0x01, 0x3A),
+            ('guide', 'Guide', 'SIRC15', 0xA4, 0x5B), ('netflix', 'Netflix', 'SIRC15', 0x1A, 0x7C), ('digit_0', '0', 'SIRC', 0x01, 0x09),
+            ('digit_1', '1', 'SIRC', 0x01, 0x00), ('digit_2', '2', 'SIRC', 0x01, 0x01), ('digit_3', '3', 'SIRC', 0x01, 0x02),
+            ('digit_4', '4', 'SIRC', 0x01, 0x03), ('digit_5', '5', 'SIRC', 0x01, 0x04), ('digit_6', '6', 'SIRC', 0x01, 0x05),
+            ('digit_7', '7', 'SIRC', 0x01, 0x06), ('digit_8', '8', 'SIRC', 0x01, 0x07), ('digit_9', '9', 'SIRC', 0x01, 0x08),
+            ('red', 'Red', 'SIRC15', 0x97, 0x25), ('green', 'Green', 'SIRC15', 0x97, 0x26), ('yellow', 'Yellow', 'SIRC15', 0x97, 0x27),
+            ('blue', 'Blue', 'SIRC15', 0x97, 0x24), ('play', 'Play', 'SIRC15', 0x97, 0x1A), ('pause', 'Pause', 'SIRC15', 0x97, 0x19),
+            ('stop', 'Stop', 'SIRC15', 0x97, 0x18), ('ff', 'Fast forward', 'SIRC15', 0x97, 0x1C), ('rew', 'Rewind', 'SIRC15', 0x97, 0x1B),
+            ('next', 'Next', 'SIRC15', 0x97, 0x3D), ('prev', 'Previous', 'SIRC15', 0x97, 0x3C), ('record', 'Record', 'SIRC15', 0x97, 0x20),
+            ('audio', 'Audio', 'SIRC', 0x01, 0x17), ('aspect', 'Picture size', 'SIRC15', 0xA4, 0x3D), ('sleep', 'Sleep', 'SIRC', 0x01, 0x36),
+            ('last', 'Previous channel', 'SIRC', 0x01, 0x3B), ('text', 'Teletext', 'SIRC', 0x01, 0x3F),
+        ],
+        "evidence": 'Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 24 Flipper-IRDB file(s) and 19 probonopd/irdb file(s). Keys without that agreement are left out.',
+        "sources": 'Flipper-IRDB d126fb1 captures (24 files); probonopd/irdb 11aa5eb codes/Sony (19 files) (factual values only, files not bundled)',
+        "support": 'power 32*, power_off 2*, input 31*, mute 34*, vol_up 37*, vol_down 34*, ch_up 25*, ch_down 25*, up 26*, down 24*, left 25*, right 25*, ok 26*, back 18, exit 5*, home 14, settings 10, info 19*, guide 6, netflix 3, digit_0 21*, digit_1 23*, digit_2 23*, digit_3 23*, digit_4 23*, digit_5 23*, digit_6 23*, digit_7 23*, digit_8 23*, digit_9 23*, red 7, green 7, yellow 7, blue 7, play 13*, pause 12*, stop 11*, ff 10*, rew 7, next 6*, prev 6*, record 5*, audio 12*, aspect 5*, sleep 12*, last 10*, text 5*',
+    },
+    {
+        "id": 'fullremote-philips-tv', "category": 'TELEVISION', "brand": 'Philips', "models": ['All Philips TVs (full remote, RC6)'],
+        "commands": [
+            ('power', 'Power', 'RC6', 0x00, 0x0C), ('input', 'Source', 'RC6', 0x00, 0x38), ('mute', 'Mute', 'RC6', 0x00, 0x0D),
+            ('vol_up', 'Volume +', 'RC6', 0x00, 0x10), ('vol_down', 'Volume -', 'RC6', 0x00, 0x11), ('ch_up', 'Channel +', 'RC6', 0x00, 0x20),
+            ('ch_down', 'Channel -', 'RC6', 0x00, 0x21), ('up', 'Up', 'RC6', 0x00, 0x58), ('down', 'Down', 'RC6', 0x00, 0x59),
+            ('left', 'Left', 'RC6', 0x00, 0x5A), ('right', 'Right', 'RC6', 0x00, 0x5B), ('ok', 'OK', 'RC6', 0x00, 0x5C),
+            ('back', 'Back', 'RC6', 0x00, 0x0A), ('home', 'Home', 'RC6', 0x00, 0x54), ('menu', 'Menu', 'RC6', 0x00, 0x57),
+            ('settings', 'Options', 'RC6', 0x00, 0x40), ('info', 'Info', 'RC6', 0x00, 0x0F), ('guide', 'Guide', 'RC6', 0x00, 0xCC),
+            ('netflix', 'Netflix', 'RC6', 0x00, 0x76), ('youtube', 'YouTube', 'RC6', 0x00, 0x79), ('prime_video', 'Prime Video', 'RC6', 0x00, 0xBA),
+            ('digit_0', '0', 'RC6', 0x00, 0x00), ('digit_1', '1', 'RC6', 0x00, 0x01), ('digit_2', '2', 'RC6', 0x00, 0x02),
+            ('digit_3', '3', 'RC6', 0x00, 0x03), ('digit_4', '4', 'RC6', 0x00, 0x04), ('digit_5', '5', 'RC6', 0x00, 0x05),
+            ('digit_6', '6', 'RC6', 0x00, 0x06), ('digit_7', '7', 'RC6', 0x00, 0x07), ('digit_8', '8', 'RC6', 0x00, 0x08),
+            ('digit_9', '9', 'RC6', 0x00, 0x09), ('red', 'Red', 'RC6', 0x00, 0x6D), ('green', 'Green', 'RC6', 0x00, 0x6E),
+            ('yellow', 'Yellow', 'RC6', 0x00, 0x6F), ('blue', 'Blue', 'RC6', 0x00, 0x70), ('play', 'Play', 'RC6', 0x00, 0x2C),
+            ('pause', 'Pause', 'RC6', 0x00, 0x30), ('stop', 'Stop', 'RC6', 0x00, 0x31), ('ff', 'Fast forward', 'RC6', 0x00, 0x28),
+            ('rew', 'Rewind', 'RC6', 0x00, 0x2B), ('record', 'Record', 'RC6', 0x00, 0x37), ('subtitle', 'Subtitles', 'RC6', 0x00, 0x4B),
+            ('aspect', 'Format', 'RC6', 0x00, 0xF5), ('list', 'Channel list', 'RC6', 0x00, 0xD2), ('text', 'Teletext', 'RC6', 0x00, 0x3C),
+        ],
+        "evidence": 'Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 14 Flipper-IRDB file(s) and 3 probonopd/irdb file(s). Keys without that agreement are left out.',
+        "sources": 'Flipper-IRDB d126fb1 captures (14 files); probonopd/irdb 11aa5eb codes/Philips (3 files) (factual values only, files not bundled)',
+        "support": 'power 17*, input 8, mute 16*, vol_up 16*, vol_down 15*, ch_up 9*, ch_down 9*, up 14*, down 13*, left 13*, right 14*, ok 13*, back 9*, home 9*, menu 2, settings 9*, info 7*, guide 10*, netflix 4, youtube 2, prime_video 2, digit_0 12*, digit_1 12*, digit_2 12*, digit_3 12*, digit_4 12*, digit_5 12*, digit_6 12*, digit_7 12*, digit_8 12*, digit_9 12*, red 10*, green 10*, yellow 11*, blue 11*, play 5*, pause 5, stop 6*, ff 6*, rew 5*, record 5*, subtitle 5*, aspect 4*, list 2, text 9*',
+    },
+    {
+        "id": 'fullremote-toshiba-tv', "category": 'TELEVISION', "brand": 'Toshiba', "models": ['All Toshiba TVs (full remote)'],
+        "commands": [
+            ('power', 'Power', 'NEC', 0x40, 0x12), ('mute', 'Mute', 'NEC', 0x40, 0x10), ('vol_up', 'Volume +', 'NEC', 0x40, 0x1A),
+            ('vol_down', 'Volume -', 'NEC', 0x40, 0x1E), ('ch_up', 'Channel +', 'NEC', 0x40, 0x1B), ('ch_down', 'Channel -', 'NEC', 0x40, 0x1F),
+            ('up', 'Up', 'NEC', 0x40, 0x19), ('down', 'Down', 'NEC', 0x40, 0x1D), ('left', 'Left', 'NEC', 0x40, 0x42),
+            ('right', 'Right', 'NEC', 0x40, 0x40), ('ok', 'OK', 'NEC', 0x40, 0x21), ('back', 'Return', 'NEC', 0x40, 0x64),
+            ('menu', 'Menu', 'NEC', 0x40, 0x5B), ('info', 'Info', 'NEC', 0x40, 0x16), ('digit_0', '0', 'NEC', 0x40, 0x00),
+            ('digit_1', '1', 'NEC', 0x40, 0x01), ('digit_2', '2', 'NEC', 0x40, 0x02), ('digit_3', '3', 'NEC', 0x40, 0x03),
+            ('digit_4', '4', 'NEC', 0x40, 0x04), ('digit_5', '5', 'NEC', 0x40, 0x05), ('digit_6', '6', 'NEC', 0x40, 0x06),
+            ('digit_7', '7', 'NEC', 0x40, 0x07), ('digit_8', '8', 'NEC', 0x40, 0x08), ('digit_9', '9', 'NEC', 0x40, 0x09),
+            ('red', 'Red', 'NEC', 0x40, 0x48), ('green', 'Green', 'NEC', 0x40, 0x49), ('yellow', 'Yellow', 'NEC', 0x40, 0x4A),
+            ('blue', 'Blue', 'NEC', 0x40, 0x4B), ('play', 'Play', 'NEC', 0x40, 0x51), ('stop', 'Stop', 'NEC', 0x40, 0x4F),
+            ('ff', 'Fast forward', 'NEC', 0x40, 0x53), ('rew', 'Rewind', 'NEC', 0x40, 0x4E), ('audio', 'Audio', 'NEC', 0x40, 0x13),
+            ('sleep', 'Sleep', 'NEC', 0x40, 0x15), ('text', 'Teletext', 'NEC', 0x40, 0x17),
+        ],
+        "evidence": 'Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 6 Flipper-IRDB file(s) and 11 probonopd/irdb file(s). Keys without that agreement are left out.',
+        "sources": 'Flipper-IRDB d126fb1 captures (6 files); probonopd/irdb 11aa5eb codes/Toshiba (11 files) (factual values only, files not bundled)',
+        "support": 'power 17*, mute 17*, vol_up 16*, vol_down 15*, ch_up 13*, ch_down 12*, up 4*, down 4*, left 3*, right 3*, ok 4*, back 3*, menu 7*, info 4*, digit_0 15*, digit_1 15*, digit_2 14*, digit_3 15*, digit_4 15*, digit_5 15*, digit_6 15*, digit_7 15*, digit_8 15*, digit_9 15*, red 7*, green 6*, yellow 6*, blue 6*, play 2*, stop 2*, ff 2*, rew 2*, audio 2*, sleep 3*, text 2*',
+    },
+    {
+        "id": 'fullremote-hisense-tv', "category": 'TELEVISION', "brand": 'Hisense', "models": ['All Hisense TVs (full remote)'],
+        "commands": [
+            ('power', 'Power', 'NECext', 0xBF00, 0xF20D), ('input', 'Input', 'NECext', 0xBF00, 0xED12), ('mute', 'Mute', 'NECext', 0xBF00, 0xF10E),
+            ('vol_up', 'Volume +', 'NECext', 0xBF00, 0xBB44), ('vol_down', 'Volume -', 'NECext', 0xBF00, 0xBC43), ('ch_up', 'Channel +', 'NECext', 0xBF00, 0xB54A),
+            ('ch_down', 'Channel -', 'NECext', 0xBF00, 0xB44B), ('up', 'Up', 'NECext', 0xBF00, 0xE916), ('down', 'Down', 'NECext', 0xBF00, 0xE817),
+            ('left', 'Left', 'NECext', 0xBF00, 0xE619), ('right', 'Right', 'NECext', 0xBF00, 0xE718), ('ok', 'OK', 'NECext', 0xBF00, 0xEA15),
+            ('back', 'Back', 'NECext', 0xBF00, 0xB748), ('exit', 'Exit', 'NECext', 0xBF00, 0xA35C), ('home', 'Home', 'NECext', 0xBF00, 0xDF20),
+            ('settings', 'Settings', 'NECext', 0xBF00, 0xEB14), ('info', 'Info', 'NECext', 0xBF00, 0xF30C), ('guide', 'Guide', 'NECext', 0xBF00, 0xE21D),
+            ('youtube', 'YouTube', 'NECext', 0xBF00, 0x55AA), ('digit_0', '0', 'NECext', 0xBF00, 0xFF00), ('digit_1', '1', 'NECext', 0xBF00, 0xFE01),
+            ('digit_2', '2', 'NECext', 0xBF00, 0xFD02), ('digit_3', '3', 'NECext', 0xBF00, 0xFC03), ('digit_4', '4', 'NECext', 0xBF00, 0xFB04),
+            ('digit_5', '5', 'NECext', 0xBF00, 0xFA05), ('digit_6', '6', 'NECext', 0xBF00, 0xF906), ('digit_7', '7', 'NECext', 0xBF00, 0xF807),
+            ('digit_8', '8', 'NECext', 0xBF00, 0xF708), ('digit_9', '9', 'NECext', 0xBF00, 0xF609), ('red', 'Red', 'NECext', 0xBF00, 0xAD52),
+            ('green', 'Green', 'NECext', 0xBF00, 0xAC53), ('yellow', 'Yellow', 'NECext', 0xBF00, 0xAB54), ('blue', 'Blue', 'NECext', 0xBF00, 0xAA55),
+            ('play', 'Play', 'NECext', 0xBF00, 0x57A8), ('pause', 'Pause', 'NECext', 0xBF00, 0x56A9), ('stop', 'Stop', 'NECext', 0xBF00, 0xA55A),
+            ('ff', 'Fast forward', 'NECext', 0xBF00, 0xA659), ('rew', 'Rewind', 'NECext', 0xBF00, 0xA758), ('subtitle', 'Subtitles', 'NECext', 0xBF00, 0xE01F),
+        ],
+        "evidence": 'Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 8 Flipper-IRDB file(s). Keys without that agreement are left out.',
+        "sources": 'Flipper-IRDB d126fb1 captures (8 files) (factual values only, files not bundled)',
+        "support": 'power 7, input 8, mute 8, vol_up 8, vol_down 8, ch_up 7, ch_down 7, up 8, down 6, left 7, right 7, ok 7, back 5, exit 3, home 5, settings 4, info 5, guide 5, youtube 5, digit_0 3, digit_1 4, digit_2 4, digit_3 4, digit_4 4, digit_5 4, digit_6 4, digit_7 4, digit_8 4, digit_9 4, red 3, green 3, yellow 3, blue 3, play 3, pause 3, stop 5, ff 4, rew 4, subtitle 4',
+    },
+    {
+        "id": 'fullremote-vizio-tv', "category": 'TELEVISION', "brand": 'Vizio', "models": ['All Vizio TVs (full remote)'],
+        "commands": [
+            ('power', 'Power', 'NEC', 0x04, 0x08), ('input', 'Input', 'NEC', 0x04, 0x2F), ('mute', 'Mute', 'NEC', 0x04, 0x09),
+            ('vol_up', 'Volume +', 'NEC', 0x04, 0x02), ('vol_down', 'Volume -', 'NEC', 0x04, 0x03), ('ch_up', 'Channel +', 'NEC', 0x04, 0x00),
+            ('ch_down', 'Channel -', 'NEC', 0x04, 0x01), ('up', 'Up', 'NEC', 0x04, 0x45), ('down', 'Down', 'NEC', 0x04, 0x46),
+            ('left', 'Left', 'NEC', 0x04, 0x47), ('right', 'Right', 'NEC', 0x04, 0x48), ('ok', 'OK', 'NEC', 0x04, 0x44),
+            ('back', 'Back', 'NEC', 0x04, 0x4A), ('exit', 'Exit', 'NEC', 0x04, 0x49), ('home', 'Home', 'NEC', 0x04, 0x2D),
+            ('info', 'Info', 'NEC', 0x04, 0x1B), ('guide', 'Guide', 'NEC', 0x04, 0x1C), ('netflix', 'Netflix', 'NEC', 0x04, 0xEB),
+            ('prime_video', 'Prime Video', 'NEC', 0x04, 0xEA), ('disney_plus', 'Disney+', 'NEC', 0x04, 0x1F), ('digit_0', '0', 'NEC', 0x04, 0x10),
+            ('digit_1', '1', 'NEC', 0x04, 0x11), ('digit_2', '2', 'NEC', 0x04, 0x12), ('digit_3', '3', 'NEC', 0x04, 0x13),
+            ('digit_4', '4', 'NEC', 0x04, 0x14), ('digit_5', '5', 'NEC', 0x04, 0x15), ('digit_6', '6', 'NEC', 0x04, 0x16),
+            ('digit_7', '7', 'NEC', 0x04, 0x17), ('digit_8', '8', 'NEC', 0x04, 0x18), ('digit_9', '9', 'NEC', 0x04, 0x19),
+            ('play', 'Play', 'NEC', 0x04, 0x33), ('pause', 'Pause', 'NEC', 0x04, 0x37), ('stop', 'Stop', 'NEC', 0x04, 0x30),
+            ('subtitle', 'Subtitles', 'NEC', 0x04, 0x39), ('aspect', 'Picture size', 'NEC', 0x04, 0x77), ('sleep', 'Sleep', 'NEC', 0x04, 0x0E),
+            ('last', 'Last', 'NEC', 0x04, 0x1A),
+        ],
+        "evidence": 'Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 13 Flipper-IRDB file(s) and 2 probonopd/irdb file(s). Keys without that agreement are left out.',
+        "sources": 'Flipper-IRDB d126fb1 captures (13 files); probonopd/irdb 11aa5eb codes/Vizio (2 files) (factual values only, files not bundled)',
+        "support": 'power 13*, input 13*, mute 14*, vol_up 14*, vol_down 13*, ch_up 13*, ch_down 10, up 14*, down 13*, left 13*, right 13*, ok 12*, back 9, exit 7*, home 6, info 10*, guide 3, netflix 7, prime_video 7, disney_plus 2, digit_0 12*, digit_1 12*, digit_2 12*, digit_3 11*, digit_4 12*, digit_5 12*, digit_6 11*, digit_7 11*, digit_8 11*, digit_9 12*, play 2, pause 2, stop 2, subtitle 10*, aspect 7*, sleep 3*, last 4*',
+    },
+    {
+        "id": 'fullremote-hitachi-tv', "category": 'TELEVISION', "brand": 'Hitachi', "models": ['All Hitachi TVs (full remote, NEC)'],
+        "commands": [
+            ('power', 'Power', 'NEC', 0x50, 0x17), ('power_on', 'Power on', 'NEC', 0x50, 0x3E), ('power_off', 'Power off', 'NEC', 0x50, 0x3F),
+            ('input', 'Input', 'NEC', 0x50, 0x09), ('mute', 'Mute', 'NEC', 0x50, 0x0B), ('vol_up', 'Volume +', 'NEC', 0x50, 0x12),
+            ('vol_down', 'Volume -', 'NEC', 0x50, 0x15), ('ch_up', 'Channel +', 'NEC', 0x50, 0x19), ('ch_down', 'Channel -', 'NEC', 0x50, 0x18),
+            ('up', 'Up', 'NEC', 0x50, 0x70), ('down', 'Down', 'NEC', 0x50, 0x71), ('left', 'Left', 'NEC', 0x50, 0x73),
+            ('right', 'Right', 'NEC', 0x50, 0x72), ('ok', 'OK', 'NEC', 0x50, 0x2E), ('exit', 'Exit', 'NEC', 0x50, 0x64),
+            ('menu', 'Menu', 'NEC', 0x50, 0x53), ('digit_0', '0', 'NEC', 0x50, 0x0C), ('digit_1', '1', 'NEC', 0x50, 0x0D),
+            ('digit_2', '2', 'NEC', 0x50, 0x0E), ('digit_3', '3', 'NEC', 0x50, 0x0F), ('digit_4', '4', 'NEC', 0x50, 0x1C),
+            ('digit_5', '5', 'NEC', 0x50, 0x1D), ('digit_6', '6', 'NEC', 0x50, 0x1E), ('digit_7', '7', 'NEC', 0x50, 0x1F),
+            ('digit_8', '8', 'NEC', 0x50, 0x04), ('digit_9', '9', 'NEC', 0x50, 0x05), ('play', 'Play', 'NEC', 0x50, 0x46),
+            ('pause', 'Pause', 'NEC', 0x50, 0x61), ('ff', 'Fast forward', 'NEC', 0x50, 0x47), ('aspect', 'Picture size', 'NEC', 0x50, 0x6F),
+            ('sleep', 'Sleep', 'NEC', 0x50, 0x11), ('last', 'Previous channel', 'NEC', 0x50, 0x10),
+        ],
+        "evidence": 'Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 2 Flipper-IRDB file(s) and 11 probonopd/irdb file(s). Keys without that agreement are left out.',
+        "sources": 'Flipper-IRDB d126fb1 captures (2 files); probonopd/irdb 11aa5eb codes/Hitachi (11 files) (factual values only, files not bundled)',
+        "support": 'power 9*, power_on 2*, power_off 2*, input 7*, mute 10*, vol_up 7*, vol_down 6*, ch_up 6*, ch_down 5*, up 4*, down 4*, left 3*, right 3*, ok 2*, exit 3*, menu 6*, digit_0 5*, digit_1 5*, digit_2 5*, digit_3 5*, digit_4 5*, digit_5 5*, digit_6 5*, digit_7 5*, digit_8 5*, digit_9 5*, play 2*, pause 2*, ff 2*, aspect 2*, sleep 2*, last 4*',
+    },
+    {
+        "id": 'fullremote-insignia-tv', "category": 'TELEVISION', "brand": 'Insignia', "models": ['All Insignia TVs (full remote)'],
+        "commands": [
+            ('power', 'Power', 'NECext', 0x586, 0xF00F), ('input', 'Input', 'NECext', 0x586, 0xE21D), ('mute', 'Mute', 'NECext', 0x586, 0xF10E),
+            ('vol_up', 'Volume +', 'NECext', 0x586, 0xF30C), ('vol_down', 'Volume -', 'NECext', 0x586, 0xF20D), ('ch_up', 'Channel +', 'NECext', 0x586, 0xF50A),
+            ('ch_down', 'Channel -', 'NECext', 0x586, 0xF40B), ('up', 'Up', 'NECext', 0x586, 0xBD42), ('down', 'Down', 'NECext', 0x586, 0xBC43),
+            ('left', 'Left', 'NECext', 0x586, 0xE916), ('right', 'Right', 'NECext', 0x586, 0xEA15), ('ok', 'OK', 'NECext', 0x586, 0xE718),
+            ('exit', 'Exit', 'NECext', 0x586, 0xE41B), ('menu', 'Menu', 'NECext', 0x586, 0xEB14), ('info', 'Info', 'NECext', 0x586, 0xE817),
+            ('digit_0', '0', 'NECext', 0x586, 0xF609), ('digit_1', '1', 'NECext', 0x586, 0xFF00), ('digit_2', '2', 'NECext', 0x586, 0xFE01),
+            ('digit_3', '3', 'NECext', 0x586, 0xFD02), ('digit_4', '4', 'NECext', 0x586, 0xFC03), ('digit_5', '5', 'NECext', 0x586, 0xFB04),
+            ('digit_6', '6', 'NECext', 0x586, 0xFA05), ('digit_7', '7', 'NECext', 0x586, 0xF906), ('digit_8', '8', 'NECext', 0x586, 0xF807),
+            ('digit_9', '9', 'NECext', 0x586, 0xF708), ('sleep', 'Sleep', 'NECext', 0x586, 0xEC13),
+        ],
+        "evidence": 'Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 2 Flipper-IRDB file(s) and 1 probonopd/irdb file(s). Keys without that agreement are left out.',
+        "sources": 'Flipper-IRDB d126fb1 captures (2 files); probonopd/irdb 11aa5eb codes/Insignia (1 files) (factual values only, files not bundled)',
+        "support": 'power 3*, input 3*, mute 3*, vol_up 3*, vol_down 2, ch_up 3*, ch_down 2, up 2*, down 2*, left 2*, right 2*, ok 3*, exit 3*, menu 3*, info 2*, digit_0 2*, digit_1 2*, digit_2 2*, digit_3 2*, digit_4 2*, digit_5 2*, digit_6 2*, digit_7 2*, digit_8 2*, digit_9 2*, sleep 2*',
+    },
+    {
+        "id": 'fullremote-roku-tv', "category": 'TELEVISION', "brand": 'Roku', "models": ['All Roku TVs (full remote)'],
+        "extraBrands": ['TCL', 'Onn', 'Philips', 'RCA', 'Sanyo'],
+        "commands": [
+            ('power', 'Power', 'NECext', 0xC7EA, 0xE817), ('mute', 'Mute', 'NECext', 0xC7EA, 0xDF20), ('vol_up', 'Volume +', 'NECext', 0xC7EA, 0xF00F),
+            ('vol_down', 'Volume -', 'NECext', 0xC7EA, 0xEF10), ('up', 'Up', 'NECext', 0xC7EA, 0xE619), ('down', 'Down', 'NECext', 0xC7EA, 0xCC33),
+            ('left', 'Left', 'NECext', 0xC7EA, 0xE11E), ('right', 'Right', 'NECext', 0xC7EA, 0xD22D), ('ok', 'OK', 'NECext', 0xC7EA, 0xD52A),
+            ('back', 'Back', 'NECext', 0xC7EA, 0x9966), ('home', 'Home', 'NECext', 0xC7EA, 0xFC03), ('settings', 'Settings', 'NECext', 0xC7EA, 0x9E61),
+            ('netflix', 'Netflix', 'NECext', 0xC7EA, 0xAD52), ('youtube', 'YouTube', 'NECext', 0xC7EA, 0xA956), ('prime_video', 'Prime Video', 'NECext', 0xC7EA, 0xB44B),
+            ('disney_plus', 'Disney+', 'NECext', 0xC7EA, 0xF30C), ('ff', 'Fast forward', 'NECext', 0xC7EA, 0xAA55), ('rew', 'Rewind', 'NECext', 0xC7EA, 0xCB34),
+            ('sleep', 'Sleep', 'NECext', 0xC7EA, 0x9D62), ('play', 'Play / Pause', 'NECext', 0xC7EA, 0xB34C),
+        ],
+        "evidence": 'Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 14 Flipper-IRDB file(s). Keys without that agreement are left out.',
+        "sources": 'Flipper-IRDB d126fb1 captures (14 files) (factual values only, files not bundled)',
+        "support": 'power 11, mute 12, vol_up 12, vol_down 10, up 13, down 10, left 13, right 12, ok 14, back 10, home 11, settings 6, netflix 10, youtube 2, prime_video 3, disney_plus 6, ff 9, rew 8, sleep 4, play 7',
+    },
+    {
+        "id": 'fullremote-fire-tv-edition', "category": 'TELEVISION', "brand": 'Amazon', "models": ['All Fire TV Edition TVs (full remote)'],
+        "extraBrands": ['Toshiba', 'Insignia'],
+        "commands": [
+            ('power', 'Power', 'NECext', 0x7D02, 0xB946), ('mute', 'Mute', 'NECext', 0x7D02, 0xB34C), ('vol_up', 'Volume +', 'NECext', 0x7D02, 0xF30C),
+            ('vol_down', 'Volume -', 'NECext', 0x7D02, 0xE619), ('ch_up', 'Channel +', 'NECext', 0x7D02, 0xF00F), ('ch_down', 'Channel -', 'NECext', 0x7D02, 0xA55A),
+            ('up', 'Up', 'NECext', 0x7D02, 0xB748), ('down', 'Down', 'NECext', 0x7D02, 0xB24D), ('left', 'Left', 'NECext', 0x7D02, 0xB14E),
+            ('right', 'Right', 'NECext', 0x7D02, 0xB649), ('ok', 'OK', 'NECext', 0x7D02, 0xB54A), ('back', 'Back', 'NECext', 0x7D02, 0xF20D),
+            ('home', 'Home', 'NECext', 0x7D02, 0x609F), ('menu', 'Menu', 'NECext', 0x7D02, 0xBA45), ('settings', 'Settings', 'NECext', 0x7D02, 0x6996),
+            ('guide', 'Guide', 'NECext', 0x7D02, 0xEB14), ('netflix', 'Netflix', 'NECext', 0x7D02, 0xA05F), ('prime_video', 'Prime Video', 'NECext', 0x7D02, 0x5EA1),
+            ('ff', 'Fast forward', 'NECext', 0x7D02, 0xE817), ('rew', 'Rewind', 'NECext', 0x7D02, 0xE916), ('play', 'Play / Pause', 'NECext', 0x7D02, 0xA45B),
+        ],
+        "evidence": 'Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 5 Flipper-IRDB file(s). Keys without that agreement are left out.',
+        "sources": 'Flipper-IRDB d126fb1 captures (5 files) (factual values only, files not bundled)',
+        "support": 'power 5, mute 4, vol_up 4, vol_down 4, ch_up 3, ch_down 3, up 4, down 4, left 4, right 4, ok 4, back 3, home 4, menu 2, settings 3, guide 2, netflix 2, prime_video 2, ff 3, rew 3, play 3',
+    },
+    {
+        "id": 'fullremote-vestel-tv', "category": 'TELEVISION', "brand": 'Vestel', "models": ['All Vestel-made TVs (full remote)'],
+        "extraBrands": ['Bush', 'Continental Edison', 'Digihome', 'EdenWood', 'Finlux', 'Gogen', 'JVC', 'Medion', 'Technika', 'Telefunken', 'Toshiba'],
+        "commands": [
+            ('power', 'Power', 'RC5', 0x01, 0x0C), ('input', 'Source', 'RC5', 0x01, 0x38), ('mute', 'Mute', 'RC5', 0x01, 0x0D),
+            ('vol_up', 'Volume +', 'RC5', 0x01, 0x10), ('vol_down', 'Volume -', 'RC5', 0x01, 0x11), ('ch_up', 'Channel +', 'RC5', 0x01, 0x20),
+            ('ch_down', 'Channel -', 'RC5', 0x01, 0x21), ('up', 'Up', 'RC5', 0x01, 0x14), ('down', 'Down', 'RC5', 0x01, 0x13),
+            ('left', 'Left', 'RC5', 0x01, 0x15), ('right', 'Right', 'RC5', 0x01, 0x16), ('ok', 'OK', 'RC5', 0x01, 0x35),
+            ('back', 'Back', 'RC5', 0x01, 0x0A), ('exit', 'Exit', 'RC5', 0x01, 0x25), ('home', 'Home', 'RC5', 0x01, 0x2E),
+            ('menu', 'Menu', 'RC5', 0x01, 0x30), ('settings', 'Settings', 'RC5', 0x01, 0x2B), ('info', 'Info', 'RC5', 0x01, 0x12),
+            ('guide', 'Guide', 'RC5', 0x01, 0x2F), ('netflix', 'Netflix', 'RC5', 0x01, 0x27), ('youtube', 'YouTube', 'RC5', 0x01, 0x29),
+            ('prime_video', 'Prime Video', 'RC5', 0x01, 0x3E), ('digit_0', '0', 'RC5', 0x01, 0x00), ('digit_1', '1', 'RC5', 0x01, 0x01),
+            ('digit_2', '2', 'RC5', 0x01, 0x02), ('digit_3', '3', 'RC5', 0x01, 0x03), ('digit_4', '4', 'RC5', 0x01, 0x04),
+            ('digit_5', '5', 'RC5', 0x01, 0x05), ('digit_6', '6', 'RC5', 0x01, 0x06), ('digit_7', '7', 'RC5', 0x01, 0x07),
+            ('digit_8', '8', 'RC5', 0x01, 0x08), ('digit_9', '9', 'RC5', 0x01, 0x09), ('red', 'Red', 'RC5', 0x01, 0x37),
+            ('green', 'Green', 'RC5', 0x01, 0x36), ('yellow', 'Yellow', 'RC5', 0x01, 0x32), ('blue', 'Blue', 'RC5', 0x01, 0x34),
+            ('play', 'Play', 'RC5', 0x01, 0x19), ('pause', 'Pause', 'RC5', 0x01, 0x31), ('stop', 'Stop', 'RC5', 0x01, 0x18),
+            ('ff', 'Fast forward', 'RC5', 0x01, 0x1C), ('rew', 'Rewind', 'RC5', 0x01, 0x1B), ('record', 'Record', 'RC5', 0x01, 0x33),
+            ('subtitle', 'Subtitles', 'RC5', 0x01, 0x1F), ('audio', 'Audio', 'RC5', 0x01, 0x0F), ('aspect', 'Picture size', 'RC5', 0x01, 0x0B),
+            ('sleep', 'Sleep', 'RC5', 0x01, 0x2A), ('list', 'Channel list', 'RC5', 0x01, 0x26), ('last', 'Previous channel', 'RC5', 0x01, 0x22),
+            ('text', 'Teletext', 'RC5', 0x01, 0x3C),
+        ],
+        "evidence": 'Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 16 Flipper-IRDB file(s). Keys without that agreement are left out.',
+        "sources": 'Flipper-IRDB d126fb1 captures (16 files) (factual values only, files not bundled)',
+        "support": 'power 16, input 12, mute 16, vol_up 16, vol_down 16, ch_up 12, ch_down 13, up 15, down 16, left 14, right 15, ok 15, back 14, exit 12, home 5, menu 10, settings 3, info 6, guide 5, netflix 6, youtube 4, prime_video 3, digit_0 12, digit_1 12, digit_2 12, digit_3 11, digit_4 12, digit_5 12, digit_6 11, digit_7 12, digit_8 11, digit_9 11, red 8, green 8, yellow 7, blue 8, play 8, pause 8, stop 6, ff 3, rew 5, record 5, subtitle 5, audio 8, aspect 5, sleep 2, list 2, last 2, text 4',
+    },
+    {
+        "id": 'fullremote-lg-soundbar', "category": 'AUDIO', "brand": 'LG', "models": ['All LG soundbars (full remote)'],
+        "commands": [
+            ('power', 'Power', 'Samsung32', 0x2C, 0x1E), ('input', 'Function', 'Samsung32', 0x2C, 0x8A), ('mute', 'Mute', 'Samsung32', 0x2C, 0x1F),
+            ('vol_up', 'Volume +', 'Samsung32', 0x2C, 0x17), ('vol_down', 'Volume -', 'Samsung32', 0x2C, 0x16), ('settings', 'Settings', 'Samsung32', 0x2C, 0x98),
+            ('info', 'Info', 'Samsung32', 0x2C, 0xA3), ('digit_0', '0', 'Samsung32', 0x2C, 0x4B), ('digit_1', '1', 'Samsung32', 0x2C, 0x41),
+            ('digit_2', '2', 'Samsung32', 0x2C, 0x42), ('digit_3', '3', 'Samsung32', 0x2C, 0x43), ('digit_4', '4', 'Samsung32', 0x2C, 0x44),
+            ('digit_5', '5', 'Samsung32', 0x2C, 0x45), ('digit_6', '6', 'Samsung32', 0x2C, 0x46), ('digit_7', '7', 'Samsung32', 0x2C, 0x47),
+            ('digit_8', '8', 'Samsung32', 0x2C, 0x48), ('digit_9', '9', 'Samsung32', 0x2C, 0x49), ('stop', 'Stop', 'Samsung32', 0x2C, 0x05),
+            ('next', 'Next', 'Samsung32', 0x2C, 0x07), ('prev', 'Previous', 'Samsung32', 0x2C, 0x06), ('sleep', 'Sleep', 'Samsung32', 0x2C, 0xC2),
+            ('play', 'Play / Pause', 'Samsung32', 0x2C, 0x4F),
+        ],
+        "evidence": 'Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 8 Flipper-IRDB file(s) and 2 probonopd/irdb file(s). Keys without that agreement are left out.',
+        "sources": 'Flipper-IRDB d126fb1 captures (8 files); probonopd/irdb 11aa5eb codes/LG (2 files) (factual values only, files not bundled)',
+        "support": 'power 10*, input 4*, mute 10*, vol_up 9*, vol_down 8*, settings 2, info 5*, digit_0 3*, digit_1 3*, digit_2 3*, digit_3 3*, digit_4 3*, digit_5 3*, digit_6 3*, digit_7 3*, digit_8 3*, digit_9 3*, stop 2*, next 3, prev 3, sleep 2*, play 4',
+    },
+    {
+        "id": 'fullremote-sony-soundbar', "category": 'AUDIO', "brand": 'Sony', "models": ['All Sony soundbars (basic remote)'],
+        "commands": [
+            ('power', 'Power', 'SIRC15', 0x30, 0x15), ('input', 'Input', 'SIRC15', 0xB0, 0x69), ('mute', 'Mute', 'SIRC15', 0x30, 0x14),
+            ('vol_up', 'Volume +', 'SIRC15', 0x30, 0x12), ('vol_down', 'Volume -', 'SIRC15', 0x30, 0x13), ('up', 'Up', 'SIRC15', 0xB0, 0x78),
+            ('down', 'Down', 'SIRC15', 0xB0, 0x79), ('ok', 'OK', 'SIRC15', 0x30, 0x0C), ('back', 'Back', 'SIRC20', 0x110, 0x7D),
+            ('audio', 'Sound field', 'SIRC20', 0x110, 0x12),
+        ],
+        "evidence": 'Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 3 Flipper-IRDB file(s). Keys without that agreement are left out.',
+        "sources": 'Flipper-IRDB d126fb1 captures (3 files) (factual values only, files not bundled)',
+        "support": 'power 2, input 2, mute 3, vol_up 3, vol_down 3, up 3, down 3, ok 3, back 2, audio 2',
+    },
+]
+# Apple TV: Apple's NEC variant (address 0x87EE; command byte = function << 1 | parity, high byte = remote id). Values are the
+# Apple_TV_4K_Gen2 capture (remote id 0x8C); every function number is confirmed by probonopd/irdb codes/Apple/Apple TV
+# (MENU 1, RIGHT 3, LEFT 4, UP 5, DOWN 6, ENTER 46, PLAY/PAUSE 47) and by four more Flipper-IRDB Apple TV captures with
+# other remote ids, which share the same parity rule (odd parity over the command and id bytes).
+TV_REMOTES.append({
+    "id": "fullremote-apple-tv", "category": "TV_BOX", "brand": "Apple", "models": ["All Apple TV models (IR remote)"],
+    "commands": [
+        ("up", "Up", "NECext", 0x87EE, 0x8C0A), ("down", "Down", "NECext", 0x87EE, 0x8C0C),
+        ("left", "Left", "NECext", 0x87EE, 0x8C09), ("right", "Right", "NECext", 0x87EE, 0x8C06),
+        ("ok", "Select", "NECext", 0x87EE, 0x8C5C), ("back", "Menu / Back", "NECext", 0x87EE, 0x8C03),
+        ("play", "Play / Pause", "NECext", 0x87EE, 0x8C5F),
+    ],
+    "evidence": "Apple remote protocol (NEC timing, address 0x87EE). Function numbers agree between probonopd/irdb and 5 Flipper-IRDB "
+                "Apple TV captures; values are one complete capture (remote id 0x8C). An Apple TV paired to its own remote may "
+                "ignore other remote ids.",
+    "sources": "Flipper-IRDB d126fb1 Streaming_Devices/Apple captures (5 files); probonopd/irdb 11aa5eb codes/Apple/Apple TV "
+               "(factual values only, files not bundled)",
+    "support": "up 5*, down 5*, left 5*, right 5*, ok 3*, back 5*, play 4*",
+})
+
+
 def broadlink_us(b64):
     b64 = "".join(b64.split())
     if b64.startswith("b64:"):
@@ -442,6 +755,34 @@ def write_led_remotes(out, entries):
         })
 
 
+def write_tv_remotes(out, entries):
+    os.makedirs(os.path.join(out, "generated"), exist_ok=True)
+    for r in TV_REMOTES:
+        cmds = [{"name": n, "label": label, "kind": "parsed", "protocol": p, "address": a, "command": c}
+                for n, label, p, a, c in r["commands"]]
+        names = [c["name"] for c in cmds]
+        frames = [(c["protocol"], c["address"], c["command"]) for c in cmds]
+        assert len(names) == len(set(names)) and len(frames) == len(set(frames)), r["id"] + " has duplicates"
+        protocols = sorted({c["protocol"] for c in cmds})
+        protocol_id = protocols[0] if len(protocols) == 1 else "mixed"
+        name = r["id"] + ".json"
+        with open(os.path.join(out, "generated", name), "w", encoding="utf-8", newline="\n") as f:
+            json.dump({
+                "formatVersion": 1, "id": r["id"], "protocolId": protocol_id, "category": r["category"],
+                "brand": r["brand"], "models": r["models"], "commands": cmds,
+                "source": {"repository": "Universal IR protocol table", "url": FULL_REMOTE_URL,
+                           "license": "Factual protocol values", "attribution": r["sources"]},
+                "verification": "SOURCE_DISCOVERED", "notes": [r["evidence"], "Agreeing files per key (* = also in irdb): " + r["support"]],
+            }, f, ensure_ascii=False, indent=1)
+        # "All ..." titles sort before "Flipper-IRDB ..." / "SmartIR ..." in CatalogDao.codeSetRows (ORDER BY title).
+        entries.append({
+            "id": r["id"], "category": r["category"], "brand": r["brand"], "models": r["models"],
+            "asset": f"catalog/generated/{name}", "format": "canonical", "fingerprintProtocol": protocol_id,
+            "sourceUrl": FULL_REMOTE_URL, "title": r["models"][0], "repository": r["sources"],
+            "license": "Factual protocol values", "evidence": r["evidence"], "extraBrands": r.get("extraBrands", []),
+        })
+
+
 def add_smartir(fork, src, out, entries, taken, report):
     """Copies one SmartIR fork's usable files. `taken` (shared across forks) maps (command hash, manufacturer)
     and (sub, file, manufacturer, models) of files bundled from earlier forks to their fork and id, so later
@@ -599,7 +940,7 @@ LINUX_KEYMAPS = {
     "rc-wetek-hub.c": ("WeTek", ["Hub"], True, {}),
     "rc-wetek-play2.c": ("WeTek", ["Play 2"], True, {}),
     "rc-vega-s9x.c": ("Tronsmart", ["Vega S95", "Vega S96"], True, {}),
-    "rc-geekbox.c": ("GeekBox", ["GeekBox"], True, {}),
+    # rc-geekbox.c is GPL-2.0-only, which cannot be combined with the GPL-3.0 app, so it is not bundled.
     # Commit d5da31f9: "The mouse key has been mapped to KEY_EPG".
     "rc-pine64.c": ("Pine64", ["Pine A64 remote"], True, {"KEY_EPG": ("mouse", "Mouse")}),
     "rc-hisi-poplar.c": ("HiSilicon", ["Poplar board remote (96Boards)"], True, {}),
@@ -765,6 +1106,7 @@ def main(src, out, upstream=None, litinoveweedle=None, flipper=None, linux=None)
     if flipper:
         add_flipper(flipper, out, entries)
     write_led_remotes(out, entries)
+    write_tv_remotes(out, entries)
     if linux:
         add_linux_keymaps(linux, out, entries)
     add_fujicom_candidates(entries)

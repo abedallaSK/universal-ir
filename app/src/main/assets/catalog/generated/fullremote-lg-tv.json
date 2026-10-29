@@ -1,0 +1,423 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-lg-tv",
+ "protocolId": "NEC",
+ "category": "TELEVISION",
+ "brand": "LG",
+ "models": [
+  "All LG TVs (full remote)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 8
+  },
+  {
+   "name": "power_on",
+   "label": "Power on",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 196
+  },
+  {
+   "name": "power_off",
+   "label": "Power off",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 197
+  },
+  {
+   "name": "input",
+   "label": "Input",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 11
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 9
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 2
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 3
+  },
+  {
+   "name": "ch_up",
+   "label": "Channel +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 0
+  },
+  {
+   "name": "ch_down",
+   "label": "Channel -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 1
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 64
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 65
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 7
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 6
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 68
+  },
+  {
+   "name": "back",
+   "label": "Back",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 40
+  },
+  {
+   "name": "exit",
+   "label": "Exit",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 91
+  },
+  {
+   "name": "home",
+   "label": "Home",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 124
+  },
+  {
+   "name": "settings",
+   "label": "Settings",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 67
+  },
+  {
+   "name": "q_menu",
+   "label": "Q.Menu",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 69
+  },
+  {
+   "name": "info",
+   "label": "Info",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 170
+  },
+  {
+   "name": "guide",
+   "label": "Guide",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 171
+  },
+  {
+   "name": "netflix",
+   "label": "Netflix",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 86
+  },
+  {
+   "name": "prime_video",
+   "label": "Prime Video",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 92
+  },
+  {
+   "name": "disney_plus",
+   "label": "Disney+",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 49
+  },
+  {
+   "name": "digit_0",
+   "label": "0",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 16
+  },
+  {
+   "name": "digit_1",
+   "label": "1",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 17
+  },
+  {
+   "name": "digit_2",
+   "label": "2",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 18
+  },
+  {
+   "name": "digit_3",
+   "label": "3",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 19
+  },
+  {
+   "name": "digit_4",
+   "label": "4",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 20
+  },
+  {
+   "name": "digit_5",
+   "label": "5",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 21
+  },
+  {
+   "name": "digit_6",
+   "label": "6",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 22
+  },
+  {
+   "name": "digit_7",
+   "label": "7",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 23
+  },
+  {
+   "name": "digit_8",
+   "label": "8",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 24
+  },
+  {
+   "name": "digit_9",
+   "label": "9",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 25
+  },
+  {
+   "name": "red",
+   "label": "Red",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 114
+  },
+  {
+   "name": "green",
+   "label": "Green",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 113
+  },
+  {
+   "name": "yellow",
+   "label": "Yellow",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 99
+  },
+  {
+   "name": "blue",
+   "label": "Blue",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 97
+  },
+  {
+   "name": "play",
+   "label": "Play",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 176
+  },
+  {
+   "name": "pause",
+   "label": "Pause",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 186
+  },
+  {
+   "name": "stop",
+   "label": "Stop",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 177
+  },
+  {
+   "name": "ff",
+   "label": "Fast forward",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 142
+  },
+  {
+   "name": "rew",
+   "label": "Rewind",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 143
+  },
+  {
+   "name": "record",
+   "label": "Record",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 189
+  },
+  {
+   "name": "subtitle",
+   "label": "Subtitles",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 57
+  },
+  {
+   "name": "audio",
+   "label": "Audio",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 10
+  },
+  {
+   "name": "aspect",
+   "label": "Picture size",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 121
+  },
+  {
+   "name": "sleep",
+   "label": "Sleep",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 14
+  },
+  {
+   "name": "last",
+   "label": "Q.View",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 26
+  },
+  {
+   "name": "text",
+   "label": "Teletext",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 4,
+   "command": 32
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 captures (34 files); probonopd/irdb 11aa5eb codes/LG (13 files) (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 34 Flipper-IRDB file(s) and 13 probonopd/irdb file(s). Keys without that agreement are left out.",
+  "Agreeing files per key (* = also in irdb): power 44*, power_on 2*, power_off 2*, input 36*, mute 41*, vol_up 43*, vol_down 38*, ch_up 37*, ch_down 33*, up 35*, down 34*, left 34*, right 34*, ok 38*, back 29*, exit 23*, home 16*, settings 18*, q_menu 10*, info 21*, guide 15*, netflix 11, prime_video 11, disney_plus 3, digit_0 34*, digit_1 33*, digit_2 33*, digit_3 33*, digit_4 33*, digit_5 34*, digit_6 34*, digit_7 33*, digit_8 33*, digit_9 34*, red 19*, green 18*, yellow 18*, blue 18*, play 21*, pause 21*, stop 16*, ff 14*, rew 11*, record 4*, subtitle 16*, audio 4*, aspect 9*, sleep 8*, last 11*, text 12*"
+ ]
+}

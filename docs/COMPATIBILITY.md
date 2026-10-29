@@ -57,7 +57,7 @@ Catalogue version 4 bundles 343 captured SmartIR AC tables (level 0) from three 
 
 There are 19 code sets converted from `drivers/media/rc/keymaps` (Linux v7.3, GPL-2.0), all at level 0.
 
-- NEC: X96 Max, Tanix TX3 mini, Beelink GS1 and Mini MXIII, Mecool KII Pro and KIII Pro, Videostrong KII Pro, Minix NEO, Khadas VIM/Edge, ODROID, WeTek Hub, Tronsmart Vega S95/S96, GeekBox, HiSilicon Poplar, and Dreambox RC10 and RC20.
+- NEC: X96 Max, Tanix TX3 mini, Beelink GS1 and Mini MXIII, Mecool KII Pro and KIII Pro, Videostrong KII Pro, Minix NEO, Khadas VIM/Edge, ODROID, WeTek Hub, Tronsmart Vega S95/S96, HiSilicon Poplar, and Dreambox RC10 and RC20.
 - NECext: Tanix TX5 max, WeTek Play 2, Pine64.
 
 Every set except the two Dreambox ones is also listed under the brand "Unknown / generic Chinese box".
@@ -76,6 +76,40 @@ The kernel's NEC scancode `0xAACC` becomes NEC address `0xAA`, command `0xCC`. T
 These six sets are also listed under the brand **Generic Android TV**, so the wizard can try them on an unlisted or rebadged Android TV.
 
 **Fujicom** (Israeli budget brand; e.g. FJ-65F Android 9, FJ-43ZX650 Android 11): no IR capture, code table, remote model number or chassis/ODM was found for any Fujicom TV. Searched: Fujicom Israel product pages (no remote or SoC listed; the FJ-65F ships with a wireless air mouse), Flipper-IRDB `d126fb1` (no Fujicom file), IRDB, the three SmartIR repositories, Linux kernel keymaps, LIRC and web/forum searches (only universal-remote setup-code numbers, which identify no protocol). Fujicom is therefore linked to the six Generic Android TV sets as **unverified candidates** (`fujicom-candidate-*`, evidence string starting "UNVERIFIED"). Level 0, brand link unverified. Replace them with a real code set once a Fujicom remote is captured (e.g. with a Flipper Zero or IR receiver). Wi-Fi control (Android TV remote protocol) is the more reliable path for these TVs.
+
+## Full TV / box / soundbar remotes (generated, `fullremote-*`)
+
+Captured SmartIR TV sets often hold only power, volume, channels, digits and sources. Catalogue version 5 adds one generated
+"full remote" per brand, built from factual protocol values. A key is included only when at least two independent captures
+(identical copies counted once) give the same protocol, address and command, and that value outvotes any other value for the
+key 2:1. Sources: Flipper-IRDB `d126fb1` captures and probonopd/irdb `11aa5eb` tables (numbers only, no file bundled). Each
+set stores its per-key agreement counts in its notes. Titles start with "All …", so these sets come first in the brand's
+code-set list and in the setup wizard (`codeSetRows` orders by title).
+
+| Code set | Protocol / address | Keys | Files agreeing (Flipper + irdb) | Also listed under | Level |
+|---|---|---|---|---|---|
+| All Samsung TVs | Samsung32 0x07 | 50 | 55 + 29 | | 1 |
+| All LG TVs | NEC 0x04 | 50 | 34 + 13 | | 1 |
+| All Sony TVs | SIRC 0x01, SIRC15 0x97 / 0x1A / 0xA4 | 47 | 24 + 19 | | 1 |
+| All Philips TVs (RC6) | RC6 0x00 | 45 | 14 + 3 | | 1 |
+| All Toshiba TVs | NEC 0x40 | 35 | 6 + 11 | | 1 |
+| All Hisense TVs | NECext 0xBF00 | 39 | 8 + 0 | | 1 |
+| All Vizio TVs | NEC 0x04 | 37 | 13 + 2 | | 1 |
+| All Hitachi TVs (NEC) | NEC 0x50 | 32 | 2 + 11 | | 1 |
+| All Insignia TVs | NECext 0x0586 | 26 | 2 + 1 | | 1 |
+| All Roku TVs | NECext 0xC7EA | 20 | 14 + 0 | TCL, Onn, Philips, RCA, Sanyo | 1 |
+| All Fire TV Edition TVs (Amazon) | NECext 0x7D02 | 21 | 5 + 0 | Toshiba, Insignia | 1 |
+| All Vestel-made TVs | RC5 0x01 | 49 | 16 + 0 | Bush, Continental Edison, Digihome, EdenWood, Finlux, Gogen, JVC, Medion, Technika, Telefunken, Toshiba | 1 |
+| All Apple TV models | Apple (NECext 0x87EE, remote id 0x8C) | 7 | 5 + 1 | | 1 |
+| All LG soundbars | Samsung32 0x2C | 22 | 8 + 2 | | 1 |
+| All Sony soundbars (basic) | SIRC15 0x30 / 0xB0, SIRC20 0x110 | 10 | 3 + 0 | | 1 |
+
+Keys left out because the sources disagree or only one capture has them include: Samsung Disney+ and discrete power-on; LG
+channel-list key and Apps; Sony subtitles; Toshiba input, exit and guide; Hisense Netflix; Vizio menu; Hitachi back, home and colour
+keys; LG soundbar arrows. Not generated: Panasonic (Kaseikyo) and Thomson / TCL Android TVs (RCA) are not implemented
+protocols; Sharp (Sharp protocol; NECext captures too few), JVC (JVC protocol; JVC's Vestel-made TVs use the Vestel set),
+Grundig / Beko (too few agreeing captures), Haier, Funai, Xiaomi TV / Mi Box (no parsed captures), Nvidia Shield, Samsung
+soundbars, Roku streaming players (captures disagree) and Sanyo (no agreeing arrow / OK keys).
 
 ## Lights / LED strips (category LIGHT)
 

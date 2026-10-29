@@ -1,0 +1,383 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-philips-tv",
+ "protocolId": "RC6",
+ "category": "TELEVISION",
+ "brand": "Philips",
+ "models": [
+  "All Philips TVs (full remote, RC6)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 12
+  },
+  {
+   "name": "input",
+   "label": "Source",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 56
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 13
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 16
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 17
+  },
+  {
+   "name": "ch_up",
+   "label": "Channel +",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 32
+  },
+  {
+   "name": "ch_down",
+   "label": "Channel -",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 33
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 88
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 89
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 90
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 91
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 92
+  },
+  {
+   "name": "back",
+   "label": "Back",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 10
+  },
+  {
+   "name": "home",
+   "label": "Home",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 84
+  },
+  {
+   "name": "menu",
+   "label": "Menu",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 87
+  },
+  {
+   "name": "settings",
+   "label": "Options",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 64
+  },
+  {
+   "name": "info",
+   "label": "Info",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 15
+  },
+  {
+   "name": "guide",
+   "label": "Guide",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 204
+  },
+  {
+   "name": "netflix",
+   "label": "Netflix",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 118
+  },
+  {
+   "name": "youtube",
+   "label": "YouTube",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 121
+  },
+  {
+   "name": "prime_video",
+   "label": "Prime Video",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 186
+  },
+  {
+   "name": "digit_0",
+   "label": "0",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 0
+  },
+  {
+   "name": "digit_1",
+   "label": "1",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 1
+  },
+  {
+   "name": "digit_2",
+   "label": "2",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 2
+  },
+  {
+   "name": "digit_3",
+   "label": "3",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 3
+  },
+  {
+   "name": "digit_4",
+   "label": "4",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 4
+  },
+  {
+   "name": "digit_5",
+   "label": "5",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 5
+  },
+  {
+   "name": "digit_6",
+   "label": "6",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 6
+  },
+  {
+   "name": "digit_7",
+   "label": "7",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 7
+  },
+  {
+   "name": "digit_8",
+   "label": "8",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 8
+  },
+  {
+   "name": "digit_9",
+   "label": "9",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 9
+  },
+  {
+   "name": "red",
+   "label": "Red",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 109
+  },
+  {
+   "name": "green",
+   "label": "Green",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 110
+  },
+  {
+   "name": "yellow",
+   "label": "Yellow",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 111
+  },
+  {
+   "name": "blue",
+   "label": "Blue",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 112
+  },
+  {
+   "name": "play",
+   "label": "Play",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 44
+  },
+  {
+   "name": "pause",
+   "label": "Pause",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 48
+  },
+  {
+   "name": "stop",
+   "label": "Stop",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 49
+  },
+  {
+   "name": "ff",
+   "label": "Fast forward",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 40
+  },
+  {
+   "name": "rew",
+   "label": "Rewind",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 43
+  },
+  {
+   "name": "record",
+   "label": "Record",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 55
+  },
+  {
+   "name": "subtitle",
+   "label": "Subtitles",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 75
+  },
+  {
+   "name": "aspect",
+   "label": "Format",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 245
+  },
+  {
+   "name": "list",
+   "label": "Channel list",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 210
+  },
+  {
+   "name": "text",
+   "label": "Teletext",
+   "kind": "parsed",
+   "protocol": "RC6",
+   "address": 0,
+   "command": 60
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 captures (14 files); probonopd/irdb 11aa5eb codes/Philips (3 files) (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 14 Flipper-IRDB file(s) and 3 probonopd/irdb file(s). Keys without that agreement are left out.",
+  "Agreeing files per key (* = also in irdb): power 17*, input 8, mute 16*, vol_up 16*, vol_down 15*, ch_up 9*, ch_down 9*, up 14*, down 13*, left 13*, right 14*, ok 13*, back 9*, home 9*, menu 2, settings 9*, info 7*, guide 10*, netflix 4, youtube 2, prime_video 2, digit_0 12*, digit_1 12*, digit_2 12*, digit_3 12*, digit_4 12*, digit_5 12*, digit_6 12*, digit_7 12*, digit_8 12*, digit_9 12*, red 10*, green 10*, yellow 11*, blue 11*, play 5*, pause 5, stop 6*, ff 6*, rew 5*, record 5*, subtitle 5*, aspect 4*, list 2, text 9*"
+ ]
+}

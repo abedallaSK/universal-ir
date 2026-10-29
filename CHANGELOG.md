@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.1
+
+### New
+- **Signed release APK** (about 10 MB, optimized) instead of the debug build. Uninstall earlier test builds before installing.
+- **Full TV remotes** with arrows, OK, Home, Back, media and app keys (Netflix, Prime Video…) for Samsung, LG, Sony, Philips, Toshiba, Hisense, Vizio, Hitachi, Insignia, Roku TV, Fire TV Edition, Vestel-made TVs, Apple TV, plus LG and Sony soundbars.
+- **Edit home**: drag tiles, one tap to resize or hide; one-tap size and colour in the long-press menu.
+- **Layout profiles**: save a remote layout under a name and load it later.
+- **Button order** per remote (Smart TV / Classic TV); **IR repeat**; **Check for updates** reads GitHub releases.
+- Press Back twice to exit; temperature unit applies to AC defaults; better tablets, foldables and large text.
+- Project is now **GPL-3.0** with contributing guide, code of conduct, security policy and issue/PR templates.
+
+### Fixed
+- Buttons added in the layout editor with an arrow or OK action were hidden after saving.
+
 ## 0.2.0
 
 ### New

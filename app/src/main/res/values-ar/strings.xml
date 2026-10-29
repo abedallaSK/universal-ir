@@ -618,4 +618,12 @@
     <string name="order_classic">تلفاز كلاسيكي</string>
     <string name="order_smart_desc">الأسهم وموافق أولاً والأرقام في الأسفل</string>
     <string name="order_classic_desc">الأرقام أولاً ثم الصوت والقنوات والأسهم</string>
+    <string name="back_again_exit">اضغط رجوع مرة أخرى للخروج</string>
+    <string name="home_edit">تعديل الرئيسية</string>
+    <string name="home_edit_hint">اسحب للنقل · ⤢ لتغيير الحجم · 👁 للإخفاء</string>
+    <string name="profiles_title">الملفات الشخصية</string>
+    <string name="profiles_name">اسم الملف الشخصي</string>
+    <string name="profiles_empty">لا توجد ملفات محفوظة بعد. احفظ هذا التخطيط لتحميله لاحقًا.</string>
+    <string name="profiles_info">%1$d زر · %2$d أعمدة</string>
+    <string name="profiles_load">تحميل</string>
 </resources>

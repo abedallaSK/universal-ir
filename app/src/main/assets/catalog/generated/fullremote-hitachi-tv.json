@@ -1,0 +1,279 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-hitachi-tv",
+ "protocolId": "NEC",
+ "category": "TELEVISION",
+ "brand": "Hitachi",
+ "models": [
+  "All Hitachi TVs (full remote, NEC)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 23
+  },
+  {
+   "name": "power_on",
+   "label": "Power on",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 62
+  },
+  {
+   "name": "power_off",
+   "label": "Power off",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 63
+  },
+  {
+   "name": "input",
+   "label": "Input",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 9
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 11
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 18
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 21
+  },
+  {
+   "name": "ch_up",
+   "label": "Channel +",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 25
+  },
+  {
+   "name": "ch_down",
+   "label": "Channel -",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 24
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 112
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 113
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 115
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 114
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 46
+  },
+  {
+   "name": "exit",
+   "label": "Exit",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 100
+  },
+  {
+   "name": "menu",
+   "label": "Menu",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 83
+  },
+  {
+   "name": "digit_0",
+   "label": "0",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 12
+  },
+  {
+   "name": "digit_1",
+   "label": "1",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 13
+  },
+  {
+   "name": "digit_2",
+   "label": "2",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 14
+  },
+  {
+   "name": "digit_3",
+   "label": "3",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 15
+  },
+  {
+   "name": "digit_4",
+   "label": "4",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 28
+  },
+  {
+   "name": "digit_5",
+   "label": "5",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 29
+  },
+  {
+   "name": "digit_6",
+   "label": "6",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 30
+  },
+  {
+   "name": "digit_7",
+   "label": "7",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 31
+  },
+  {
+   "name": "digit_8",
+   "label": "8",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 4
+  },
+  {
+   "name": "digit_9",
+   "label": "9",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 5
+  },
+  {
+   "name": "play",
+   "label": "Play",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 70
+  },
+  {
+   "name": "pause",
+   "label": "Pause",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 97
+  },
+  {
+   "name": "ff",
+   "label": "Fast forward",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 71
+  },
+  {
+   "name": "aspect",
+   "label": "Picture size",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 111
+  },
+  {
+   "name": "sleep",
+   "label": "Sleep",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 17
+  },
+  {
+   "name": "last",
+   "label": "Previous channel",
+   "kind": "parsed",
+   "protocol": "NEC",
+   "address": 80,
+   "command": 16
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 captures (2 files); probonopd/irdb 11aa5eb codes/Hitachi (11 files) (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 2 Flipper-IRDB file(s) and 11 probonopd/irdb file(s). Keys without that agreement are left out.",
+  "Agreeing files per key (* = also in irdb): power 9*, power_on 2*, power_off 2*, input 7*, mute 10*, vol_up 7*, vol_down 6*, ch_up 6*, ch_down 5*, up 4*, down 4*, left 3*, right 3*, ok 2*, exit 3*, menu 6*, digit_0 5*, digit_1 5*, digit_2 5*, digit_3 5*, digit_4 5*, digit_5 5*, digit_6 5*, digit_7 5*, digit_8 5*, digit_9 5*, play 2*, pause 2*, ff 2*, aspect 2*, sleep 2*, last 4*"
+ ]
+}

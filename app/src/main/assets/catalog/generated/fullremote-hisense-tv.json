@@ -1,0 +1,335 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-hisense-tv",
+ "protocolId": "NECext",
+ "category": "TELEVISION",
+ "brand": "Hisense",
+ "models": [
+  "All Hisense TVs (full remote)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 61965
+  },
+  {
+   "name": "input",
+   "label": "Input",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 60690
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 61710
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 47940
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 48195
+  },
+  {
+   "name": "ch_up",
+   "label": "Channel +",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 46410
+  },
+  {
+   "name": "ch_down",
+   "label": "Channel -",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 46155
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 59670
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 59415
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 58905
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 59160
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 59925
+  },
+  {
+   "name": "back",
+   "label": "Back",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 46920
+  },
+  {
+   "name": "exit",
+   "label": "Exit",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 41820
+  },
+  {
+   "name": "home",
+   "label": "Home",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 57120
+  },
+  {
+   "name": "settings",
+   "label": "Settings",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 60180
+  },
+  {
+   "name": "info",
+   "label": "Info",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 62220
+  },
+  {
+   "name": "guide",
+   "label": "Guide",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 57885
+  },
+  {
+   "name": "youtube",
+   "label": "YouTube",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 21930
+  },
+  {
+   "name": "digit_0",
+   "label": "0",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 65280
+  },
+  {
+   "name": "digit_1",
+   "label": "1",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 65025
+  },
+  {
+   "name": "digit_2",
+   "label": "2",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 64770
+  },
+  {
+   "name": "digit_3",
+   "label": "3",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 64515
+  },
+  {
+   "name": "digit_4",
+   "label": "4",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 64260
+  },
+  {
+   "name": "digit_5",
+   "label": "5",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 64005
+  },
+  {
+   "name": "digit_6",
+   "label": "6",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 63750
+  },
+  {
+   "name": "digit_7",
+   "label": "7",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 63495
+  },
+  {
+   "name": "digit_8",
+   "label": "8",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 63240
+  },
+  {
+   "name": "digit_9",
+   "label": "9",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 62985
+  },
+  {
+   "name": "red",
+   "label": "Red",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 44370
+  },
+  {
+   "name": "green",
+   "label": "Green",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 44115
+  },
+  {
+   "name": "yellow",
+   "label": "Yellow",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 43860
+  },
+  {
+   "name": "blue",
+   "label": "Blue",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 43605
+  },
+  {
+   "name": "play",
+   "label": "Play",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 22440
+  },
+  {
+   "name": "pause",
+   "label": "Pause",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 22185
+  },
+  {
+   "name": "stop",
+   "label": "Stop",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 42330
+  },
+  {
+   "name": "ff",
+   "label": "Fast forward",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 42585
+  },
+  {
+   "name": "rew",
+   "label": "Rewind",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 42840
+  },
+  {
+   "name": "subtitle",
+   "label": "Subtitles",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 48896,
+   "command": 57375
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 captures (8 files) (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 8 Flipper-IRDB file(s). Keys without that agreement are left out.",
+  "Agreeing files per key (* = also in irdb): power 7, input 8, mute 8, vol_up 8, vol_down 8, ch_up 7, ch_down 7, up 8, down 6, left 7, right 7, ok 7, back 5, exit 3, home 5, settings 4, info 5, guide 5, youtube 5, digit_0 3, digit_1 4, digit_2 4, digit_3 4, digit_4 4, digit_5 4, digit_6 4, digit_7 4, digit_8 4, digit_9 4, red 3, green 3, yellow 3, blue 3, play 3, pause 3, stop 5, ff 4, rew 4, subtitle 4"
+ ]
+}

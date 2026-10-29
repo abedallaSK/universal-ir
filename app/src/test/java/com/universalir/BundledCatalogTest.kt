@@ -139,6 +139,59 @@ class BundledCatalogTest {
         assertEquals("NECext", tx5.protocol); assertEquals(0x4040L, tx5.address); assertEquals(0xB24DL, tx5.command)
     }
 
+    private val arrows = listOf(CommandNames.UP, CommandNames.DOWN, CommandNames.LEFT, CommandNames.RIGHT, CommandNames.OK)
+
+    private fun firstTimings(set: com.universalir.ir.format.CanonicalCodeSet, name: String): IntArray {
+        val r = CanonicalRenderer.render(set.commands.single { it.name == name })
+        assertTrue("${set.id}/$name", r is EncodeResult.Success)
+        return (r as EncodeResult.Success).transmission.messages.first().pattern.timings()
+    }
+
+    @Test
+    fun samsungAndLgFullRemotesHaveSmartKeysAndArrows() {
+        val samsung = load("fullremote-samsung-tv").codeSet!!
+        val lg = load("fullremote-lg-tv").codeSet!!
+        for (set in listOf(samsung, lg)) {
+            val names = set.commands.map { it.name }
+            assertTrue(set.id, names.containsAll(arrows + listOf(CommandNames.POWER, CommandNames.BACK, CommandNames.HOME, CommandNames.NETFLIX, CommandNames.MUTE, CommandNames.VOL_UP, "digit_0", "digit_9")))
+            assertTrue(set.id, set.commands.all { CanonicalRenderer.render(it) is EncodeResult.Success })
+        }
+        for (n in listOf(CommandNames.POWER, CommandNames.UP, CommandNames.OK, CommandNames.NETFLIX)) {
+            val s = firstTimings(samsung, n)
+            assertEquals(67, s.size); assertEquals(4500, s[0]); assertEquals(4500, s[1])
+            val l = firstTimings(lg, n)
+            assertEquals(67, l.size); assertEquals(9000, l[0]); assertEquals(4500, l[1])
+        }
+        fun cmd(set: com.universalir.ir.format.CanonicalCodeSet, n: String) = set.commands.single { it.name == n }
+        assertEquals("Samsung32", cmd(samsung, CommandNames.POWER).protocol)
+        assertEquals(0x07L, cmd(samsung, CommandNames.POWER).address); assertEquals(0x02L, cmd(samsung, CommandNames.POWER).command)
+        assertEquals(0x79L, cmd(samsung, CommandNames.HOME).command); assertEquals(0xF3L, cmd(samsung, CommandNames.NETFLIX).command)
+        assertEquals(0x68L, cmd(samsung, CommandNames.OK).command); assertEquals(0x58L, cmd(samsung, CommandNames.BACK).command)
+        assertEquals("NEC", cmd(lg, CommandNames.POWER).protocol)
+        assertEquals(0x04L, cmd(lg, CommandNames.POWER).address); assertEquals(0x08L, cmd(lg, CommandNames.POWER).command)
+        assertEquals(0x44L, cmd(lg, CommandNames.OK).command); assertEquals(0x56L, cmd(lg, CommandNames.NETFLIX).command)
+        assertEquals(0x7CL, cmd(lg, CommandNames.HOME).command); assertEquals(0x28L, cmd(lg, CommandNames.BACK).command)
+    }
+
+    @Test
+    fun fullRemotesLoadEncodeAndSortFirstInTheirBrand() {
+        val full = catalog.entries.filter { it.id.startsWith("fullremote-") }
+        assertTrue(full.size >= 10)
+        for (e in full) {
+            assertEquals(e.id, "Factual protocol values", e.license)
+            val set = load(e.id).codeSet!!
+            assertEquals(e.id, DeviceCategory.valueOf(e.category), set.category)
+            val names = set.commands.map { it.name }
+            assertEquals(e.id, names.size, names.toSet().size)
+            assertEquals(e.id, 0, load(e.id).rejected.size)
+            set.commands.forEach { assertTrue("${e.id}/${it.name}", CanonicalRenderer.render(it) is EncodeResult.Success) }
+            if (e.category != DeviceCategory.AUDIO.name) assertTrue(e.id, names.containsAll(arrows))
+            assertTrue(e.id, CommandNames.POWER in names || e.id == "fullremote-apple-tv")
+            // CatalogDao.codeSetRows orders by title: "All ..." precedes "Flipper-IRDB ..." and "SmartIR ...".
+            assertTrue(e.id, e.title!!.startsWith("All ") && e.title!! < "Flipper-IRDB" && e.title!! < "SmartIR")
+        }
+    }
+
     @Test
     fun lightsTestWithOnAndGenericBoxBrandGroupsBoxes() {
         assertEquals(CommandNames.POWER_ON, CodeTester.testCommandOrder(DeviceCategory.LIGHT).first())

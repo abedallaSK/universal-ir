@@ -618,4 +618,12 @@
     <string name="order_classic">Classic TV</string>
     <string name="order_smart_desc">Arrows and OK first, numbers at the bottom</string>
     <string name="order_classic_desc">Numbers first, then volume, channels and arrows</string>
+    <string name="back_again_exit">Press back again to exit</string>
+    <string name="home_edit">Edit home</string>
+    <string name="home_edit_hint">Drag to move · tap ⤢ to resize · tap 👁 to hide</string>
+    <string name="profiles_title">Profiles</string>
+    <string name="profiles_name">Profile name</string>
+    <string name="profiles_empty">No saved profiles yet. Save this layout to load it again later.</string>
+    <string name="profiles_info">%1$d buttons · %2$d columns</string>
+    <string name="profiles_load">Load</string>
 </resources>
