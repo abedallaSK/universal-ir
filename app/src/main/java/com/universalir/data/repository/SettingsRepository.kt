@@ -24,7 +24,7 @@ enum class TemperatureUnit { CELSIUS, FAHRENHEIT }
 enum class HomeLayout { GRID, LIST }
 
 /** App accent colour; DYNAMIC uses the wallpaper colours (Android 12+) and falls back to BLUE. */
-enum class AccentTheme { BLUE, TEAL, VIOLET, ORANGE, ROSE, GREEN, DYNAMIC }
+enum class AccentTheme { BLUE, TEAL, VIOLET, ORANGE, ROSE, GREEN, DYNAMIC, CUSTOM }
 
 /** Which kinds of remote the app offers. AUTO = infrared only when the phone has an IR emitter. */
 enum class ConnectionMode { AUTO, BOTH, WIFI_ONLY }
@@ -56,6 +56,8 @@ data class AppSettings(
     val pureBlack: Boolean = false,
     /** How many times each button press is transmitted (1..5). */
     val irRepeat: Int = 1,
+    /** ARGB of the user's own accent, used when accent == CUSTOM. */
+    val customAccent: Long = 0xFF2F6BFF,
 ) {
     /** Whether infrared features are shown, given whether this phone has a usable emitter. */
     fun irEnabled(hasEmitter: Boolean): Boolean = when (connectionMode) {
@@ -92,6 +94,7 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
         val accent = stringPreferencesKey("accent")
         val pureBlack = booleanPreferencesKey("pure_black")
         val irRepeat = intPreferencesKey("ir_repeat")
+        val customAccent = androidx.datastore.preferences.core.longPreferencesKey("custom_accent")
     }
 
     val settings: Flow<AppSettings> = context.dataStore.data.map { it.toSettings() }
@@ -123,6 +126,7 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
         accent = enumOr(this[K.accent], AccentTheme.BLUE),
         pureBlack = this[K.pureBlack] ?: false,
         irRepeat = this[K.irRepeat] ?: 1,
+        customAccent = this[K.customAccent] ?: 0xFF2F6BFF,
     )
 
     private inline fun <reified E : Enum<E>> enumOr(name: String?, default: E): E =
@@ -142,6 +146,7 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
 
     suspend fun setIrRepeat(v: Int) = context.dataStore.edit { it[K.irRepeat] = v.coerceIn(1, 5) }
     suspend fun setAccent(v: AccentTheme) = context.dataStore.edit { it[K.accent] = v.name }
+    suspend fun setCustomAccent(argb: Long) = context.dataStore.edit { it[K.customAccent] = argb; it[K.accent] = AccentTheme.CUSTOM.name }
     suspend fun setPureBlack(v: Boolean) = context.dataStore.edit { it[K.pureBlack] = v }
     suspend fun setConnectionMode(v: ConnectionMode) = context.dataStore.edit { it[K.connectionMode] = v.name }
     suspend fun setRemoteStyle(v: com.universalir.domain.model.RemoteStyle) = context.dataStore.edit { it[K.remoteStyle] = v.name }

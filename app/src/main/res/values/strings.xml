@@ -604,4 +604,11 @@
     <string name="set_ir_repeat">Send each press</string>
     <string name="set_ir_repeat_desc">Send more times if a device misses presses</string>
     <string name="onb_personal_title">Make it yours</string>
+    <string name="lang_search">Search languages</string>
+    <string name="lang_system_desc">Use the phone\'s language</string>
+    <string name="lang_change">Tap to change</string>
+    <string name="color_custom">Custom color</string>
+    <string name="color_hue">Hue</string>
+    <string name="color_saturation">Saturation</string>
+    <string name="color_brightness">Brightness</string>
 </resources>

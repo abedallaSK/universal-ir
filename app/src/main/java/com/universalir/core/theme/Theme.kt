@@ -13,6 +13,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -167,7 +168,10 @@ fun ThemeMode.isDark(): Boolean = when (this) {
 }
 
 /** Accent palettes: (light primary, light container, dark primary, dark container). */
-private fun accentColors(a: AccentTheme): List<Color> = when (a) {
+private fun accentColors(a: AccentTheme, custom: Color): List<Color> = when (a) {
+    // A user colour: the colour itself in light mode, a lighter tint in dark mode, containers mixed from it.
+    AccentTheme.CUSTOM -> listOf(custom, androidx.compose.ui.graphics.lerp(custom, Color.White, 0.82f),
+        androidx.compose.ui.graphics.lerp(custom, Color.White, 0.35f), androidx.compose.ui.graphics.lerp(custom, Color.Black, 0.55f))
     AccentTheme.BLUE, AccentTheme.DYNAMIC -> listOf(Palette.Accent, Color(0xFFDCE5FF), Palette.AccentDark, Color(0xFF1D3A8A))
     AccentTheme.TEAL -> listOf(Color(0xFF00897B), Color(0xFFCDEFEA), Color(0xFF5EDDD6), Color(0xFF0B4F4B))
     AccentTheme.VIOLET -> listOf(Color(0xFF6D4AFF), Color(0xFFE6DEFF), Color(0xFFB9A7FF), Color(0xFF3F2A9E))
@@ -178,14 +182,16 @@ private fun accentColors(a: AccentTheme): List<Color> = when (a) {
 
 /** Colour scheme for a theme choice: accent on the base palette, wallpaper colours, optional pure black. */
 @Composable
-fun appColorScheme(dark: Boolean, accent: AccentTheme, pureBlack: Boolean): ColorScheme {
+fun appColorScheme(dark: Boolean, accent: AccentTheme, pureBlack: Boolean, custom: Color = Palette.Accent): ColorScheme {
     val context = androidx.compose.ui.platform.LocalContext.current
     val base = if (accent == AccentTheme.DYNAMIC && android.os.Build.VERSION.SDK_INT >= 31) {
         if (dark) androidx.compose.material3.dynamicDarkColorScheme(context) else androidx.compose.material3.dynamicLightColorScheme(context)
     } else {
-        val (lp, lc, dp, dc) = accentColors(accent)
-        if (dark) DarkColors.copy(primary = dp, primaryContainer = dc, onPrimaryContainer = Color.White, surfaceTint = dp, inversePrimary = lp)
-        else LightColors.copy(primary = lp, primaryContainer = lc, onPrimaryContainer = Color(0xFF101418), surfaceTint = lp, inversePrimary = dp)
+        val (lp, lc, dp, dc) = accentColors(accent, custom)
+        // Text on the primary colour must stay readable for any custom colour.
+        fun on(c: Color) = if (c.luminance() > 0.5f) Color(0xFF101418) else Color.White
+        if (dark) DarkColors.copy(primary = dp, onPrimary = on(dp), primaryContainer = dc, onPrimaryContainer = Color.White, surfaceTint = dp, inversePrimary = lp)
+        else LightColors.copy(primary = lp, onPrimary = on(lp), primaryContainer = lc, onPrimaryContainer = Color(0xFF101418), surfaceTint = lp, inversePrimary = dp)
     }
     if (!dark || !pureBlack) return base
     // AMOLED: true black backgrounds, slightly lifted cards so surfaces stay distinguishable.
@@ -202,6 +208,7 @@ fun UniversalIrTheme(
     buttonSize: ButtonSize = ButtonSize.MEDIUM,
     accent: AccentTheme = AccentTheme.BLUE,
     pureBlack: Boolean = false,
+    customAccent: Long = 0xFF2F6BFF,
     content: @Composable () -> Unit,
 ) {
     val dark = themeMode.isDark()
@@ -213,6 +220,6 @@ fun UniversalIrTheme(
         ButtonSize.LARGE -> RemoteMetrics(76.dp, 252.dp, 30.dp)
     }
     CompositionLocalProvider(LocalStatusColors provides status, LocalSpacing provides Spacing(), LocalRemoteMetrics provides metrics) {
-        MaterialTheme(colorScheme = appColorScheme(dark, accent, pureBlack), typography = AppTypography, shapes = AppShapes, content = content)
+        MaterialTheme(colorScheme = appColorScheme(dark, accent, pureBlack, Color(customAccent)), typography = AppTypography, shapes = AppShapes, content = content)
     }
 }

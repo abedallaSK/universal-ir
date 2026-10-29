@@ -604,4 +604,11 @@
     <string name="set_ir_repeat">إرسال كل ضغطة</string>
     <string name="set_ir_repeat_desc">أرسل مرات أكثر إذا لم يستجب الجهاز لبعض الضغطات</string>
     <string name="onb_personal_title">اجعله على ذوقك</string>
+    <string name="lang_search">البحث عن لغة</string>
+    <string name="lang_system_desc">استخدام لغة الهاتف</string>
+    <string name="lang_change">اضغط للتغيير</string>
+    <string name="color_custom">لون مخصص</string>
+    <string name="color_hue">درجة اللون</string>
+    <string name="color_saturation">التشبع</string>
+    <string name="color_brightness">السطوع</string>
 </resources>

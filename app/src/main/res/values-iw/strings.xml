@@ -604,4 +604,11 @@
     <string name="set_ir_repeat">שליחת כל לחיצה</string>
     <string name="set_ir_repeat_desc">לשלוח יותר פעמים אם מכשיר מפספס לחיצות</string>
     <string name="onb_personal_title">בהתאמה אישית</string>
+    <string name="lang_search">חיפוש שפה</string>
+    <string name="lang_system_desc">שימוש בשפת הטלפון</string>
+    <string name="lang_change">הקישו לשינוי</string>
+    <string name="color_custom">צבע מותאם</string>
+    <string name="color_hue">גוון</string>
+    <string name="color_saturation">רוויה</string>
+    <string name="color_brightness">בהירות</string>
 </resources>

@@ -752,4 +752,11 @@ S = {
     "set_ir_repeat": ('Send each press', 'إرسال كل ضغطة', 'שליחת כל לחיצה'),
     "set_ir_repeat_desc": ('Send more times if a device misses presses', 'أرسل مرات أكثر إذا لم يستجب الجهاز لبعض الضغطات', 'לשלוח יותר פעמים אם מכשיר מפספס לחיצות'),
     "onb_personal_title": ('Make it yours', 'اجعله على ذوقك', 'בהתאמה אישית'),
+    "lang_search": ('Search languages', 'البحث عن لغة', 'חיפוש שפה'),
+    "lang_system_desc": ("Use the phone's language", 'استخدام لغة الهاتف', 'שימוש בשפת הטלפון'),
+    "lang_change": ('Tap to change', 'اضغط للتغيير', 'הקישו לשינוי'),
+    "color_custom": ('Custom color', 'لون مخصص', 'צבע מותאם'),
+    "color_hue": ('Hue', 'درجة اللون', 'גוון'),
+    "color_saturation": ('Saturation', 'التشبع', 'רוויה'),
+    "color_brightness": ('Brightness', 'السطوع', 'בהירות'),
 }
