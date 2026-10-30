@@ -154,7 +154,7 @@ class WifiDiscoveryViewModel @Inject constructor(
     }
 
     /** Saves (or refreshes) a discovered device and returns its id for navigation. */
-    suspend fun save(d: DiscoveredDevice): String { store.upsert(d.toSaved()); return d.id }
+    suspend fun save(d: DiscoveredDevice): String = store.upsert(d.toSaved())
 
     /** "Add by IP": checks the address for the chosen type and saves it. Returns the new id. */
     suspend fun addByIp(kind: ManualKind, ip: String, name: String): WifiResult<String> =

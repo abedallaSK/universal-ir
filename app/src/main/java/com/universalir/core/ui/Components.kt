@@ -277,7 +277,7 @@ fun RemoteButton(
                 .background(bg)
                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = if (emphasized) 0f else 0.6f), CircleShape)
                 .combinedClickable(interactionSource = interaction, indication = ripple(), role = Role.Button,
-                    onClick = { feedback.click(); onClick() }, onLongClick = onLongClick)
+                    onClick = { feedback.click(); onClick() }, onLongClick = rememberHoldRepeat(interaction, onLongClick))
                 .semantics { contentDescription = label },
             contentAlignment = Alignment.Center,
         ) {
@@ -354,4 +354,27 @@ fun Modifier.readableWidth(max: androidx.compose.ui.unit.Dp = 640.dp): Modifier 
 fun CappedFontScale(max: Float = 1.3f, content: @Composable () -> Unit) {
     val d = androidx.compose.ui.platform.LocalDensity.current
     CompositionLocalProvider(androidx.compose.ui.platform.LocalDensity provides androidx.compose.ui.unit.Density(d.density, d.fontScale.coerceAtMost(max)), content = content)
+}
+
+/** Repeat interval while a remote key is held, close to a physical remote's repeat rate. */
+const val HOLD_REPEAT_MS = 110L
+
+/**
+ * Turns a long press into a held key: once the long press is recognised, [onRepeat] runs right away and then
+ * every [HOLD_REPEAT_MS] until the finger lifts — what a physical remote does (fast volume, "hold OK" menus,
+ * hold-power). Returns the callback to pass as `onLongClick`, or null when there is nothing to repeat.
+ */
+@Composable
+fun rememberHoldRepeat(interaction: androidx.compose.foundation.interaction.InteractionSource, onRepeat: (() -> Unit)?): (() -> Unit)? {
+    val pressed by interaction.collectIsPressedAsState()
+    var holding by remember { mutableStateOf(false) }
+    val latest by androidx.compose.runtime.rememberUpdatedState(onRepeat)
+    val haptics = androidx.compose.ui.platform.LocalHapticFeedback.current
+    LaunchedEffect(holding, pressed) {
+        if (holding && pressed) {
+            haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+            while (true) { latest?.invoke(); kotlinx.coroutines.delay(HOLD_REPEAT_MS) }
+        } else holding = false
+    }
+    return if (onRepeat == null) null else ({ holding = true })
 }

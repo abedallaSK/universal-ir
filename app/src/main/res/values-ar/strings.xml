@@ -132,6 +132,9 @@
     <string name="trial_skip_next">انتقل إلى المجموعة التالية</string>
     <string name="trial_none_left">كانت هذه آخر مجموعة في القائمة. جرّب المعالج مع كل الطرازات أو علامة أخرى أو استورد ملفًا.</string>
     <string name="action_close">إغلاق</string>
+    <string name="action_update">تحديث</string>
+    <string name="remote_upgrade_title">%1$d أزرار إضافية متاحة</string>
+    <string name="remote_upgrade_body">انتقل إلى الريموت الكامل. يبقى ترتيبك وإعداداتك كما هي.</string>
     <string name="wizard_title">ابحث عن الكود</string>
     <string name="wizard_intro">وجّه الهاتف نحو الجهاز. أرسل اختبارًا واحدًا ثم أخبرنا إن استجاب الجهاز (صوت، ضوء، تغيّر الشاشة).</string>
     <string name="wizard_progress">المرشح %1$d من %2$d</string>
@@ -140,6 +143,15 @@
     <string name="wizard_ac_note">في المكيّفات يشغّل الاختبار الوحدة بوضع التبريد عند نحو 24 °م. يمكنك إطفاؤها بعد ذلك.</string>
     <string name="wizard_send_test">إرسال اختبار</string>
     <string name="wizard_question">هل استجاب الجهاز؟</string>
+    <string name="fav_pick_key">أضف زرًا إلى المفضلة</string>
+    <string name="fav_pick_hint">اضغط على زر لإضافته إلى المفضلة</string>
+    <string name="test_point">وجّه الهاتف نحو الجهاز ثم اضغط</string>
+    <string name="codeset_keys">%1$d زر</string>
+    <string name="codeset_test_hint">اضغط للاختبار</string>
+    <string name="test_other_key">اختبر بزر آخر</string>
+    <string name="test_again">أرسل مرة أخرى</string>
+    <string name="test_yes">نعم، يعمل</string>
+    <string name="test_no_next">لا، الكود التالي</string>
     <string name="wizard_yes">نعم، استجاب</string>
     <string name="wizard_no">لا استجابة</string>
     <string name="wizard_finish">إنهاء</string>
@@ -523,6 +535,11 @@
     <string name="ac_mode_title">الوضع</string>
     <string name="ac_features">الميزات</string>
     <string name="ac_quick">إعدادات سريعة</string>
+    <string name="ac_preset_add">حفظ الحالي</string>
+    <string name="ac_preset_new">إعداد سريع جديد</string>
+    <string name="ac_preset_name">الاسم</string>
+    <string name="ac_preset_saves">يحفظ الوضع ودرجة الحرارة والمروحة والميزات الحالية.</string>
+    <string name="ac_preset_update">استبدال بالإعدادات الحالية</string>
     <string name="ac_preset_cool">تبريد</string>
     <string name="ac_preset_sleep">نوم</string>
     <string name="ac_preset_warm">تدفئة</string>
@@ -548,6 +565,7 @@
     <string name="layout_redo">إعادة</string>
     <string name="layout_tidy">إزالة الفراغات</string>
     <string name="layout_insert_row">إدراج صف</string>
+    <string name="layout_delete_row">حذف الصف</string>
     <string name="ac_off_hint">تُحفظ التغييرات وتُرسل عند التشغيل</string>
     <string name="style_title">نمط الأزرار</string>
     <string name="style_all">استخدامه لكل أجهزة التحكم</string>
@@ -620,7 +638,10 @@
     <string name="order_classic_desc">الأرقام أولاً ثم الصوت والقنوات والأسهم</string>
     <string name="back_again_exit">اضغط رجوع مرة أخرى للخروج</string>
     <string name="home_edit">تعديل الرئيسية</string>
-    <string name="home_edit_hint">اسحب للنقل · ⤢ لتغيير الحجم · 👁 للإخفاء</string>
+    <string name="home_edit_drag">اضغط واسحب</string>
+    <string name="home_edit_resize">اضغط لتغيير الحجم</string>
+    <string name="home_edit_hide">إخفاء</string>
+    <string name="home_hidden">مخفية من الرئيسية</string>
     <string name="profiles_title">الملفات الشخصية</string>
     <string name="profiles_name">اسم الملف الشخصي</string>
     <string name="profiles_empty">لا توجد ملفات محفوظة بعد. احفظ هذا التخطيط لتحميله لاحقًا.</string>

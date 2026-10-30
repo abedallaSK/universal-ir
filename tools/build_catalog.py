@@ -35,7 +35,7 @@ import subprocess
 import sys
 
 # Bump when catalogue content changes; CatalogSeeder re-seeds when this (or its own logic) changes.
-CATALOG_VERSION = 5
+CATALOG_VERSION = 7
 
 # Importer / validator limits (ir-core Importers.kt and PatternValidator.kt).
 MAX_FILE_CHARS = 2_000_000
@@ -588,6 +588,31 @@ TV_REMOTES.append({
     "support": "up 5*, down 5*, left 5*, right 5*, ok 3*, back 5*, play 4*",
 })
 
+
+# yes (Israel) satellite box, older remote: probonopd/irdb 11aa5eb codes/YES/Unknown_YES (LIRC-derived, NEC device 132,
+# subdevice 60), mapped as IrdbCsvImporter.mapIrdb does (NECext, command byte + its inverse). Function 51 is a second "0"
+# in the source and is left out because it is ambiguous. Single source: the Flipper-IRDB copy is converted from the same file.
+def _yes(n, label, f):
+    return (n, label, "NECext", 0x3C84, f | ((f ^ 0xFF) << 8))
+
+
+TV_REMOTES.append({
+    "id": "fullremote-yes-stb", "category": "TV_BOX", "brand": "yes", "models": ["yes satellite box (older remote)"],
+    "commands": [
+        _yes("power", "Power", 33), _yes("mute", "Mute", 37), _yes("vol_up", "Volume +", 38), _yes("vol_down", "Volume -", 39),
+        _yes("ch_up", "Channel +", 53), _yes("ch_down", "Channel -", 55), _yes("up", "Up", 43), _yes("down", "Down", 36),
+        _yes("left", "Left", 52), _yes("right", "Right", 59), _yes("ok", "OK", 58), _yes("exit", "Exit", 49),
+        _yes("info", "Info", 46), _yes("yes_key", "yes", 35), _yes("help", "Help (?)", 44), _yes("mosaic", "Mosaic", 54),
+        _yes("plus", "+", 60), _yes("messages", "Messages", 67), _yes("orange", "Orange", 62), _yes("green", "Green", 45),
+        _yes("yellow", "Yellow", 61), _yes("blue", "Blue", 63), _yes("key_i", "I", 64), _yes("key_a", "A", 65), _yes("key_b", "B", 66),
+        _yes("digit_0", "0", 47), _yes("digit_1", "1", 48), _yes("digit_2", "2", 41), _yes("digit_3", "3", 57), _yes("digit_4", "4", 40),
+        _yes("digit_5", "5", 32), _yes("digit_6", "6", 56), _yes("digit_7", "7", 50), _yes("digit_8", "8", 42), _yes("digit_9", "9", 34),
+    ],
+    "evidence": "One remote table from LIRC (via probonopd/irdb), NEC protocol, device 132 / subdevice 60. Not cross-checked by a "
+                "second independent capture; newer yes boxes (yes+, yes Max) may use another remote.",
+    "sources": "probonopd/irdb 11aa5eb codes/YES/Unknown_YES (LIRC-derived; factual values only, file not bundled)",
+    "support": "all keys 1 (irdb)",
+})
 
 def broadlink_us(b64):
     b64 = "".join(b64.split())

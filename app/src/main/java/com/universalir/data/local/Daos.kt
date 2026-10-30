@@ -113,6 +113,8 @@ interface CatalogDao {
     fun codeSetRows(modelId: String?, brandId: String?, category: String?, protocolId: String?, limit: Int = 200): Flow<List<CodeSetRow>>
 
     @Query("SELECT * FROM code_sets WHERE id = :id") suspend fun codeSet(id: String): CodeSetEntity?
+    @Query("SELECT * FROM code_sets WHERE id LIKE 'fullremote-%' AND brandId = :brandId AND category = :category LIMIT 1")
+    suspend fun fullRemoteFor(brandId: String, category: String): CodeSetEntity?
     @Query("SELECT * FROM code_sets WHERE contentHash = :hash LIMIT 1") suspend fun codeSetByHash(hash: String): CodeSetEntity?
     @Query("SELECT DISTINCT protocolId FROM code_sets ORDER BY protocolId") fun protocols(): Flow<List<String>>
 

@@ -57,6 +57,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.universalir.R
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.foundation.lazy.itemsIndexed
 import com.universalir.core.theme.LocalStatusColors
 import com.universalir.core.ui.AppScaffold
 import com.universalir.core.ui.LtrText
@@ -281,6 +286,10 @@ class ModelSelectionViewModel @Inject constructor(
         }
     }
 
+    fun pickTrialKey(command: String) {
+        trial.update { s -> s?.copy(test = s.test?.copy(command = command), awaitingAnswer = false, outcome = null) }
+    }
+
     fun turnAcOffAfterTrial() = viewModelScope.launch { trial.value?.test?.let { tester.turnAcOff(it) } }
 
     /** Records the answer. "No" moves to the next code set in the list but does not send it yet. */
@@ -389,8 +398,9 @@ fun ModelSelectionScreen(
                         actionLabel = stringResource(R.string.add_import), onAction = onBack)
                 }
             }
-            items(sets.orEmpty(), key = { it.codeSetId + it.modelId }) { s ->
-                CodeSetCard(s, onClick = { pending = s; warned = false }, onInfo = { onCodeSet(s.codeSetId) }, onTest = { vm.startTrial(s) })
+            itemsIndexed(sets.orEmpty(), key = { _, it -> it.codeSetId + it.modelId }) { i, s ->
+                CodeSetCard(s, onClick = { pending = s; warned = false }, onInfo = { onCodeSet(s.codeSetId) }, onTest = { vm.startTrial(s) },
+                    index = i + 1, showBrand = vm.brandId == ANY_BRAND)
             }
         }
     }
@@ -405,6 +415,7 @@ fun ModelSelectionScreen(
                 // The user just confirmed it works on their device, so no unverified warning.
                 onYes = { vm.answerTrial(true) { worked -> pending = worked; warned = true } },
                 onNo = { vm.answerTrial(false) {} },
+                onPickKey = vm::pickTrialKey,
                 onTurnOff = { vm.turnAcOffAfterTrial() },
                 onClose = vm::closeTrial,
             )
@@ -427,76 +438,74 @@ fun ModelSelectionScreen(
 }
 
 @Composable
-fun CodeSetCard(s: CodeSetSummary, onClick: () -> Unit, onInfo: () -> Unit, onTest: (() -> Unit)? = null) {
-    Surface(onClick = onClick, shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surface, modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
-        Column(Modifier.fillMaxWidth().padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text(s.brandName, style = MaterialTheme.typography.titleSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    LtrText(s.remoteModel?.takeIf { it.isNotBlank() } ?: s.modelNumber, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
-                }
-                TextButton(onClick = onInfo) { Icon(Icons.Filled.Info, stringResource(R.string.action_details)) }
+fun CodeSetCard(s: CodeSetSummary, onClick: () -> Unit, onInfo: () -> Unit, onTest: (() -> Unit)? = null, index: Int? = null, showBrand: Boolean = false) {
+    // With a Test action, tapping the card tests it (the common first step); "Use" saves it.
+    Surface(onClick = onTest ?: onClick, shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surfaceContainerLow,
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 5.dp)) {
+        Row(Modifier.padding(start = 14.dp, end = 8.dp, top = 12.dp, bottom = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Box(Modifier.size(40.dp).clip(RoundedCornerShape(12.dp)).background(MaterialTheme.colorScheme.secondaryContainer), contentAlignment = Alignment.Center) {
+                if (index != null) Text("$index", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSecondaryContainer)
+                else Icon(com.universalir.core.ui.AppIcons.Remote, null, Modifier.size(22.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer)
             }
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                val model = s.remoteModel?.takeIf { it.isNotBlank() } ?: s.modelNumber
+                LtrText(if (showBrand) "${s.brandName} $model" else model, style = MaterialTheme.typography.titleMedium, maxLines = 2)
+                val details = listOfNotNull(
+                    s.commandCount.takeIf { it > 0 }?.let { stringResource(R.string.codeset_keys, it) },
+                    s.protocolId.takeIf { it.isNotBlank() && it != "raw" && it != "smartir_table" },
+                ).joinToString(" · ")
+                if (details.isNotEmpty()) LtrText(details, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
+            }
+            IconButton(onClick = onInfo) { Icon(Icons.Outlined.Info, stringResource(R.string.action_details), tint = MaterialTheme.colorScheme.onSurfaceVariant) }
             if (onTest != null) {
-                Spacer(Modifier.height(10.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(onClick = onTest) {
-                        Icon(Icons.AutoMirrored.Filled.Send, null, Modifier.size(18.dp))
-                        Spacer(Modifier.width(6.dp))
-                        Text(stringResource(R.string.trial_test))
-                    }
-                    Button(onClick = onClick) { Text(stringResource(R.string.trial_use)) }
-                }
+                FilledTonalIconButton(onClick = onTest) { Icon(com.universalir.core.ui.AppIcons.Power, stringResource(R.string.trial_test), Modifier.size(20.dp)) }
+                Spacer(Modifier.width(4.dp))
+                Button(onClick = onClick, contentPadding = PaddingValues(horizontal = 16.dp)) { Text(stringResource(R.string.trial_use)) }
             }
         }
     }
 }
 
 /** Test-before-adding: send one safe command, then the user says whether the device reacted. */
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun TrialDialog(
     t: TrialState, position: Int, total: Int, isAc: Boolean,
     onSend: () -> Unit, onYes: () -> Unit, onNo: () -> Unit, onTurnOff: () -> Unit, onClose: () -> Unit,
+    onPickKey: (String) -> Unit = {},
 ) {
-    val context = LocalContext.current
-    AlertDialog(
-        onDismissRequest = onClose,
-        title = { Text(stringResource(R.string.trial_title)) },
-        text = {
-            Column(Modifier.verticalScroll(rememberScrollState())) {
-                if (total > 0 && position > 0) Text(stringResource(R.string.wizard_progress, position, total), style = MaterialTheme.typography.labelMedium)
-                Text(t.summary.brandName, style = MaterialTheme.typography.titleSmall)
-                LtrText(t.summary.modelNumber, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Spacer(Modifier.height(8.dp))
-                t.test?.let { Text(stringResource(R.string.wizard_test_command, it.label), style = MaterialTheme.typography.bodyMedium) }
-                t.error?.let { Text(stringResource(R.string.wizard_load_error, it), color = MaterialTheme.colorScheme.error) }
-                t.outcome?.let {
-                    Spacer(Modifier.height(6.dp))
-                    Text(describeOutcome(context, it), style = MaterialTheme.typography.bodySmall,
-                        color = if (it is SendOutcome.Success) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error)
+    androidx.compose.material3.ModalBottomSheet(onDismissRequest = onClose,
+        sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(bottom = 24.dp)) {
+            Text(stringResource(R.string.trial_title), style = MaterialTheme.typography.titleLarge)
+            Row(Modifier.fillMaxWidth().padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text(t.summary.brandName, style = MaterialTheme.typography.titleSmall)
+                    LtrText(t.summary.modelNumber, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-                if (t.noMore) Text(stringResource(R.string.trial_none_left), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
-                Spacer(Modifier.height(12.dp))
-                when {
-                    t.awaitingAnswer -> {
-                        Text(stringResource(R.string.wizard_question), style = MaterialTheme.typography.titleMedium)
-                        Spacer(Modifier.height(8.dp))
-                        Button(onClick = onYes, Modifier.fillMaxWidth()) { Text(stringResource(R.string.trial_yes_save)) }
-                        OutlinedButton(onClick = onNo, Modifier.fillMaxWidth()) { Text(stringResource(R.string.trial_no_next)) }
-                        TextButton(onClick = onSend, Modifier.fillMaxWidth(), enabled = !t.sending) { Text(stringResource(R.string.action_retry)) }
-                        if (isAc && t.test?.acState != null) TextButton(onClick = onTurnOff, Modifier.fillMaxWidth()) { Text(stringResource(R.string.wizard_turn_off)) }
-                    }
-                    t.noMore -> {}
-                    t.error != null -> OutlinedButton(onClick = onNo, Modifier.fillMaxWidth()) { Text(stringResource(R.string.trial_skip_next)) }
-                    else -> {
-                        Button(onClick = onSend, Modifier.fillMaxWidth(), enabled = t.test != null && !t.sending) { Text(stringResource(R.string.wizard_send_test)) }
-                        OutlinedButton(onClick = onNo, Modifier.fillMaxWidth()) { Text(stringResource(R.string.trial_skip_next)) }
-                    }
-                }
+                if (total > 0 && position > 0) LtrText("$position / $total", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-        },
-        confirmButton = { TextButton(onClick = onClose) { Text(stringResource(R.string.action_close)) } },
-    )
+            if (total > 1 && position > 0) androidx.compose.material3.LinearProgressIndicator(progress = { position.toFloat() / total },
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp))
+            Spacer(Modifier.height(20.dp))
+            val test = t.test
+            val cs = test?.set as? com.universalir.domain.model.LoadedCodeSet.CommandSet
+            val labelOf: (String) -> String = { n -> cs?.codes?.commands?.firstOrNull { it.name == n }?.label ?: n }
+            TestPanel(
+                keyLabel = test?.let { it.command?.let(labelOf) ?: it.label },
+                keys = cs?.let { testKeyChoices(it.commandNames, labelOf) }.orEmpty(), selectedKey = test?.command, onPickKey = onPickKey,
+                canSend = test != null, sending = t.sending, awaiting = t.awaitingAnswer, outcome = t.outcome,
+                onSend = onSend, onYes = onYes, onNo = onNo,
+                yesLabel = stringResource(R.string.test_yes), noLabel = stringResource(R.string.test_no_next),
+            )
+            t.error?.let { Text(stringResource(R.string.wizard_load_error, it), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 12.dp)) }
+            if (t.noMore) Text(stringResource(R.string.trial_none_left), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 12.dp))
+            if (isAc && t.awaitingAnswer && test?.acState != null) TextButton(onClick = onTurnOff, Modifier.fillMaxWidth()) { Text(stringResource(R.string.wizard_turn_off)) }
+            if (!t.awaitingAnswer && !t.noMore) TextButton(onClick = onNo, Modifier.fillMaxWidth().padding(top = 8.dp)) { Text(stringResource(R.string.trial_skip_next)) }
+        }
+    }
 }
 
 @Composable

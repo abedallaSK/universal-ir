@@ -24,9 +24,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AspectRatio
-import androidx.compose.material.icons.filled.DragIndicator
-import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.foundation.shape.RoundedCornerShape
+import com.universalir.core.ui.AppIcons
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -136,6 +135,7 @@ fun DeviceTile(
 fun ArrangeGrid(
     devices: List<SavedDeviceEntity>, rooms: List<RoomEntity>, onOrderChanged: (List<Long>) -> Unit, modifier: Modifier = Modifier,
     onResize: ((SavedDeviceEntity) -> Unit)? = null, onHide: ((SavedDeviceEntity) -> Unit)? = null,
+    hidden: List<SavedDeviceEntity> = emptyList(), onShow: ((SavedDeviceEntity) -> Unit)? = null,
 ) {
     // The grid owns only the order; tiles are drawn from the live device rows so resizes show at once.
     val items = remember(devices.map { it.id }.toSet()) { devices.map { it.id }.toMutableStateList() }
@@ -151,7 +151,7 @@ fun ArrangeGrid(
             detectDragGesturesAfterLongPress(
                 onDragStart = { pos ->
                     state.itemAt(pos)?.let { info ->
-                        dragging = info.key as Long; start = info.offset.toOffset(); delta = Offset.Zero
+                        dragging = info.key as? Long ?: return@let; start = info.offset.toOffset(); delta = Offset.Zero
                         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                     }
                 },
@@ -161,7 +161,7 @@ fun ArrangeGrid(
                     delta += amount
                     val current = state.layoutInfo.visibleItemsInfo.firstOrNull { it.key == key } ?: return@detectDragGesturesAfterLongPress
                     val center = start + delta + Offset(current.size.width / 2f, current.size.height / 2f)
-                    val target = state.itemAt(center)?.takeIf { it.key != key } ?: return@detectDragGesturesAfterLongPress
+                    val target = state.itemAt(center)?.takeIf { it.key != key && it.key is Long } ?: return@detectDragGesturesAfterLongPress
                     val from = items.indexOf(key)
                     val to = items.indexOf(target.key as Long)
                     if (from >= 0 && to >= 0) {
@@ -195,15 +195,58 @@ fun ArrangeGrid(
                         }
                     },
             ) {
-                DeviceTile(d, rooms, onClick = { onResize?.invoke(d) }, onLongClick = null)
-                // Edit controls: one tap to resize (cycles the four sizes) or hide from home.
-                Row(Modifier.align(Alignment.TopEnd).padding(6.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    if (onResize != null) EditBadge(Icons.Filled.AspectRatio, androidx.compose.ui.res.stringResource(com.universalir.R.string.device_tile_size)) { onResize(d) }
-                    if (onHide != null) EditBadge(Icons.Filled.VisibilityOff, androidx.compose.ui.res.stringResource(com.universalir.R.string.device_hide_home)) { onHide(d) }
+                DeviceTile(d, rooms, onClick = { onResize?.invoke(d) }, onLongClick = null,
+                    modifier = Modifier.border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = if (isDragged) 1f else 0.35f), RoundedCornerShape(24.dp)))
+                // Edit controls: tap the size pill to cycle the four sizes, the eye to hide from home.
+                Row(Modifier.align(Alignment.TopEnd).padding(8.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                    if (onResize != null) SizePill(d.settings().tileSize) { onResize(d) }
+                    if (onHide != null) EditBadge(AppIcons.EyeOff, stringResource(R.string.device_hide_home)) { onHide(d) }
                 }
-                Icon(Icons.Filled.DragIndicator, null, Modifier.align(Alignment.BottomEnd).padding(10.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                Icon(AppIcons.Grip, stringResource(R.string.home_edit_drag), Modifier.align(Alignment.BottomEnd).padding(10.dp).size(20.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
+        if (hidden.isNotEmpty() && onShow != null) {
+            item(key = "hidden_header", span = { GridItemSpan(maxLineSpan) }) {
+                Row(Modifier.fillMaxWidth().padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(AppIcons.EyeOff, null, Modifier.size(18.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.home_hidden), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+            items(hidden, key = { "h${it.id}" }, span = { GridItemSpan(maxLineSpan) }) { d ->
+                Surface(shape = RoundedCornerShape(18.dp), color = MaterialTheme.colorScheme.surfaceContainerLow, modifier = Modifier.fillMaxWidth().animateItem()) {
+                    Row(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        DeviceAvatar(lookOf(categoryOf(d.category), d.settings()), size = 36.dp)
+                        Spacer(Modifier.width(12.dp))
+                        Text(d.displayName, Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.bodyLarge)
+                        androidx.compose.material3.FilledTonalButton(onClick = { onShow(d) }) {
+                            Icon(AppIcons.Eye, null, Modifier.size(18.dp)); Spacer(Modifier.width(6.dp)); Text(stringResource(R.string.action_show))
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Current tile size with the resize glyph; each tap moves to the next size. */
+@Composable
+private fun SizePill(size: TileSize, onClick: () -> Unit) {
+    val label = stringResource(when (size) {
+        TileSize.SMALL -> R.string.size_small; TileSize.MEDIUM -> R.string.size_medium
+        TileSize.WIDE -> R.string.size_wide; TileSize.LARGE -> R.string.size_large
+    })
+    val desc = stringResource(R.string.device_tile_size) + ": " + label
+    Row(
+        Modifier.height(34.dp).clip(RoundedCornerShape(17.dp)).background(MaterialTheme.colorScheme.primaryContainer)
+            .combinedClickable(onClick = onClick, role = Role.Button).semantics { contentDescription = desc }
+            .padding(horizontal = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(AppIcons.Resize, null, Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer)
+        Spacer(Modifier.width(6.dp))
+        Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
     }
 }
 
@@ -217,7 +260,7 @@ private fun IntOffset.toOffset() = Offset(x.toFloat(), y.toFloat())
 private fun EditBadge(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, onClick: () -> Unit) {
     Box(
         Modifier.size(34.dp).clip(androidx.compose.foundation.shape.CircleShape).background(MaterialTheme.colorScheme.primaryContainer)
-            .combinedClickable(onClick = onClick).semantics { contentDescription = label },
+            .combinedClickable(onClick = onClick, role = Role.Button).semantics { contentDescription = label },
         contentAlignment = Alignment.Center,
     ) { Icon(icon, null, Modifier.size(18.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer) }
 }

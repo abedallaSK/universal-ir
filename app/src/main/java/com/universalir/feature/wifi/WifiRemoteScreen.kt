@@ -131,7 +131,8 @@ sealed interface WifiConn {
     data object Connecting : WifiConn
     data object Pairing : WifiConn
     data object Connected : WifiConn
-    data class Offline(val error: WifiError, val detail: String? = null) : WifiConn
+    /** [reachable] = the device answered but the connection failed for another reason (not "offline"). */
+    data class Offline(val error: WifiError, val detail: String? = null, val reachable: Boolean = false) : WifiConn
 }
 
 /** Android TV code pairing, shown in place of the remote until the TV accepts this phone. */
@@ -161,6 +162,7 @@ class WifiRemoteViewModel @Inject constructor(
     handle: SavedStateHandle,
     private val store: WifiDeviceStore,
     private val controllers: WifiControllers,
+    private val discovery: com.universalir.data.wifi.WifiDiscovery,
 ) : ViewModel() {
     private val wifiId: String = handle["wifiId"] ?: ""
     private val _ui = MutableStateFlow(WifiRemoteUi())
@@ -193,13 +195,46 @@ class WifiRemoteViewModel @Inject constructor(
         connectJob = viewModelScope.launch {
             _ui.update { it.copy(conn = WifiConn.Connecting) }
             tv?.let { c ->
-                val r = c.connect { _ui.update { it.copy(conn = WifiConn.Pairing) } }
+                var r = c.connect { _ui.update { it.copy(conn = WifiConn.Pairing) } }
+                // Not answering at the saved address: it may have a new IP from the router. Find it and retry once.
+                if (r.isUnreachable()) {
+                    relocate()
+                    r = tv!!.connect { _ui.update { it.copy(conn = WifiConn.Pairing) } }
+                }
                 _ui.update { it.copy(conn = r.toConn()) }
                 if (r is WifiResult.Err && r.error == WifiError.NOT_PAIRED && c is AndroidTvController && _ui.value.pairing == null) startPairing()
                 if (r is WifiResult.Ok) _ui.update { it.copy(pairing = null) }
             }
-            if (ac != null) refreshAc()
+            if (ac != null) refreshAc(allowRelocate = true)
         }
+    }
+
+    private fun WifiResult<*>.isUnreachable() = this is WifiResult.Err && (error == WifiError.UNREACHABLE || error == WifiError.TIMEOUT)
+
+    /**
+     * Scans the LAN for the saved device (same MAC, else same kind and name) and, if it now has another IP,
+     * stores the new address and rebuilds the controllers. Returns true when it moved.
+     */
+    private suspend fun relocate(): Boolean {
+        val d = _ui.value.device ?: return false
+        if (d.protocol.cloud || !discovery.onLan()) return false
+        _ui.update { it.copy(conn = WifiConn.Connecting) }
+        var found: com.universalir.data.wifi.DiscoveredDevice? = null
+        kotlinx.coroutines.withTimeoutOrNull(7_000) {
+            discovery.scan(6_000).collect { list ->
+                found = list.firstOrNull { !d.mac.isNullOrBlank() && it.mac.equals(d.mac, ignoreCase = true) }
+                    ?: list.firstOrNull { it.kind == d.kind && it.protocol == d.protocol && it.name.equals(d.name, ignoreCase = true) }
+                if (found != null) throw kotlinx.coroutines.CancellationException("found")
+            }
+        }
+        val f = found ?: return false
+        if (f.ip == d.ip) return false
+        store.update(d.id) { it.copy(ip = f.ip, port = if (f.port != 0) f.port else it.port) }
+        val moved = store.device(d.id) ?: return false
+        tv?.close(); ac?.close()
+        tv = controllers.tv(moved); ac = controllers.ac(moved)
+        _ui.update { it.copy(device = moved) }
+        return true
     }
 
     fun press(key: TvKey) {
@@ -296,9 +331,11 @@ class WifiRemoteViewModel @Inject constructor(
         }
     }
 
-    private suspend fun refreshAc() {
-        val c = ac ?: return
-        when (val r = c.read()) {
+    private suspend fun refreshAc(allowRelocate: Boolean = false) {
+        var c = ac ?: return
+        var r = c.read()
+        if (allowRelocate && r.isUnreachable() && relocate()) { c = ac ?: return; r = c.read() }
+        when (r) {
             is WifiResult.Ok -> _ui.update { it.copy(ac = r.value, conn = WifiConn.Connected) }
             is WifiResult.Err -> _ui.update { it.copy(conn = r.toConn()) }
         }
@@ -310,7 +347,7 @@ class WifiRemoteViewModel @Inject constructor(
 
     private fun WifiResult<*>.toConn(): WifiConn = when (this) {
         is WifiResult.Ok -> WifiConn.Connected
-        is WifiResult.Err -> WifiConn.Offline(error, detail)
+        is WifiResult.Err -> WifiConn.Offline(error, detail, reachable = error != WifiError.UNREACHABLE && error != WifiError.TIMEOUT)
     }
 
     override fun onCleared() { tv?.close(); ac?.close(); pairingSession?.close() }
@@ -354,7 +391,8 @@ fun WifiRemoteScreen(onBack: () -> Unit, vm: WifiRemoteViewModel = hiltViewModel
                         val ac = ui.ac
                         when {
                             ac != null -> AcRemote(ac, vm)
-                            conn is WifiConn.Offline -> StatusPanel(Icons.Filled.WifiOff, WifiText.offline, errorText(d, conn.error, conn.detail),
+                            conn is WifiConn.Offline -> StatusPanel(Icons.Filled.WifiOff, if (conn.reachable) WifiText.problem else WifiText.offline,
+                                errorText(d, conn.error, conn.detail),
                                 actionLabel = WifiText.retry, onAction = vm::connect)
                             else -> Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(32.dp)) {
                                 CircularProgressIndicator()
@@ -407,7 +445,7 @@ private fun ConnectionChip(conn: WifiConn) {
     val (color, text) = when (conn) {
         WifiConn.Connected -> s.success to WifiText.connected
         WifiConn.Connecting, WifiConn.Pairing -> s.warning to WifiText.connecting
-        is WifiConn.Offline -> s.error to WifiText.offline
+        is WifiConn.Offline -> if (conn.reachable) s.warning to WifiText.problem else s.error to WifiText.offline
     }
     Surface(shape = RoundedCornerShape(50), color = color.copy(alpha = 0.14f)) {
         Row(Modifier.padding(horizontal = 12.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {

@@ -51,6 +51,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Button
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -210,20 +213,24 @@ fun HomeScreen(nav: NavController, vm: HomeViewModel = hiltViewModel()) {
         val shownAll = all.orEmpty().filter { it.settings().showOnHome }
         if (arranging && all != null) {
             Column(Modifier.fillMaxSize().padding(padding)) {
-                Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 8.dp, top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f)) {
-                        Text(stringResource(R.string.home_edit), style = MaterialTheme.typography.headlineSmall)
-                        Text(stringResource(R.string.home_edit_hint), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                    TextButton(onClick = { pendingOrder?.let { vm.reorderShown(it, all) }; pendingOrder = null; arranging = false }) {
-                        Icon(Icons.Filled.Check, null); Spacer(Modifier.width(6.dp)); Text(stringResource(R.string.action_done))
+                Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 16.dp, top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.home_edit), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
+                    Button(onClick = { pendingOrder?.let { vm.reorderShown(it, all) }; pendingOrder = null; arranging = false }) {
+                        Icon(Icons.Filled.Check, null, Modifier.size(18.dp)); Spacer(Modifier.width(6.dp)); Text(stringResource(R.string.action_done))
                     }
                 }
-                Spacer(Modifier.height(12.dp))
+                // How-to as icon chips instead of a sentence.
+                Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    EditHint(AppIcons.Grip, R.string.home_edit_drag)
+                    EditHint(AppIcons.Resize, R.string.home_edit_resize)
+                    EditHint(AppIcons.EyeOff, R.string.home_edit_hide)
+                }
                 ArrangeGrid(shownAll, rooms, onOrderChanged = { pendingOrder = it },
                     onResize = { d -> val st = d.settings(); val lk = lookOf(com.universalir.domain.model.categoryOf(d.category), st)
                         vm.setLook(d.id, lk.iconKey, lk.colorIndex, st.tileSize.next()) },
-                    onHide = { d -> vm.setShowOnHome(d.id, false) })
+                    onHide = { d -> vm.setShowOnHome(d.id, false) },
+                    hidden = all.filter { !it.settings().showOnHome }, onShow = { d -> vm.setShowOnHome(d.id, true) })
             }
             return@Scaffold
         }
@@ -587,5 +594,16 @@ private fun SheetLine(icon: androidx.compose.ui.graphics.vector.ImageVector, tex
         Icon(icon, null, tint = tint ?: MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.width(20.dp))
         Text(text, style = MaterialTheme.typography.bodyLarge, color = tint ?: MaterialTheme.colorScheme.onSurface)
+    }
+}
+
+@Composable
+private fun EditHint(icon: androidx.compose.ui.graphics.vector.ImageVector, text: Int) {
+    Surface(shape = RoundedCornerShape(50), color = MaterialTheme.colorScheme.secondaryContainer) {
+        Row(Modifier.padding(horizontal = 12.dp, vertical = 7.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(icon, null, Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer)
+            Spacer(Modifier.width(6.dp))
+            Text(stringResource(text), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSecondaryContainer)
+        }
     }
 }

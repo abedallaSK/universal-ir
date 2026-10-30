@@ -38,6 +38,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.material3.TextButton
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -148,6 +152,7 @@ data class AcUiState(
     val outcome: SendOutcome? = null,
     val protocolId: String? = null,
     val protocolLevel: VerificationLevel? = null,
+    val presets: List<com.universalir.domain.model.AcPreset> = emptyList(),
 )
 
 @HiltViewModel
@@ -196,6 +201,7 @@ class AcRemoteViewModel @Inject constructor(
                     state = coerce(initial, caps, temps), lastSent = ds.lastSentAcState, protocolId = protocolId,
                     protocolLevel = (set as? LoadedCodeSet.AcProtocolSet)?.protocol?.info?.verification,
                     offAt = ds.acOffAt?.takeIf { it > System.currentTimeMillis() },
+                    presets = ds.acPresets,
                 )
                 devices.markUsed(d.id)
             }
@@ -205,6 +211,18 @@ class AcRemoteViewModel @Inject constructor(
     private fun capabilitiesOf(set: LoadedCodeSet) = AcStateRules.capabilitiesOf(set)
 
     private fun coerce(s: AcState, caps: AcCapabilities, temps: ((AcMode, FanSpeed) -> List<Int>)?): AcState = AcStateRules.coerce(s, caps, temps)
+
+    fun savePreset(name: String) = editPresets { it + com.universalir.domain.model.AcPreset(java.util.UUID.randomUUID().toString(), name.trim(), _ui.value.state.copy(power = true)) }
+    fun renamePreset(id: String, name: String) = editPresets { l -> l.map { if (it.id == id) it.copy(name = name.trim()) else it } }
+    fun replacePreset(id: String) = editPresets { l -> l.map { if (it.id == id) it.copy(state = _ui.value.state.copy(power = true)) else it } }
+    fun deletePreset(id: String) = editPresets { l -> l.filterNot { it.id == id } }
+    fun applyPreset(p: com.universalir.domain.model.AcPreset) = update { p.state.copy(power = true, modelSpecificFields = it.modelSpecificFields + p.state.modelSpecificFields) }
+
+    private fun editPresets(change: (List<com.universalir.domain.model.AcPreset>) -> List<com.universalir.domain.model.AcPreset>) {
+        deviceSettings = deviceSettings.copy(acPresets = change(deviceSettings.acPresets))
+        _ui.update { it.copy(presets = deviceSettings.acPresets) }
+        viewModelScope.launch { devices.saveSettings(deviceId, deviceSettings) }
+    }
 
     fun update(debounce: Boolean = false, change: (AcState) -> AcState) {
         val ui = _ui.value
@@ -310,7 +328,7 @@ fun AcRemoteScreen(onBack: () -> Unit, onDiagnostics: (String?) -> Unit, vm: AcR
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 private fun AcContent(ui: AcUiState, expanded: Boolean, unit: TemperatureUnit, vm: AcRemoteViewModel, modifier: Modifier) {
     val caps = ui.caps!!
@@ -415,21 +433,48 @@ private fun AcContent(ui: AcUiState, expanded: Boolean, unit: TemperatureUnit, v
             if (AcMode.HEAT in caps.modes) add(Preset(R.string.ac_preset_warm, AppIcons.Sun, AcMode.HEAT, 22, sleep = false))
             if (AcMode.DRY in caps.modes) add(Preset(R.string.ac_preset_dry, AppIcons.Drop, AcMode.DRY, 24, sleep = false))
         }
-        if (presets.isNotEmpty()) AcSection(stringResource(R.string.ac_quick)) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        var naming by remember { mutableStateOf<com.universalir.domain.model.AcPreset?>(null) }
+        var adding by remember { mutableStateOf(false) }
+        var menuFor by remember { mutableStateOf<com.universalir.domain.model.AcPreset?>(null) }
+        AcSection(stringResource(R.string.ac_quick)) {
+            // Built-in presets, then the user's own, then "Save current"; scrolls sideways when there are many.
+            Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 presets.forEach { p ->
-                    Surface(
-                        onClick = { vm.update { it.copy(power = true, mode = p.mode, temperatureCelsius = p.temp, sleep = if (AcFeature.SLEEP in caps.features) p.sleep else it.sleep) } },
-                        shape = MaterialTheme.shapes.large, color = acModeColor(p.mode).copy(alpha = 0.14f), modifier = Modifier.weight(1f),
-                    ) {
-                        Column(Modifier.padding(vertical = 12.dp, horizontal = 6.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(p.icon, null, tint = acModeColor(p.mode), modifier = Modifier.size(22.dp))
-                            Spacer(Modifier.height(4.dp))
-                            Text(stringResource(p.label), style = MaterialTheme.typography.labelLarge, maxLines = 1)
-                            Text(com.universalir.core.ui.formatTemp(p.temp, unit), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
+                    PresetTile(stringResource(p.label), p.icon, acModeColor(p.mode), com.universalir.core.ui.formatTemp(p.temp, unit),
+                        onClick = { vm.update { it.copy(power = true, mode = p.mode, temperatureCelsius = p.temp, sleep = if (AcFeature.SLEEP in caps.features) p.sleep else it.sleep) } })
+                }
+                ui.presets.forEach { p ->
+                    PresetTile(p.name, modeIcon(p.state.mode), acModeColor(p.state.mode), com.universalir.core.ui.formatTemp(p.state.temperatureCelsius, unit),
+                        onClick = { vm.applyPreset(p) }, onLongClick = { menuFor = p })
+                }
+                Surface(onClick = { adding = true }, shape = MaterialTheme.shapes.large, color = Color.Transparent,
+                    border = androidx.compose.foundation.BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant), modifier = Modifier.width(96.dp)) {
+                    Column(Modifier.padding(vertical = 12.dp, horizontal = 6.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(AppIcons.Plus, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(22.dp))
+                        Spacer(Modifier.height(4.dp))
+                        Text(stringResource(R.string.ac_preset_add), style = MaterialTheme.typography.labelLarge, maxLines = 2,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center, color = MaterialTheme.colorScheme.primary)
                     }
                 }
+            }
+        }
+        if (adding) PresetNameDialog(stringResource(R.string.ac_preset_new), "", showHint = true, onDismiss = { adding = false }) { vm.savePreset(it); adding = false }
+        naming?.let { p -> PresetNameDialog(stringResource(R.string.action_rename), p.name, showHint = false, onDismiss = { naming = null }) { vm.renamePreset(p.id, it); naming = null } }
+        menuFor?.let { p ->
+            androidx.compose.material3.ModalBottomSheet(onDismissRequest = { menuFor = null }) {
+                Text(p.name, style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp))
+                listOf(
+                    Triple(AppIcons.Edit, R.string.action_rename) { naming = p },
+                    Triple(AppIcons.Refresh, R.string.ac_preset_update) { vm.replacePreset(p.id) },
+                    Triple(AppIcons.Trash, R.string.action_delete) { vm.deletePreset(p.id) },
+                ).forEach { (icon, label, action) ->
+                    androidx.compose.material3.ListItem(
+                        headlineContent = { Text(stringResource(label)) }, leadingContent = { Icon(icon, null) },
+                        colors = androidx.compose.material3.ListItemDefaults.colors(containerColor = Color.Transparent),
+                        modifier = Modifier.clickable { menuFor = null; action() },
+                    )
+                }
+                Spacer(Modifier.height(24.dp))
             }
         }
 
@@ -626,4 +671,38 @@ private fun OffTimer(offAt: Long?, onSet: (Int?) -> Unit) {
                 leadingIcon = { Icon(AppIcons.Timer, null, Modifier.size(18.dp)) })
         }
     }
+}
+
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+@Composable
+private fun PresetTile(name: String, icon: ImageVector, color: Color, temp: String, onClick: () -> Unit, onLongClick: (() -> Unit)? = null) {
+    Column(
+        Modifier.width(96.dp).clip(MaterialTheme.shapes.large).background(color.copy(alpha = 0.14f))
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
+            .padding(vertical = 12.dp, horizontal = 6.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(icon, null, tint = color, modifier = Modifier.size(22.dp))
+        Spacer(Modifier.height(4.dp))
+        Text(name, style = MaterialTheme.typography.labelLarge, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+        Text(temp, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+}
+
+@Composable
+private fun PresetNameDialog(title: String, initial: String, showHint: Boolean, onDismiss: () -> Unit, onSave: (String) -> Unit) {
+    var name by remember { mutableStateOf(initial) }
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = {
+            Column {
+                if (showHint) Text(stringResource(R.string.ac_preset_saves), style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(bottom = 12.dp))
+                androidx.compose.material3.OutlinedTextField(name, { name = it.take(24) }, label = { Text(stringResource(R.string.ac_preset_name)) }, singleLine = true)
+            }
+        },
+        confirmButton = { TextButton(onClick = { onSave(name) }, enabled = name.isNotBlank()) { Text(stringResource(R.string.action_save)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } },
+    )
 }

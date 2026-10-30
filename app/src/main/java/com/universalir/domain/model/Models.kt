@@ -19,6 +19,10 @@ data class DeviceSettings(
     val acState: AcState? = null,
     /** Last state actually transmitted successfully; used by toggle-power protocols. */
     val lastSentAcState: AcState? = null,
+    /** User-made AC quick settings (any number), shown after the built-in ones. */
+    val acPresets: List<AcPreset> = emptyList(),
+    /** Full-remote code set the user said "no" to, so the offer isn't shown again. */
+    val upgradeDismissed: String? = null,
     val customButtons: List<CustomButton> = emptyList(),
     /** Key into deviceIconChoices; null means the category default. */
     val icon: String? = null,
@@ -35,6 +39,8 @@ data class DeviceSettings(
     /** Show the D-pad as a swipe touchpad. */
     val touchpad: Boolean = false,
     val layoutOrder: LayoutOrder = LayoutOrder.SMART,
+    /** Keys added in the last editor session, highlighted once on the remote so they're easy to find. */
+    val newKeyIds: Set<String> = emptySet(),
     /** Named layouts the user saved for this remote. */
     val layoutProfiles: List<LayoutProfile> = emptyList(),
 ) {
@@ -180,3 +186,7 @@ object LicensePolicy {
     private val exportable = setOf("MIT", "CC0-1.0", "Unlicense", "Apache-2.0", "BSD-3-Clause", "USER", "LGPL-2.1", "GPL-2.0")
     fun allowsExport(license: String) = exportable.any { license.startsWith(it) }
 }
+
+/** A named AC setup the user saved from the AC screen; applying it always switches the unit on. */
+@Serializable
+data class AcPreset(val id: String, val name: String, val state: AcState)

@@ -132,6 +132,9 @@
     <string name="trial_skip_next">Skip to the next code set</string>
     <string name="trial_none_left">That was the last code set in this list. Try the wizard with all models, another brand, or import a file.</string>
     <string name="action_close">Close</string>
+    <string name="action_update">Update</string>
+    <string name="remote_upgrade_title">%1$d more buttons available</string>
+    <string name="remote_upgrade_body">Switch to the full remote. Your layout and settings stay.</string>
     <string name="wizard_title">Find your code</string>
     <string name="wizard_intro">Point the phone at the device. Send one test, then tell us whether the device reacted (beep, light, screen change).</string>
     <string name="wizard_progress">Candidate %1$d of %2$d</string>
@@ -140,6 +143,15 @@
     <string name="wizard_ac_note">For air conditioners the test turns the unit ON in cool mode at about 24 °C. You can turn it off again afterwards.</string>
     <string name="wizard_send_test">Send test</string>
     <string name="wizard_question">Did the device respond?</string>
+    <string name="fav_pick_key">Add a button to favorites</string>
+    <string name="fav_pick_hint">Tap a button to add it to favorites</string>
+    <string name="test_point">Point the phone at the device, then tap</string>
+    <string name="codeset_keys">%1$d buttons</string>
+    <string name="codeset_test_hint">Tap to test</string>
+    <string name="test_other_key">Test with another key</string>
+    <string name="test_again">Send again</string>
+    <string name="test_yes">Yes, it works</string>
+    <string name="test_no_next">No, next code</string>
     <string name="wizard_yes">Yes, it responded</string>
     <string name="wizard_no">No response</string>
     <string name="wizard_finish">Finish</string>
@@ -523,6 +535,11 @@
     <string name="ac_mode_title">Mode</string>
     <string name="ac_features">Features</string>
     <string name="ac_quick">Quick settings</string>
+    <string name="ac_preset_add">Save current</string>
+    <string name="ac_preset_new">New quick setting</string>
+    <string name="ac_preset_name">Name</string>
+    <string name="ac_preset_saves">Saves the current mode, temperature, fan and features.</string>
+    <string name="ac_preset_update">Replace with current</string>
     <string name="ac_preset_cool">Cool</string>
     <string name="ac_preset_sleep">Sleep</string>
     <string name="ac_preset_warm">Warm</string>
@@ -548,6 +565,7 @@
     <string name="layout_redo">Redo</string>
     <string name="layout_tidy">Remove gaps</string>
     <string name="layout_insert_row">Insert row</string>
+    <string name="layout_delete_row">Delete row</string>
     <string name="ac_off_hint">Changes are saved and sent when you turn it on</string>
     <string name="style_title">Button style</string>
     <string name="style_all">Use for all remotes</string>
@@ -620,7 +638,10 @@
     <string name="order_classic_desc">Numbers first, then volume, channels and arrows</string>
     <string name="back_again_exit">Press back again to exit</string>
     <string name="home_edit">Edit home</string>
-    <string name="home_edit_hint">Drag to move · tap ⤢ to resize · tap 👁 to hide</string>
+    <string name="home_edit_drag">Hold &amp; drag</string>
+    <string name="home_edit_resize">Tap to resize</string>
+    <string name="home_edit_hide">Hide</string>
+    <string name="home_hidden">Hidden from home</string>
     <string name="profiles_title">Profiles</string>
     <string name="profiles_name">Profile name</string>
     <string name="profiles_empty">No saved profiles yet. Save this layout to load it again later.</string>

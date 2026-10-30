@@ -110,7 +110,7 @@ class SamsungController(private val device: SavedWifiDevice, private val saveTok
         val urls = listOf("wss://${device.ip}:8002$path" + (token?.let { "&token=$it" } ?: ""), "ws://${device.ip}:8001$path")
         var last: WifiResult<Unit> = WifiResult.Err(WifiError.UNREACHABLE)
         for (url in urls) {
-            val s = try { WsSession.connect(LanHttp.tvClient, url, 4000) } catch (e: CancellationException) { throw e } catch (e: Exception) {
+            val s = try { WsSession.connect(LanHttp.tvClient, url, 9000) } catch (e: CancellationException) { throw e } catch (e: Exception) {
                 last = WifiResult.Err(errorOf(e), e.message); continue
             }
             val r = awaitAuthorization(s, onPairing)
@@ -198,7 +198,7 @@ class LgWebOsController(private val device: SavedWifiDevice, private val saveKey
         if (session?.isOpen == true) return WifiResult.Ok(Unit)
         var last: WifiResult<Unit> = WifiResult.Err(WifiError.UNREACHABLE)
         for (url in listOf("ws://${device.ip}:3000", "wss://${device.ip}:3001")) {
-            val s = try { WsSession.connect(LanHttp.tvClient, url, 4000) } catch (e: CancellationException) { throw e } catch (e: Exception) {
+            val s = try { WsSession.connect(LanHttp.tvClient, url, 9000) } catch (e: CancellationException) { throw e } catch (e: Exception) {
                 last = WifiResult.Err(errorOf(e), e.message); continue
             }
             val r = register(s, onPairing)

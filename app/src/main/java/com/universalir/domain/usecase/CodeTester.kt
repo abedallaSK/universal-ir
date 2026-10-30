@@ -69,10 +69,10 @@ class CodeTester @Inject constructor(
     companion object {
         const val MIN_INTERVAL_MS = 1500L
 
-        /** Safest command with a visible/audible reaction, per category. Lights test with "on". */
+        /** Test key per category: Power first (the clearest reaction), then quieter keys. Lights test with "on". */
         fun testCommandOrder(category: DeviceCategory): List<String> = when (category) {
             DeviceCategory.LIGHT -> listOf(CommandNames.POWER_ON, CommandNames.POWER, CommandNames.BRIGHTNESS_UP)
-            else -> listOf(CommandNames.MUTE, CommandNames.VOL_UP, CommandNames.POWER, CommandNames.POWER_ON, CommandNames.SPEED, CommandNames.POWER_OFF)
+            else -> listOf(CommandNames.POWER, CommandNames.POWER_ON, CommandNames.MUTE, CommandNames.VOL_UP, CommandNames.SPEED, CommandNames.POWER_OFF)
         }
     }
 

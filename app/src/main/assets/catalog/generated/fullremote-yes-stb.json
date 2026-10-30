@@ -1,0 +1,303 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-yes-stb",
+ "protocolId": "NECext",
+ "category": "TV_BOX",
+ "brand": "yes",
+ "models": [
+  "yes satellite box (older remote)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 56865
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 55845
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 55590
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 55335
+  },
+  {
+   "name": "ch_up",
+   "label": "Channel +",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 51765
+  },
+  {
+   "name": "ch_down",
+   "label": "Channel -",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 51255
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 54315
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 56100
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 52020
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 50235
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 50490
+  },
+  {
+   "name": "exit",
+   "label": "Exit",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 52785
+  },
+  {
+   "name": "info",
+   "label": "Info",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 53550
+  },
+  {
+   "name": "yes_key",
+   "label": "yes",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 56355
+  },
+  {
+   "name": "help",
+   "label": "Help (?)",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 54060
+  },
+  {
+   "name": "mosaic",
+   "label": "Mosaic",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 51510
+  },
+  {
+   "name": "plus",
+   "label": "+",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 49980
+  },
+  {
+   "name": "messages",
+   "label": "Messages",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 48195
+  },
+  {
+   "name": "orange",
+   "label": "Orange",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 49470
+  },
+  {
+   "name": "green",
+   "label": "Green",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 53805
+  },
+  {
+   "name": "yellow",
+   "label": "Yellow",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 49725
+  },
+  {
+   "name": "blue",
+   "label": "Blue",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 49215
+  },
+  {
+   "name": "key_i",
+   "label": "I",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 48960
+  },
+  {
+   "name": "key_a",
+   "label": "A",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 48705
+  },
+  {
+   "name": "key_b",
+   "label": "B",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 48450
+  },
+  {
+   "name": "digit_0",
+   "label": "0",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 53295
+  },
+  {
+   "name": "digit_1",
+   "label": "1",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 53040
+  },
+  {
+   "name": "digit_2",
+   "label": "2",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 54825
+  },
+  {
+   "name": "digit_3",
+   "label": "3",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 50745
+  },
+  {
+   "name": "digit_4",
+   "label": "4",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 55080
+  },
+  {
+   "name": "digit_5",
+   "label": "5",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 57120
+  },
+  {
+   "name": "digit_6",
+   "label": "6",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 51000
+  },
+  {
+   "name": "digit_7",
+   "label": "7",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 52530
+  },
+  {
+   "name": "digit_8",
+   "label": "8",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 54570
+  },
+  {
+   "name": "digit_9",
+   "label": "9",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 15492,
+   "command": 56610
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "probonopd/irdb 11aa5eb codes/YES/Unknown_YES (LIRC-derived; factual values only, file not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "One remote table from LIRC (via probonopd/irdb), NEC protocol, device 132 / subdevice 60. Not cross-checked by a second independent capture; newer yes boxes (yes+, yes Max) may use another remote.",
+  "Agreeing files per key (* = also in irdb): all keys 1 (irdb)"
+ ]
+}

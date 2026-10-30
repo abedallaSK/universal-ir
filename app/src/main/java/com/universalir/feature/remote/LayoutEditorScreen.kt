@@ -45,6 +45,8 @@ import androidx.compose.material.icons.filled.AutoFixHigh
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Search
@@ -127,6 +129,8 @@ data class LayoutEditorState(
     val canUndo: Boolean = false,
     val canRedo: Boolean = false,
     val profiles: List<com.universalir.domain.model.LayoutProfile> = emptyList(),
+    /** The remote's own button style (null = app default), so the editor looks like the remote. */
+    val style: com.universalir.domain.model.RemoteStyle? = null,
 )
 
 @HiltViewModel
@@ -158,7 +162,8 @@ class LayoutEditorViewModel @Inject constructor(
             // First visit: start from the standard layout so the user edits instead of building from nothing.
             val buttons = if (ds.customButtons.isEmpty()) defaultLayout(names.filter { it !in ds.hiddenButtons }, labelOf, columns, category, order)
             else packLayout(ds.customButtons.filter { it.commandName in names }, columns)
-            _state.value = LayoutEditorState(false, d.displayName, commands, buttons, columns, profiles = ds.layoutProfiles)
+            originalIds = buttons.map { it.id }.toSet()
+            _state.value = LayoutEditorState(false, d.displayName, commands, buttons, columns, profiles = ds.layoutProfiles, style = ds.remoteStyle)
         }
     }
 
@@ -209,6 +214,17 @@ class LayoutEditorViewModel @Inject constructor(
     }
 
     /** Pushes every key at [row] or below one row down, opening an empty row. */
+    /** Removes a whole row: its keys go, taller keys crossing it shrink, everything below moves up. */
+    fun deleteRow(row: Int) = edit { s ->
+        s.copy(buttons = s.buttons.mapNotNull { b ->
+            when {
+                b.row == row && b.h == 1 -> null
+                b.row == row || (b.row < row && row < b.row + b.h) -> b.copy(row = minOf(b.row, row), h = b.h - 1)
+                b.row > row -> b.copy(row = b.row - 1)
+                else -> b
+            }
+        })
+    }
     fun insertRow(row: Int) = edit { s -> s.copy(buttons = s.buttons.map { if (it.row >= row) it.copy(row = it.row + 1) else it }) }
 
     /** Removes empty rows so the layout has no gaps. */
@@ -288,9 +304,15 @@ class LayoutEditorViewModel @Inject constructor(
         _state.update { it.copy(outcome = outcome) }
     }
 
+    private var originalIds: Set<String> = emptySet()
+
     fun save(onDone: () -> Unit) = viewModelScope.launch {
         val s = _state.value
-        devices.updateSettings(deviceId) { it.copy(customButtons = s.buttons, layoutColumns = s.columns) }
+        val added = s.buttons.map { it.id }.toSet() - originalIds
+        val placed = s.buttons.map { it.commandName }.toSet()
+        devices.updateSettings(deviceId) {
+            it.copy(customButtons = s.buttons, layoutColumns = s.columns, newKeyIds = added, hiddenButtons = it.hiddenButtons - placed)
+        }
         onDone()
     }
 
@@ -343,6 +365,7 @@ fun LayoutEditorScreen(onBack: () -> Unit, vm: LayoutEditorViewModel = hiltViewM
             }
             Spacer(Modifier.height(16.dp))
             EditorGrid(
+                style = s.style ?: com.universalir.core.ui.LocalAppSettings.current.remoteStyle,
                 s.buttons, s.columns,
                 onEmpty = { r, c ->
                     val first = s.commands.firstOrNull { cmd -> s.buttons.none { it.commandName == cmd.name } } ?: s.commands.firstOrNull()
@@ -350,6 +373,7 @@ fun LayoutEditorScreen(onBack: () -> Unit, vm: LayoutEditorViewModel = hiltViewM
                 },
                 onKey = { editing = KeyEdit(it, isNew = false) },
                 onMove = vm::moveTo,
+                onDeleteRow = vm::deleteRow,
             )
             Spacer(Modifier.height(32.dp))
         }
@@ -361,6 +385,7 @@ fun LayoutEditorScreen(onBack: () -> Unit, vm: LayoutEditorViewModel = hiltViewM
             onTest = vm::test,
             onDuplicate = { vm.duplicate(e.button); editing = null },
             onInsertRow = { vm.insertRow(e.button.row); editing = null },
+            onDeleteRow = { vm.deleteRow(e.button.row); editing = null },
             onSave = { b -> if (e.isNew) vm.addAt(b.row, b.col, b) else vm.update(b); editing = null },
             onDelete = { vm.remove(e.button.id); editing = null },
             onDismiss = { editing = null })
@@ -370,14 +395,16 @@ fun LayoutEditorScreen(onBack: () -> Unit, vm: LayoutEditorViewModel = hiltViewM
 /** Grid canvas: dashed "+" cells where nothing is placed, keys that can be tapped or dragged. */
 @Composable
 private fun EditorGrid(
+    style: com.universalir.domain.model.RemoteStyle,
     buttons: List<CustomButton>, columns: Int,
     onEmpty: (Int, Int) -> Unit, onKey: (CustomButton) -> Unit, onMove: (String, Int, Int) -> Unit,
+    onDeleteRow: ((Int) -> Unit)? = null,
 ) {
     val haptics = LocalHapticFeedback.current
     val density = LocalDensity.current
     BoxWithConstraints(Modifier.fillMaxWidth()) {
-        val gap = 10.dp
-        val cell = ((maxWidth - gap * (columns - 1)) / columns).coerceAtMost(96.dp)
+        val gap = 12.dp
+        val cell = ((maxWidth - gap * (columns - 1)) / columns).coerceAtMost(88.dp)
         val gridWidth = cell * columns + gap * (columns - 1)
         val startPad = (maxWidth - gridWidth) / 2
         val rows = maxOf(rowsOf(buttons) + 2, 6)
@@ -391,14 +418,57 @@ private fun EditorGrid(
                     .clip(RoundedCornerShape(20.dp)).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.14f))
                     .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(20.dp)))
             }
-            for (r in 0 until rows) for (c in 0 until columns) if ((r to c) !in taken) {
+            // Same backgrounds as the remote: rocker pills and the round D-pad behind their keys.
+            val volLabel = stringResource(R.string.btn_volume)
+            val chLabel = stringResource(R.string.btn_channel)
+            val rockers = remember(buttons, volLabel, chLabel) { findRockers(buttons, volLabel, chLabel) }
+            val pad = remember(buttons) { dpadCentre(buttons) }
+            val onPad = remember(buttons, pad, rockers) {
+                val cross = pad?.let { (r, c) -> setOf(r - 1 to c, r + 1 to c, r to c - 1, r to c + 1) }.orEmpty()
+                buttons.filter { (it.row to it.col) in cross && it.commandName in setOf("up", "down", "left", "right") }.map { it.id }.toSet() +
+                    rockers.flatMap { it.keys }
+            }
+            rockers.forEach { rk ->
+                val h = cell * (rk.bottom - rk.top + 1) + gap * (rk.bottom - rk.top)
+                Box(Modifier.offset(x = startPad + (cell + gap) * rk.col, y = (cell + gap) * rk.top).size(cell, h), contentAlignment = Alignment.Center) {
+                    Box(Modifier.fillMaxSize().padding(horizontal = cell * 0.04f).clip(RoundedCornerShape(50)).background(padBrush(style))
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(50)))
+                    rk.label?.let { Text(it, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                }
+            }
+            pad?.let { (r, c) ->
+                val size = cell * 3 + gap * 2
+                Box(Modifier.offset(x = startPad + (cell + gap) * (c - 1), y = (cell + gap) * (r - 1)).size(size).clip(CircleShape)
+                    .background(padBrush(style)).border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape))
+            }
+            // Free cells: a light "+" so the layout reads like the real remote.
+            val rocks = rockers.flatMap { rk -> (rk.top..rk.bottom).map { it to rk.col } }.toSet()
+            val padCells = pad?.let { (pr, pc) -> (pr - 1..pr + 1).flatMap { rr -> (pc - 1..pc + 1).map { rr to it } } }.orEmpty().toSet()
+            for (r in 0 until rows) for (c in 0 until columns) if ((r to c) !in taken && (r to c) !in rocks && (r to c) !in padCells) {
                 Box(
                     Modifier.offset(x = startPad + (cell + gap) * c, y = (cell + gap) * r).size(cell)
-                        .clip(RoundedCornerShape(18.dp))
-                        .border(1.5.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(18.dp))
+                        .padding(cell * 0.12f)
+                        .clip(CircleShape)
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f), CircleShape)
                         .clickable { onEmpty(r, c) },
                     contentAlignment = Alignment.Center,
-                ) { Icon(Icons.Filled.Add, stringResource(R.string.layout_add), tint = MaterialTheme.colorScheme.outline) }
+                ) { Icon(Icons.Filled.Add, stringResource(R.string.layout_add), Modifier.size(18.dp), tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)) }
+            }
+            // Empty cells inside the D-pad / rocker area stay tappable but invisible.
+            for (cellPos in (rocks + padCells)) if (cellPos !in taken && cellPos.first in 0 until rows && cellPos.second in 0 until columns) {
+                val (r, c) = cellPos
+                Box(Modifier.offset(x = startPad + (cell + gap) * c, y = (cell + gap) * r).size(cell).clip(CircleShape).clickable { onEmpty(r, c) })
+            }
+            // An empty row with keys below it gets a remove badge, so gaps can be closed in one tap.
+            val used = rowsOf(buttons)
+            if (onDeleteRow != null) for (r in 0 until used) if ((0 until columns).none { (r to it) in taken }) {
+                val label = stringResource(R.string.layout_delete_row)
+                Box(
+                    Modifier.offset(x = startPad + gridWidth - 32.dp, y = (cell + gap) * r + 4.dp).size(28.dp).zIndex(2f)
+                        .clip(CircleShape).background(MaterialTheme.colorScheme.errorContainer)
+                        .clickable(onClickLabel = label) { onDeleteRow(r) },
+                    contentAlignment = Alignment.Center,
+                ) { Icon(Icons.Filled.Close, label, Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onErrorContainer) }
             }
             buttons.forEach { b ->
                 var drag by remember(b.id, b.row, b.col) { mutableStateOf(Offset.Zero) }
@@ -430,7 +500,7 @@ private fun EditorGrid(
                             )
                         },
                 ) {
-                    GridKey(b, cell * b.w + gap * (b.w - 1), cell * b.h + gap * (b.h - 1), onClick = { onKey(b) })
+                    GridKey(b, cell * b.w + gap * (b.w - 1), cell * b.h + gap * (b.h - 1), onClick = { onKey(b) }, style = style, onPad = b.id in onPad)
                 }
             }
         }
@@ -442,7 +512,7 @@ private fun EditorGrid(
 @Composable
 private fun KeyEditorSheet(
     initial: CustomButton, isNew: Boolean, commands: List<LayoutCommand>, columns: Int,
-    onTest: (String) -> Unit, onDuplicate: () -> Unit, onInsertRow: () -> Unit, onSave: (CustomButton) -> Unit, onDelete: () -> Unit, onDismiss: () -> Unit,
+    onTest: (String) -> Unit, onDuplicate: () -> Unit, onInsertRow: () -> Unit, onDeleteRow: () -> Unit, onSave: (CustomButton) -> Unit, onDelete: () -> Unit, onDismiss: () -> Unit,
 ) {
     var b by remember { mutableStateOf(initial) }
     var picking by remember { mutableStateOf(false) }
@@ -532,9 +602,15 @@ private fun KeyEditorSheet(
                     Icon(Icons.Filled.VerticalAlignBottom, null, Modifier.size(18.dp)); Spacer(Modifier.width(6.dp)); Text(stringResource(R.string.layout_insert_row), maxLines = 1)
                 }
             }
-            if (!isNew) TextButton(onClick = onDelete, Modifier.fillMaxWidth().padding(top = 4.dp)) {
-                Icon(Icons.Filled.DeleteOutline, null, tint = MaterialTheme.colorScheme.error); Spacer(Modifier.width(6.dp))
-                Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error)
+            if (!isNew) Row(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                TextButton(onClick = onDeleteRow, Modifier.weight(1f)) {
+                    Icon(Icons.Filled.DeleteSweep, null, tint = MaterialTheme.colorScheme.error); Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.layout_delete_row), color = MaterialTheme.colorScheme.error, maxLines = 1)
+                }
+                TextButton(onClick = onDelete, Modifier.weight(1f)) {
+                    Icon(Icons.Filled.DeleteOutline, null, tint = MaterialTheme.colorScheme.error); Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error, maxLines = 1)
+                }
             }
         }
     }

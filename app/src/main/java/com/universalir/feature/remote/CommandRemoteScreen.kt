@@ -12,12 +12,15 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Palette
 import com.universalir.domain.model.RemoteStyle
 import com.universalir.domain.model.CustomButton
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -71,6 +74,7 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.ZoomIn
 import androidx.compose.material.icons.filled.ZoomOut
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -176,6 +180,8 @@ data class CommandUiState(
     val corrupt: Boolean = false,
     val settings: DeviceSettings = DeviceSettings(),
     val outcome: SendOutcome? = null,
+    /** A fuller code set for this brand: its id and how many keys it adds. */
+    val upgrade: Pair<String, Int>? = null,
 )
 
 @HiltViewModel
@@ -189,6 +195,7 @@ class CommandRemoteViewModel @Inject constructor(
     private val deviceId: Long = handle["deviceId"] ?: -1
 
     fun setOrder(o: com.universalir.domain.model.LayoutOrder) = viewModelScope.launch { devices.updateSettings(deviceId) { it.copy(layoutOrder = o) } }
+    fun clearNewKeys() = viewModelScope.launch { devices.updateSettings(deviceId) { it.copy(newKeyIds = emptySet()) } }
     fun setTouchpad(on: Boolean) = viewModelScope.launch { devices.updateSettings(deviceId) { it.copy(touchpad = on) } }
 
     /** forAll: becomes the app default and this remote follows it again. */
@@ -218,8 +225,47 @@ class CommandRemoteViewModel @Inject constructor(
                 val set = r.set as? LoadedCodeSet.CommandSet
                 _ui.value = CommandUiState(loading = false, device = d, set = set, settings = ds, error = if (set == null) "not_commands" else null)
                 devices.markUsed(d.id)
+                if (set != null) findUpgrade(set, ds)
             }
             is LoadResult.Error -> _ui.value = CommandUiState(loading = false, device = d, error = r.reason)
+        }
+    }
+
+    /** Offers the bundled full remote when it has at least three keys this set lacks. */
+    private suspend fun findUpgrade(set: LoadedCodeSet.CommandSet, ds: DeviceSettings) {
+        val full = codes.fullRemoteFor(set.id)?.takeIf { it.id != ds.upgradeDismissed } ?: return
+        val fullSet = (codes.load(full.id) as? LoadResult.Ok)?.set as? LoadedCodeSet.CommandSet ?: return
+        val extra = (fullSet.commandNames - set.commandNames).size
+        if (extra >= 3) _ui.update { it.copy(upgrade = full.id to extra) }
+    }
+
+    /** Switches the device to the full remote; name, room, look and layout are kept. */
+    fun applyUpgrade() = viewModelScope.launch {
+        val (id, _) = _ui.value.upgrade ?: return@launch
+        val d = devices.device(deviceId) ?: return@launch
+        devices.updateDevice(d.copy(codeSetId = id))
+        _ui.update { it.copy(upgrade = null) }
+        load()
+    }
+
+    fun dismissUpgrade() = viewModelScope.launch {
+        val (id, _) = _ui.value.upgrade ?: return@launch
+        _ui.update { it.copy(upgrade = null) }
+        devices.updateSettings(deviceId) { it.copy(upgradeDismissed = id) }
+    }
+
+    private var holdBusy = false
+
+    /** One repeat of a held key; skipped while the previous frame is still being transmitted. */
+    fun hold(command: String) {
+        val set = _ui.value.set ?: return
+        if (holdBusy) return
+        holdBusy = true
+        viewModelScope.launch {
+            try {
+                val outcome = remote.sendCommand(set, command)
+                if (outcome !is SendOutcome.Success) _ui.update { it.copy(outcome = outcome) }
+            } finally { holdBusy = false }
         }
     }
 
@@ -282,7 +328,7 @@ fun CommandRemoteScreen(onBack: () -> Unit, onDesigner: (Long) -> Unit, onDiagno
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val favAdded = stringResource(R.string.fav_added)
-    var longPressed by remember { mutableStateOf<String?>(null) }
+    var picking by remember { mutableStateOf(false) }
     var stylePicker by remember { mutableStateOf(false) }
     var info by remember { mutableStateOf(false) }
     val style = ui.settings.remoteStyle ?: com.universalir.core.ui.LocalAppSettings.current.remoteStyle
@@ -295,6 +341,10 @@ fun CommandRemoteScreen(onBack: () -> Unit, onDesigner: (Long) -> Unit, onDiagno
         ui.device?.displayName ?: "", onBack = onBack, snackbar = snackbar,
         actions = {
             if (ui.set != null) {
+                IconButton(onClick = { picking = !picking }) {
+                    Icon(if (picking) Icons.Filled.Close else AppIcons.Star, stringResource(R.string.fav_pick_key),
+                        tint = if (picking) MaterialTheme.colorScheme.primary else LocalContentColor.current)
+                }
                 IconButton(onClick = { ui.device?.let { onEditLayout(it.id) } }) { Icon(Icons.Filled.Edit, stringResource(R.string.remote_edit_layout)) }
                 if ((ui.set?.commandNames?.let { names -> listOf("up", "down", "left", "right").count { it in names } } ?: 0) >= 3) {
                     IconButton(onClick = { vm.setTouchpad(!ui.settings.touchpad) }) {
@@ -315,24 +365,48 @@ fun CommandRemoteScreen(onBack: () -> Unit, onDesigner: (Long) -> Unit, onDiagno
             else -> {
                 val available = set.commandNames - ui.settings.hiddenButtons
                 val labelOf: (String) -> String = { name -> set.codes.commands.firstOrNull { it.name == name }?.label ?: name }
-                val onLong: (String) -> Unit = { c -> longPressed = c }
-                Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).readableWidth(560.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                // Holding a key repeats it like a physical remote. In "pick" mode a tap adds the key to favourites instead.
+                val send: (String) -> Unit = { c ->
+                    if (picking) { vm.favorite(c, labelOf(c)); picking = false; scope.launch { snackbar.showSnackbar(favAdded) } } else vm.send(c)
+                }
+                val onLong: (String) -> Unit = { c -> if (!picking) vm.hold(c) }
+                val scroll = rememberScrollState()
+                var gridTop by remember { mutableStateOf(0f) }
+                Column(Modifier.fillMaxSize().padding(padding).verticalScroll(scroll).padding(horizontal = 16.dp).readableWidth(560.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     ui.device?.let { RemoteHeader(it, onClick = { info = true }) }
+                    ui.upgrade?.let { (_, extra) -> UpgradeBanner(extra, onUpdate = vm::applyUpgrade, onDismiss = vm::dismissUpgrade) }
+                    androidx.compose.animation.AnimatedVisibility(picking) {
+                        Surface(shape = RoundedCornerShape(16.dp), color = MaterialTheme.colorScheme.secondaryContainer, modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
+                            Row(Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                                Icon(AppIcons.Star, null, Modifier.size(20.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer)
+                                Spacer(Modifier.width(10.dp))
+                                Text(stringResource(R.string.fav_pick_hint), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSecondaryContainer)
+                            }
+                        }
+                    }
                     Spacer(Modifier.height(20.dp))
-                    val custom = ui.settings.customButtons.filter { it.commandName in set.commandNames && it.commandName !in ui.settings.hiddenButtons }
+                    // Keys the user placed in the editor always show; "hidden" only trims the automatic layout.
+                    val custom = ui.settings.customButtons.filter { it.commandName in set.commandNames }
                     val category = categoryOf(ui.device?.category)
                     val names = set.codes.commands.map { it.name }.filter { it in available }
                     val cols = if (custom.isEmpty()) standardColumns(names, category) else ui.settings.layoutColumns.coerceIn(3, 5)
                     // The standard remote is the same smart grid the layout editor starts from.
                     val layout = remember(custom, names, cols, category, ui.settings.layoutOrder) { custom.ifEmpty { defaultLayout(names, labelOf, cols, category, ui.settings.layoutOrder) } }
-                    com.universalir.core.ui.CappedFontScale { RemoteGrid(layout, cols, onSend = vm::send, onLong = onLong, style = style, touchpad = ui.settings.touchpad) }
+                    val highlight = ui.settings.newKeyIds
+                    com.universalir.core.ui.CappedFontScale {
+                        RemoteGrid(layout, cols, onSend = send, onLong = onLong, style = style, touchpad = ui.settings.touchpad,
+                            modifier = Modifier.onGloballyPositioned { gridTop = it.positionInParent().y },
+                            highlight = highlight,
+                            onHighlightRowPx = { rowPx -> scope.launch { scroll.animateScrollTo((gridTop + rowPx - 240f).toInt().coerceAtLeast(0)) } })
+                    }
+                    if (highlight.isNotEmpty()) LaunchedEffect(highlight) { kotlinx.coroutines.delay(4000); vm.clearNewKeys() }
                     // A custom layout may leave commands out; they stay one tap away.
                     val extra = if (custom.isEmpty()) emptyList() else names.filter { n -> custom.none { it.commandName == n } }
                     if (extra.isNotEmpty()) {
                         Spacer(Modifier.height(8.dp))
                         SectionHeader(stringResource(R.string.remote_more))
                         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                            extra.forEach { c -> TextCommand(labelOf(c), { vm.send(c) }) }
+                            extra.forEach { c -> TextCommand(labelOf(c), { send(c) }) }
                         }
                     }
                     Spacer(Modifier.height(32.dp))
@@ -343,27 +417,8 @@ fun CommandRemoteScreen(onBack: () -> Unit, onDesigner: (Long) -> Unit, onDiagno
     if (stylePicker) RemoteStyleSheet(style, onPick = { st, all -> vm.setStyle(st, all); stylePicker = false }, onDismiss = { stylePicker = false },
         order = ui.settings.layoutOrder, onOrder = vm::setOrder, showOrder = ui.settings.customButtons.isEmpty())
     if (info) ui.device?.let { d -> DeviceInfoSheet(d, ui.set?.commandNames?.size ?: 0, style) { info = false } }
-    longPressed?.let { cmd ->
-        val label = ui.set?.codes?.commands?.firstOrNull { it.name == cmd }?.label ?: cmd
-        KeyMenuSheet(label,
-            onFavorite = { vm.favorite(cmd, label); longPressed = null; scope.launch { snackbar.showSnackbar(favAdded) } },
-            onEditLayout = { longPressed = null; ui.device?.let { onEditLayout(it.id) } },
-            onDismiss = { longPressed = null })
-    }
 }
 
-/** Long-press menu for a remote key. */
-@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
-@Composable
-private fun KeyMenuSheet(label: String, onFavorite: () -> Unit, onEditLayout: () -> Unit, onDismiss: () -> Unit) {
-    androidx.compose.material3.ModalBottomSheet(onDismissRequest = onDismiss) {
-        Column(Modifier.navigationBarsPadding().padding(bottom = 12.dp)) {
-            LtrText(label, Modifier.padding(horizontal = 24.dp, vertical = 8.dp), style = MaterialTheme.typography.titleLarge)
-            KeyMenuRow(AppIcons.Star, stringResource(R.string.action_favorite), onFavorite)
-            KeyMenuRow(Icons.Filled.Edit, stringResource(R.string.remote_edit_layout), onEditLayout)
-        }
-    }
-}
 
 @Composable
 private fun KeyMenuRow(icon: ImageVector, text: String, onClick: () -> Unit) {
@@ -754,3 +809,19 @@ private fun FanLayout(available: Set<String>, labelOf: (String) -> String, send:
 val designerIcons: Map<String, ImageVector> get() = buttonIcons
 
 fun designerIcon(key: String): ImageVector? = buttonIcons[key]
+
+@Composable
+private fun UpgradeBanner(extra: Int, onUpdate: () -> Unit, onDismiss: () -> Unit) {
+    Surface(shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.primaryContainer, modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
+        Row(Modifier.padding(start = 16.dp, top = 12.dp, bottom = 12.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(com.universalir.core.ui.AppIcons.Apps, null, Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer)
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(R.string.remote_upgrade_title, extra), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                Text(stringResource(R.string.remote_upgrade_body), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f))
+            }
+            androidx.compose.material3.FilledTonalButton(onClick = onUpdate) { Text(stringResource(R.string.action_update)) }
+            IconButton(onClick = onDismiss) { Icon(Icons.Filled.Close, stringResource(R.string.action_close), tint = MaterialTheme.colorScheme.onPrimaryContainer) }
+        }
+    }
+}

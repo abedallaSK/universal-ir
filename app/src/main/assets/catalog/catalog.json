@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 7,
   "source": "SmartIR (zephyrx47 fork)",
   "license": "MIT",
   "entries": [
@@ -6423,6 +6423,23 @@
       "repository": "Flipper-IRDB d126fb1 Streaming_Devices/Apple captures (5 files); probonopd/irdb 11aa5eb codes/Apple/Apple TV (factual values only, files not bundled)",
       "license": "Factual protocol values",
       "evidence": "Apple remote protocol (NEC timing, address 0x87EE). Function numbers agree between probonopd/irdb and 5 Flipper-IRDB Apple TV captures; values are one complete capture (remote id 0x8C). An Apple TV paired to its own remote may ignore other remote ids.",
+      "extraBrands": []
+    },
+    {
+      "id": "fullremote-yes-stb",
+      "category": "TV_BOX",
+      "brand": "yes",
+      "models": [
+        "yes satellite box (older remote)"
+      ],
+      "asset": "catalog/generated/fullremote-yes-stb.json",
+      "format": "canonical",
+      "fingerprintProtocol": "NECext",
+      "sourceUrl": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+      "title": "yes satellite box (older remote)",
+      "repository": "probonopd/irdb 11aa5eb codes/YES/Unknown_YES (LIRC-derived; factual values only, file not bundled)",
+      "license": "Factual protocol values",
+      "evidence": "One remote table from LIRC (via probonopd/irdb), NEC protocol, device 132 / subdevice 60. Not cross-checked by a second independent capture; newer yes boxes (yes+, yes Max) may use another remote.",
       "extraBrands": []
     },
     {

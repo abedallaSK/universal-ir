@@ -23,7 +23,7 @@ import javax.net.ssl.X509TrustManager
 
 internal object LanHttp {
     /** Plain HTTP for Roku ECP and UPnP descriptions. Returns (code, body); throws on network errors. */
-    suspend fun request(url: String, method: String = "GET", timeoutMs: Int = 2500, maxBytes: Int = 64 * 1024): Pair<Int, String> = runInterruptible(Dispatchers.IO) {
+    suspend fun request(url: String, method: String = "GET", timeoutMs: Int = 5000, maxBytes: Int = 64 * 1024): Pair<Int, String> = runInterruptible(Dispatchers.IO) {
         val c = URL(url).openConnection() as HttpURLConnection
         try {
             c.connectTimeout = timeoutMs; c.readTimeout = timeoutMs; c.requestMethod = method; c.useCaches = false
@@ -46,7 +46,7 @@ internal object LanHttp {
         }
         val ssl = SSLContext.getInstance("TLS").apply { init(null, arrayOf(trustAll), SecureRandom()) }
         OkHttpClient.Builder()
-            .connectTimeout(4, TimeUnit.SECONDS).readTimeout(0, TimeUnit.MILLISECONDS).writeTimeout(5, TimeUnit.SECONDS)
+            .connectTimeout(8, TimeUnit.SECONDS).readTimeout(0, TimeUnit.MILLISECONDS).writeTimeout(5, TimeUnit.SECONDS)
             .sslSocketFactory(ssl.socketFactory, trustAll)
             .hostnameVerifier { host, _ -> LanMath.isPrivateIpv4(host) }
             .build()
@@ -105,7 +105,7 @@ internal class WsSession private constructor() {
     fun close() { isOpen = false; runCatching { ws.close(1000, null) }; incoming.close() }
 
     companion object {
-        suspend fun connect(client: OkHttpClient, url: String, timeoutMs: Long = 5000): WsSession {
+        suspend fun connect(client: OkHttpClient, url: String, timeoutMs: Long = 9000): WsSession {
             val opened = CompletableDeferred<Unit>()
             val s = WsSession()
             s.ws = client.newWebSocket(Request.Builder().url(url).build(), object : WebSocketListener() {

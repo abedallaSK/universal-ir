@@ -132,6 +132,9 @@
     <string name="trial_skip_next">דילוג לערכה הבאה</string>
     <string name="trial_none_left">זו הייתה הערכה האחרונה ברשימה. נסו את האשף עם כל הדגמים, מותג אחר או ייבוא קובץ.</string>
     <string name="action_close">סגירה</string>
+    <string name="action_update">עדכון</string>
+    <string name="remote_upgrade_title">%1$d כפתורים נוספים זמינים</string>
+    <string name="remote_upgrade_body">מעבר לשלט המלא. הסידור וההגדרות נשמרים.</string>
     <string name="wizard_title">מציאת הקוד</string>
     <string name="wizard_intro">כוונו את הטלפון למכשיר. שלחו בדיקה אחת וספרו לנו אם המכשיר הגיב (צפצוף, נורה, שינוי מסך).</string>
     <string name="wizard_progress">מועמד %1$d מתוך %2$d</string>
@@ -140,6 +143,15 @@
     <string name="wizard_ac_note">במזגנים הבדיקה מדליקה את היחידה במצב קירור בכ-24 °C. אפשר לכבות אותה אחר כך.</string>
     <string name="wizard_send_test">שליחת בדיקה</string>
     <string name="wizard_question">האם המכשיר הגיב?</string>
+    <string name="fav_pick_key">הוספת כפתור למועדפים</string>
+    <string name="fav_pick_hint">הקישו על כפתור כדי להוסיף אותו למועדפים</string>
+    <string name="test_point">כוונו את הטלפון אל המכשיר והקישו</string>
+    <string name="codeset_keys">%1$d כפתורים</string>
+    <string name="codeset_test_hint">הקישו לבדיקה</string>
+    <string name="test_other_key">בדיקה עם מקש אחר</string>
+    <string name="test_again">שליחה שוב</string>
+    <string name="test_yes">כן, זה עובד</string>
+    <string name="test_no_next">לא, הקוד הבא</string>
     <string name="wizard_yes">כן, הוא הגיב</string>
     <string name="wizard_no">אין תגובה</string>
     <string name="wizard_finish">סיום</string>
@@ -523,6 +535,11 @@
     <string name="ac_mode_title">מצב</string>
     <string name="ac_features">תכונות</string>
     <string name="ac_quick">הגדרות מהירות</string>
+    <string name="ac_preset_add">שמירת הנוכחי</string>
+    <string name="ac_preset_new">הגדרה מהירה חדשה</string>
+    <string name="ac_preset_name">שם</string>
+    <string name="ac_preset_saves">שומר את המצב, הטמפרטורה, המאוורר והתכונות הנוכחיים.</string>
+    <string name="ac_preset_update">החלפה בהגדרות הנוכחיות</string>
     <string name="ac_preset_cool">קירור</string>
     <string name="ac_preset_sleep">שינה</string>
     <string name="ac_preset_warm">חימום</string>
@@ -548,6 +565,7 @@
     <string name="layout_redo">ביצוע מחדש</string>
     <string name="layout_tidy">הסרת רווחים</string>
     <string name="layout_insert_row">הוספת שורה</string>
+    <string name="layout_delete_row">מחיקת שורה</string>
     <string name="ac_off_hint">השינויים נשמרים ונשלחים כשמדליקים</string>
     <string name="style_title">סגנון כפתורים</string>
     <string name="style_all">להשתמש בכל השלטים</string>
@@ -620,7 +638,10 @@
     <string name="order_classic_desc">מספרים קודם, אחר כך עוצמה, ערוצים וחצים</string>
     <string name="back_again_exit">לחצו שוב על חזרה כדי לצאת</string>
     <string name="home_edit">עריכת דף הבית</string>
-    <string name="home_edit_hint">גררו להזזה · ⤢ לשינוי גודל · 👁 להסתרה</string>
+    <string name="home_edit_drag">החזיקו וגררו</string>
+    <string name="home_edit_resize">הקישו לשינוי גודל</string>
+    <string name="home_edit_hide">הסתרה</string>
+    <string name="home_hidden">מוסתרים מדף הבית</string>
     <string name="profiles_title">פרופילים</string>
     <string name="profiles_name">שם הפרופיל</string>
     <string name="profiles_empty">אין עדיין פרופילים שמורים. שמרו את הפריסה כדי לטעון אותה שוב.</string>

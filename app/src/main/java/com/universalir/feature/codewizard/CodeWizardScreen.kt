@@ -60,6 +60,8 @@ import com.universalir.domain.usecase.PreparedTest
 import com.universalir.domain.usecase.SendOutcome
 import com.universalir.feature.devicebrowser.ANY_BRAND
 import com.universalir.feature.devicebrowser.SaveDeviceDialog
+import com.universalir.feature.devicebrowser.TestPanel
+import com.universalir.feature.devicebrowser.testKeyChoices
 import com.universalir.ir.protocol.DeviceCategory
 import com.universalir.ir.protocol.ac.AcState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -76,6 +78,9 @@ data class WizardState(
     val index: Int = 0,
     val loaded: LoadedCodeSet? = null,
     val testLabel: String? = null,
+    /** Test key in use and the keys the user can switch to (command sets only). */
+    val testKey: String? = null,
+    val testKeys: List<Pair<String, String>> = emptyList(),
     val loadError: String? = null,
     val sending: Boolean = false,
     val awaitingAnswer: Boolean = false,
@@ -111,9 +116,14 @@ class CodeWizardViewModel @Inject constructor(
     private suspend fun loadCandidate(i: Int) {
         val c = _state.value.candidates.getOrNull(i) ?: run { _state.update { it.copy(finished = true) }; return }
         prepared = null
-        _state.update { it.copy(index = i, loaded = null, loadError = null, awaitingAnswer = false, lastOutcome = null, testLabel = null, testedState = null) }
+        _state.update { it.copy(index = i, loaded = null, loadError = null, awaitingAnswer = false, lastOutcome = null, testLabel = null, testedState = null, testKey = null, testKeys = emptyList()) }
         when (val r = tester.prepare(c.codeSetId)) {
-            is PrepareResult.Ready -> { prepared = r.test; _state.update { it.copy(loaded = r.test.set, testLabel = r.test.label) } }
+            is PrepareResult.Ready -> {
+                prepared = r.test
+                val set = r.test.set as? LoadedCodeSet.CommandSet
+                val keys = set?.let { cs -> testKeyChoices(cs.commandNames) { n -> cs.codes.commands.firstOrNull { it.name == n }?.label ?: n } }.orEmpty()
+                _state.update { it.copy(loaded = r.test.set, testLabel = labelOf(r.test), testKey = r.test.command, testKeys = keys) }
+            }
             is PrepareResult.Error -> _state.update { it.copy(loadError = r.reason) }
         }
     }
@@ -130,6 +140,15 @@ class CodeWizardViewModel @Inject constructor(
             }
         }
     }
+
+    fun pickKey(command: String) {
+        val t = prepared?.copy(command = command) ?: return
+        prepared = t
+        _state.update { it.copy(testKey = command, testLabel = labelOf(t), awaitingAnswer = false, lastOutcome = null) }
+    }
+
+    private fun labelOf(t: PreparedTest): String =
+        t.command?.let { c -> (t.set as? LoadedCodeSet.CommandSet)?.codes?.commands?.firstOrNull { it.name == c }?.label ?: c } ?: t.label
 
     /** Lets the user undo an AC test by sending the matching off state. */
     fun turnAcOff() = viewModelScope.launch { prepared?.let { tester.turnAcOff(it) } }
@@ -194,29 +213,16 @@ fun CodeWizardScreen(onSaved: (Long) -> Unit, onBack: () -> Unit, vm: CodeWizard
                         LtrText("${c.brandName} · ${c.modelNumber}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
-                Spacer(Modifier.height(12.dp))
-                s.loadError?.let { Text(stringResource(R.string.wizard_load_error, it), color = MaterialTheme.colorScheme.error) }
-                s.testLabel?.let { Text(stringResource(R.string.wizard_test_command, it), style = MaterialTheme.typography.bodyMedium) }
-                Spacer(Modifier.height(12.dp))
-                Button(onClick = vm::sendTest, enabled = s.loaded != null && !s.sending && !s.awaitingAnswer, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.wizard_send_test))
-                }
-                s.lastOutcome?.let {
-                    Spacer(Modifier.height(8.dp))
-                    Text(describeOutcome(context, it), style = MaterialTheme.typography.bodySmall,
-                        color = if (it is SendOutcome.Success) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error)
-                }
+                s.loadError?.let { Text(stringResource(R.string.wizard_load_error, it), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 12.dp)) }
+                Spacer(Modifier.height(16.dp))
+                TestPanel(
+                    keyLabel = s.testLabel, keys = s.testKeys, selectedKey = s.testKey, onPickKey = vm::pickKey,
+                    canSend = s.loaded != null, sending = s.sending, awaiting = s.awaitingAnswer, outcome = s.lastOutcome,
+                    onSend = vm::sendTest, onYes = { vm.answer(true) }, onNo = { vm.answer(false) },
+                    yesLabel = stringResource(R.string.test_yes), noLabel = stringResource(R.string.test_no_next),
+                )
             }
-            Spacer(Modifier.height(16.dp))
-            if (s.awaitingAnswer) {
-                Text(stringResource(R.string.wizard_question), style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-                Spacer(Modifier.height(12.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = { vm.answer(true) }, Modifier.weight(1f)) { Text(stringResource(R.string.wizard_yes)) }
-                    OutlinedButton(onClick = { vm.answer(false) }, Modifier.weight(1f)) { Text(stringResource(R.string.wizard_no)) }
-                }
-                TextButton(onClick = vm::sendTest, Modifier.fillMaxWidth()) { Text(stringResource(R.string.action_retry)) }
-            }
+            Spacer(Modifier.height(8.dp))
             TextButton(onClick = { vm.skip() }, Modifier.fillMaxWidth()) {
                 Text(stringResource(if (s.index + 1 < s.candidates.size) R.string.action_skip else R.string.wizard_finish))
             }

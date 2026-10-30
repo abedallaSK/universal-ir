@@ -148,6 +148,18 @@ class BundledCatalogTest {
     }
 
     @Test
+    fun yesSatelliteRemoteIsNecWithInvertedCommand() {
+        val yes = load("fullremote-yes-stb").codeSet!!
+        val names = yes.commands.map { it.name }
+        assertTrue(names.containsAll(arrows + listOf(CommandNames.POWER, CommandNames.CH_UP, "digit_0", "digit_9")))
+        assertTrue(yes.commands.all { CanonicalRenderer.render(it) is EncodeResult.Success })
+        val power = yes.commands.single { it.name == CommandNames.POWER }
+        assertEquals(0x3C84L, power.address); assertEquals((0xDEL shl 8) or 0x21L, power.command)
+        val t = firstTimings(yes, CommandNames.POWER)
+        assertEquals(67, t.size); assertEquals(9000, t[0]); assertEquals(4500, t[1])
+    }
+
+    @Test
     fun samsungAndLgFullRemotesHaveSmartKeysAndArrows() {
         val samsung = load("fullremote-samsung-tv").codeSet!!
         val lg = load("fullremote-lg-tv").codeSet!!
@@ -188,7 +200,8 @@ class BundledCatalogTest {
             if (e.category != DeviceCategory.AUDIO.name) assertTrue(e.id, names.containsAll(arrows))
             assertTrue(e.id, CommandNames.POWER in names || e.id == "fullremote-apple-tv")
             // CatalogDao.codeSetRows orders by title: "All ..." precedes "Flipper-IRDB ..." and "SmartIR ...".
-            assertTrue(e.id, e.title!!.startsWith("All ") && e.title!! < "Flipper-IRDB" && e.title!! < "SmartIR")
+            // The yes remote is one older model (not "All ..."), and yes has no other sets to sort against.
+            if (e.id != "fullremote-yes-stb") assertTrue(e.id, e.title!!.startsWith("All ") && e.title!! < "Flipper-IRDB" && e.title!! < "SmartIR")
         }
     }
 

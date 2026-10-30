@@ -2,6 +2,7 @@ package com.universalir.feature.remote
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -35,6 +36,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
+import com.universalir.core.ui.rememberHoldRepeat
 import com.universalir.domain.model.RemoteStyle
 import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.graphics.lerp
@@ -440,7 +442,7 @@ fun GridKey(
                 .then(if (!onPad && look.bg != null) Modifier.background(look.bg) else Modifier)
                 .then(if (!onPad && look.border) Modifier.border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f), look.shape) else Modifier)
                 .combinedClickable(interactionSource = interaction, indication = ripple(), role = Role.Button,
-                    onClick = { feedback.click(); onClick() }, onLongClick = onLongClick)
+                    onClick = { feedback.click(); onClick() }, onLongClick = com.universalir.core.ui.rememberHoldRepeat(interaction, onLongClick))
                 .semantics { contentDescription = b.label },
             contentAlignment = Alignment.Center,
         ) {
@@ -459,9 +461,9 @@ fun GridKey(
 private fun Color.luminance(): Float = 0.2126f * red + 0.7152f * green + 0.0722f * blue
 
 /** A volume/channel rocker found in a layout: one column, up above down, drawn as one tall pill. */
-private data class Rocker(val col: Int, val top: Int, val bottom: Int, val label: String?, val keys: Set<String>)
+internal data class Rocker(val col: Int, val top: Int, val bottom: Int, val label: String?, val keys: Set<String>)
 
-private fun findRockers(buttons: List<CustomButton>, volLabel: String, chLabel: String): List<Rocker> =
+internal fun findRockers(buttons: List<CustomButton>, volLabel: String, chLabel: String): List<Rocker> =
     listOf(Triple(N.VOL_UP, N.VOL_DOWN, volLabel), Triple(N.CH_UP, N.CH_DOWN, chLabel)).mapNotNull { (u, d, label) ->
         val up = buttons.firstOrNull { it.commandName == u && it.w == 1 && it.h == 1 } ?: return@mapNotNull null
         val down = buttons.firstOrNull { it.commandName == d && it.w == 1 && it.h == 1 && it.col == up.col && it.row in up.row + 1..up.row + 2 } ?: return@mapNotNull null
@@ -477,6 +479,7 @@ private fun findRockers(buttons: List<CustomButton>, volLabel: String, chLabel: 
 fun RemoteGrid(
     buttons: List<CustomButton>, columns: Int, onSend: (String) -> Unit, onLong: (String) -> Unit,
     modifier: Modifier = Modifier, style: RemoteStyle = RemoteStyle.CLASSIC, touchpad: Boolean = false,
+    highlight: Set<String> = emptySet(), onHighlightRowPx: ((Float) -> Unit)? = null,
 ) {
     val placed = remember(buttons, columns) { packLayout(buttons, columns) }
     val volLabel = androidx.compose.ui.res.stringResource(com.universalir.R.string.btn_volume)
@@ -518,10 +521,25 @@ fun RemoteGrid(
                 )
             }
             val onRocker = rockers.flatMap { it.keys }.toSet()
+            val density = androidx.compose.ui.platform.LocalDensity.current
+            val firstNew = placed.filter { it.id in highlight }.minByOrNull { it.row }
+            androidx.compose.runtime.LaunchedEffect(firstNew?.id) {
+                firstNew?.let { b -> onHighlightRowPx?.invoke(with(density) { y(b.row).toPx() }) }
+            }
+            val pulse = androidx.compose.animation.core.rememberInfiniteTransition(label = "new").animateFloat(
+                0.2f, 1f, androidx.compose.animation.core.infiniteRepeatable(androidx.compose.animation.core.tween(600),
+                    androidx.compose.animation.core.RepeatMode.Reverse), label = "pulse")
             placed.forEach { b ->
                 if (b.id in padIds) return@forEach
+                val w = cell * b.w + gap * (b.w - 1); val h = cell * b.h + gap * (b.h - 1)
+                if (b.id in highlight) {
+                    // Newly added key: a pulsing ring so it's easy to spot after saving the layout.
+                    Box(Modifier.offset(x = x(b.col) - 4.dp, y = y(b.row) - 4.dp).size(w + 8.dp, h + 8.dp)
+                        .graphicsLayer { alpha = pulse.value }
+                        .border(3.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(26.dp)))
+                }
                 GridKey(
-                    b, cell * b.w + gap * (b.w - 1), cell * b.h + gap * (b.h - 1),
+                    b, w, h,
                     onClick = { onSend(b.commandName) }, onLongClick = { onLong(b.commandName) },
                     modifier = Modifier.offset(x = x(b.col), y = y(b.row)), style = style, onPad = b.id in onRocker,
                 )
@@ -531,7 +549,7 @@ fun RemoteGrid(
 }
 
 @Composable
-private fun padBrush(style: RemoteStyle): Brush = when (style) {
+internal fun padBrush(style: RemoteStyle): Brush = when (style) {
     RemoteStyle.VIVID -> Brush.verticalGradient(listOf(Color(0xFF0EA5A0).copy(alpha = 0.35f), Color(0xFF0EA5A0).copy(alpha = 0.18f)))
     RemoteStyle.MINIMAL -> SolidColor(MaterialTheme.colorScheme.surfaceContainer)
     RemoteStyle.MODERN -> SolidColor(MaterialTheme.colorScheme.surfaceContainerHighest)
@@ -564,10 +582,11 @@ private fun DPad(has: (String) -> Boolean, size: Dp, style: RemoteStyle, onSend:
             @Composable
             fun Arrow(cmd: String, icon: ImageVector, align: Alignment) {
                 if (!has(cmd)) return
+                val arrowInteraction = remember { MutableInteractionSource() }
                 Box(
                     Modifier.align(align).size(s / 3).clip(CircleShape)
-                        .combinedClickable(indication = ripple(), interactionSource = remember { MutableInteractionSource() }, role = Role.Button,
-                            onClick = { feedback.click(); onSend(cmd) }, onLongClick = { onLong(cmd) })
+                        .combinedClickable(indication = ripple(), interactionSource = arrowInteraction, role = Role.Button,
+                            onClick = { feedback.click(); onSend(cmd) }, onLongClick = rememberHoldRepeat(arrowInteraction) { onLong(cmd) })
                         .semantics { contentDescription = cmd },
                     contentAlignment = Alignment.Center,
                 ) { Icon(icon, null, tint = arrowTint, modifier = Modifier.size(s / 3 * 0.48f)) }
@@ -577,12 +596,13 @@ private fun DPad(has: (String) -> Boolean, size: Dp, style: RemoteStyle, onSend:
             Arrow(N.LEFT, AppIcons.Left, AbsoluteAlignment.CenterLeft)
             Arrow(N.RIGHT, AppIcons.Right, AbsoluteAlignment.CenterRight)
             if (has(N.OK)) {
+                val okInteraction = remember { MutableInteractionSource() }
                 val okBg = if (style == RemoteStyle.VIVID) Color.White else MaterialTheme.colorScheme.primary
                 val okFg = if (style == RemoteStyle.VIVID) Color(0xFF2F6BFF) else MaterialTheme.colorScheme.onPrimary
                 Box(
                     Modifier.align(Alignment.Center).size(s * 0.36f).shadow(4.dp, CircleShape, clip = false).clip(CircleShape).background(okBg)
-                        .combinedClickable(indication = ripple(), interactionSource = remember { MutableInteractionSource() }, role = Role.Button,
-                            onClick = { feedback.click(); onSend(N.OK) }, onLongClick = { onLong(N.OK) })
+                        .combinedClickable(indication = ripple(), interactionSource = okInteraction, role = Role.Button,
+                            onClick = { feedback.click(); onSend(N.OK) }, onLongClick = rememberHoldRepeat(okInteraction) { onLong(N.OK) })
                         .semantics { contentDescription = N.OK },
                     contentAlignment = Alignment.Center,
                 ) { Text("OK", color = okFg, style = MaterialTheme.typography.titleMedium) }

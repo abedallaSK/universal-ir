@@ -60,9 +60,11 @@ internal object AtvTls {
         if (!LanMath.isPrivateIpv4(ip)) throw WifiException(WifiError.UNSUPPORTED, "not a local IPv4 address")
         val s = ctx.socketFactory.createSocket() as SSLSocket
         try {
-            s.connect(InetSocketAddress(ip, port), 4000)
-            s.soTimeout = readTimeoutMs
+            // TVs waking from standby and Wi-Fi power saving can take several seconds to answer.
+            s.connect(InetSocketAddress(ip, port), CONNECT_TIMEOUT_MS)
+            s.soTimeout = HANDSHAKE_READ_MS
             s.startHandshake()
+            s.soTimeout = readTimeoutMs
         } catch (e: Exception) {
             runCatching { s.close() }
             throw e
@@ -71,6 +73,8 @@ internal object AtvTls {
     }
 
     private const val ALIAS = "universalir"
+    const val CONNECT_TIMEOUT_MS = 8_000
+    private const val HANDSHAKE_READ_MS = 10_000
 }
 
 /**
@@ -264,6 +268,6 @@ class AndroidTvController(
 
     private companion object {
         const val IDLE_TIMEOUT_MS = 16_000
-        const val HANDSHAKE_MS = 6_000L
+        const val HANDSHAKE_MS = 10_000L
     }
 }

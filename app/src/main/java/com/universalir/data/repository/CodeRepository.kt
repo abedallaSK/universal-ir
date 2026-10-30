@@ -92,6 +92,13 @@ class CodeRepository @Inject constructor(
 
     suspend fun codeSetEntity(id: String) = db.catalog().codeSet(id)
 
+    /** The bundled full remote for the same brand and category as [codeSetId], if it isn't already that one. */
+    suspend fun fullRemoteFor(codeSetId: String): CodeSetEntity? {
+        val current = db.catalog().codeSet(codeSetId) ?: return null
+        if (current.id.startsWith("fullremote-")) return null
+        return db.catalog().fullRemoteFor(current.brandId, current.category)
+    }
+
     private fun toSummary(r: CodeSetRow) = CodeSetSummary(
         codeSetId = r.codeSetId, title = r.title, brandName = r.brandName, modelNumber = r.modelNumber, modelId = r.modelId,
         category = categoryOf(r.category), protocolId = r.protocolId, payloadKind = r.payloadKind, origin = r.origin,

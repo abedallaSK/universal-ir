@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.2.2
+
+### New
+- **Custom AC quick settings**: save the current AC setup under a name, as many as you like; long-press one to rename, update or delete it.
+- **Get new buttons on existing remotes**: when a full remote exists for your device's brand, the remote offers it ("N more buttons available → Update"). Your name, room, look and layout stay.
+- **Edit home** redesigned: icon hints, a size pill on each tile, and hidden devices listed at the bottom so you can show them again.
+- **Delete row** in the layout editor (from a key's menu, or the × on an empty row).
+- Keys you add in the layout editor are highlighted on the remote after saving.
+- **Hold a button** to keep sending it, like a real remote (fast volume, hold-OK menus, hold-power). Add buttons to favorites with the star in the remote's top bar.
+- **yes satellite box** remote (older yes remote, 35 keys) under TV box › yes.
+- **Edit layout looks like the remote**: same button style, round D-pad and volume/channel pills while you edit.
+- Code-set list redesigned: numbered compact cards, the model as the title, tap a card to test it.
+- **Testing codes** starts with **Power**, you can switch the test key (Power, Mute, Vol +…), and the "Did the device respond?" step has a big send button and clear Yes / No.
+
+### Fixed
+- A button you added in Edit layout (e.g. Home) could stay hidden on the remote after saving.
+- Wi-Fi devices shown as offline after the router gave them a new IP: the app now finds them again.
+- Wi-Fi: longer waits and an automatic second try before "didn't answer in time", plus tips on what to check.
+- The same Wi-Fi device could be saved twice.
+- A removed TV box brand still showed in the device list.
+
 ## 0.2.1
 
 ### New

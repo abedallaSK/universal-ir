@@ -135,6 +135,17 @@ object AppIcons {
     val Moon by lazy { icon("moon", "M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z") }
     val Hash by lazy { icon("hash", "M9 4l-2 16", "M17 4l-2 16", "M4.5 9h16", "M3.5 15h16") }
     val Ok by lazy { icon("ok", "M5 12.5l4.5 4.5L19 7.5", stroke = 2.4f) }
+    val Resize by lazy { icon("resize", "M14 4h6v6", "M10 20H4v-6", "M20 4l-6 6", "M4 20l6-6") }
+    val EyeOff by lazy {
+        icon("eye_off", "M3 3l18 18", "M10.6 6.1A9.8 9.8 0 0 1 12 6c5.5 0 9 6 9 6a16 16 0 0 1-2.6 3.3",
+            "M6.6 6.6C4.3 8.1 3 12 3 12s3.5 6 9 6c1.6 0 3-.4 4.3-1.1", "M9.9 9.9a3 3 0 0 0 4.2 4.2")
+    }
+    val Eye by lazy { icon("eye", "M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z", "M12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6z") }
+    /** Six-dot drag handle (zero-length round-capped strokes draw the dots). */
+    val Grip by lazy { icon("grip", "M9 6h.01", "M15 6h.01", "M9 12h.01", "M15 12h.01", "M9 18h.01", "M15 18h.01", stroke = 3.2f) }
+    val Edit by lazy { icon("edit", "M4 20h4L19 9l-4-4L4 16v4z", "M13.5 6.5l4 4") }
+    val Refresh by lazy { icon("refresh", "M20 11a8 8 0 1 0-2.3 5.7", "M20 4v7h-7") }
+    val Trash by lazy { icon("trash", "M4 7h16", "M10 11v6", "M14 11v6", "M6 7l1 13h10l1-13", "M9 7V4h6v3") }
     val Arrange by lazy { icon("arrange", "M4 4h6v6H4z", "M14 14h6v6h-6z", "M14 7h6", "M17 4v6", "M4 17h6") }
 }
 

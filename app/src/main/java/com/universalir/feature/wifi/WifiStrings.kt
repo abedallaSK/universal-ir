@@ -38,6 +38,7 @@ object WifiText {
     val connected get() = t("Connected", "متصل", "מחובר")
     val connecting get() = t("Connecting…", "جارٍ الاتصال…", "מתחבר…")
     val offline get() = t("Offline", "غير متصل", "לא מחובר")
+    val problem get() = t("Connection problem", "مشكلة في الاتصال", "בעיית חיבור")
     val retry get() = t("Retry", "إعادة المحاولة", "נסה שוב")
     val pairingTitle get() = t("Accept the prompt on your TV", "اقبل الطلب على شاشة التلفاز", "אשר את הבקשה בטלוויזיה")
     val pairingBody get() = t("Use the TV's own remote to allow this phone. You only need to do this once.", "استخدم ريموت التلفاز للسماح لهذا الهاتف. ستحتاج لذلك مرة واحدة فقط.", "השתמש בשלט של הטלוויזיה כדי לאשר את הטלפון. צריך לעשות זאת רק פעם אחת.")
@@ -101,7 +102,10 @@ object WifiText {
     }
 
     fun error(e: WifiError, detail: String?): String = when (e) {
-        WifiError.TIMEOUT -> t("The device didn't answer in time.", "لم يستجب الجهاز في الوقت المحدد.", "המכשיר לא ענה בזמן.")
+        WifiError.TIMEOUT -> t(
+            "The device didn't answer in time. Make sure it is switched on (not in standby), the phone is on the same Wi-Fi (not a guest network, VPN off) and the router doesn't block devices from talking to each other.",
+            "لم يستجب الجهاز في الوقت المحدد. تأكد أنه يعمل (ليس في وضع الاستعداد)، وأن الهاتف على نفس شبكة Wi-Fi (ليست شبكة ضيوف، وVPN مطفأ)، وأن الراوتر لا يمنع الأجهزة من التواصل فيما بينها.",
+            "המכשיר לא ענה בזמן. ודאו שהוא דולק (לא במצב המתנה), שהטלפון באותה רשת Wi-Fi (לא רשת אורחים, VPN כבוי) ושהנתב לא חוסם תקשורת בין מכשירים.")
         WifiError.UNREACHABLE -> t("Can't reach the device. Is it on and on this Wi-Fi?", "تعذّر الوصول إلى الجهاز. هل هو يعمل وعلى هذه الشبكة؟", "לא ניתן להגיע למכשיר. האם הוא דולק ובאותה רשת?")
         WifiError.DENIED -> t("The device refused the request.", "رفض الجهاز الطلب.", "המכשיר דחה את הבקשה.")
         WifiError.UNSUPPORTED -> t("Not supported by this device.", "غير مدعوم في هذا الجهاز.", "לא נתמך במכשיר הזה.")
