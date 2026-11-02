@@ -16,6 +16,8 @@ object KnownBrands {
     val aliases: Map<String, List<Alias>> = mapOf(
         "Electra" to listOf(Alias("אלקטרה", "he"), Alias("إلكترا", "ar"), Alias("الكترا", "ar")),
         "Tadiran" to listOf(Alias("תדיראן", "he"), Alias("تاديران", "ar")),
+        "MAG (Infomir)" to listOf(Alias("MAG", "en"), Alias("MAG TV", "en"), Alias("Infomir", "en"), Alias("מאג", "he"), Alias("ماج", "ar")),
+        "yes" to listOf(Alias("yes TV", "en"), Alias("יס", "he"), Alias("ييس", "ar")),
         "Fujicom" to listOf(Alias("פוג'יקום", "he"), Alias("פוג׳יקום", "he"), Alias("فوجيكوم", "ar")),
         "Tornado" to listOf(Alias("טורנדו", "he"), Alias("تورنادو", "ar")),
         "Kelon" to listOf(Alias("科龙", "zh"), Alias("קלון", "he"), Alias("كيلون", "ar")),

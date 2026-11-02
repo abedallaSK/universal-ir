@@ -348,7 +348,7 @@ private fun AcContent(ui: AcUiState, expanded: Boolean, unit: TemperatureUnit, v
     }
 
     Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).readableWidth(600.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        ui.device?.let { com.universalir.feature.remote.RemoteHeader(it) }
+        // No device card on the AC screen either; the name is in the top bar.
         Spacer(Modifier.height(12.dp))
 
         // Hero: mode-tinted card with the draggable dial and the main controls.

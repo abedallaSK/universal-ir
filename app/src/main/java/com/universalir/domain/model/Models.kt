@@ -49,9 +49,18 @@ data class DeviceSettings(
     companion object {
         val json = Json { ignoreUnknownKeys = true; encodeDefaults = false }
 
-        fun decode(text: String?): DeviceSettings? =
-            if (text.isNullOrBlank()) DeviceSettings()
-            else runCatching { json.decodeFromString(serializer(), text) }.getOrNull()
+        fun decode(text: String?): DeviceSettings? {
+            if (text.isNullOrBlank()) return DeviceSettings()
+            synchronized(cache) { cache[text]?.let { return it } }
+            val d = runCatching { json.decodeFromString(serializer(), text) }.getOrNull() ?: return null
+            synchronized(cache) { cache[text] = d }
+            return d
+        }
+
+        /** Recently decoded settings by their JSON text (immutable values, so sharing them is safe). */
+        private val cache = object : LinkedHashMap<String, DeviceSettings>(64, 0.75f, true) {
+            override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, DeviceSettings>?) = size > 128
+        }
     }
 }
 
@@ -93,7 +102,7 @@ data class LayoutProfile(val name: String, val columns: Int, val buttons: List<C
 
 /** Visual style of remote buttons: shapes, fills, D-pad and rocker look. */
 @Serializable
-enum class RemoteStyle { CLASSIC, MODERN, MINIMAL, COMPACT, VIVID }
+enum class RemoteStyle { CLASSIC, MODERN, MINIMAL, COMPACT, VIVID, GLASS, THREE_D }
 
 /** A code set ready to drive a remote screen. */
 sealed interface LoadedCodeSet {

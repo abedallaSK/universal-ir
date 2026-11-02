@@ -33,6 +33,8 @@ data class AppSettings(
     val onboardingDone: Boolean = false,
     val theme: ThemeMode = ThemeMode.SYSTEM,
     val haptics: Boolean = true,
+    /** The phone's volume buttons send Volume +/- to the remote on screen. */
+    val volumeKeys: Boolean = true,
     val sound: Boolean = false,
     val buttonSize: ButtonSize = ButtonSize.MEDIUM,
     val remoteLayout: RemoteLayout = RemoteLayout.EXPANDED,
@@ -54,6 +56,8 @@ data class AppSettings(
     val connectionMode: ConnectionMode = ConnectionMode.AUTO,
     val accent: AccentTheme = AccentTheme.BLUE,
     val pureBlack: Boolean = false,
+    /** Glass theme: a soft colour backdrop behind see-through surfaces. */
+    val glass: Boolean = false,
     /** How many times each button press is transmitted (1..5). */
     val irRepeat: Int = 1,
     /** ARGB of the user's own accent, used when accent == CUSTOM. */
@@ -73,6 +77,7 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
         val onboarding = booleanPreferencesKey("onboarding_done")
         val theme = stringPreferencesKey("theme")
         val haptics = booleanPreferencesKey("haptics")
+        val volumeKeys = booleanPreferencesKey("volume_keys")
         val sound = booleanPreferencesKey("sound")
         val buttonSize = stringPreferencesKey("button_size")
         val layout = stringPreferencesKey("remote_layout")
@@ -93,6 +98,7 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
         val connectionMode = stringPreferencesKey("connection_mode")
         val accent = stringPreferencesKey("accent")
         val pureBlack = booleanPreferencesKey("pure_black")
+        val glass = booleanPreferencesKey("glass")
         val irRepeat = intPreferencesKey("ir_repeat")
         val customAccent = androidx.datastore.preferences.core.longPreferencesKey("custom_accent")
     }
@@ -105,6 +111,7 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
         onboardingDone = this[K.onboarding] ?: false,
         theme = enumOr(this[K.theme], ThemeMode.SYSTEM),
         haptics = this[K.haptics] ?: true,
+        volumeKeys = this[K.volumeKeys] ?: true,
         sound = this[K.sound] ?: false,
         buttonSize = enumOr(this[K.buttonSize], ButtonSize.MEDIUM),
         remoteLayout = enumOr(this[K.layout], RemoteLayout.EXPANDED),
@@ -125,6 +132,7 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
         connectionMode = enumOr(this[K.connectionMode], ConnectionMode.AUTO),
         accent = enumOr(this[K.accent], AccentTheme.BLUE),
         pureBlack = this[K.pureBlack] ?: false,
+        glass = this[K.glass] ?: false,
         irRepeat = this[K.irRepeat] ?: 1,
         customAccent = this[K.customAccent] ?: 0xFF2F6BFF,
     )
@@ -135,6 +143,7 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
     suspend fun setOnboardingDone(done: Boolean) = context.dataStore.edit { it[K.onboarding] = done }
     suspend fun setTheme(t: ThemeMode) = context.dataStore.edit { it[K.theme] = t.name }
     suspend fun setHaptics(v: Boolean) = context.dataStore.edit { it[K.haptics] = v }
+    suspend fun setVolumeKeys(v: Boolean) = context.dataStore.edit { it[K.volumeKeys] = v }
     suspend fun setSound(v: Boolean) = context.dataStore.edit { it[K.sound] = v }
     suspend fun setButtonSize(v: ButtonSize) = context.dataStore.edit { it[K.buttonSize] = v.name }
     suspend fun setRemoteLayout(v: RemoteLayout) = context.dataStore.edit { it[K.layout] = v.name }
@@ -148,6 +157,7 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
     suspend fun setAccent(v: AccentTheme) = context.dataStore.edit { it[K.accent] = v.name }
     suspend fun setCustomAccent(argb: Long) = context.dataStore.edit { it[K.customAccent] = argb; it[K.accent] = AccentTheme.CUSTOM.name }
     suspend fun setPureBlack(v: Boolean) = context.dataStore.edit { it[K.pureBlack] = v }
+    suspend fun setGlass(v: Boolean) = context.dataStore.edit { it[K.glass] = v }
     suspend fun setConnectionMode(v: ConnectionMode) = context.dataStore.edit { it[K.connectionMode] = v.name }
     suspend fun setRemoteStyle(v: com.universalir.domain.model.RemoteStyle) = context.dataStore.edit { it[K.remoteStyle] = v.name }
     suspend fun setHomeTitle(v: String) = context.dataStore.edit { it[K.homeTitle] = v.trim() }

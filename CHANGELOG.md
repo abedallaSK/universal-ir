@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.2.5
+
+### New
+- **572 more remotes**, each a single capture from Flipper-IRDB or irdb that uses a protocol the app can send: 329 TVs (108 brands), 108 projectors (52 brands), 70 TV / IPTV / satellite boxes (51 brands, incl. MAG 250 and the MAG TV box remote) and 65 AV receivers. Test each with the Power test before saving.
+- **Simpler home**: one **Edit home** with three tabs (Devices, Look, Rooms) replaces Edit home, Customize home and the Rooms page; the menu is just Edit home, Favorite buttons, Settings and About. Wi-Fi devices are added from the + button.
+- Remote and AC screens no longer show the device card (the name is in the top bar; details are in the ⋮ menu).
+
+### Fixed
+- Smoother scrolling and less battery use: device settings are decoded once instead of on every redraw, and the "new key" and test animations only run while shown.
+- Glass theme: menus, sheets and dialogs are solid enough to read; only cards on the page are see-through.
+
+## 0.2.4
+
+### New
+- **Phone volume buttons control the remote**: on an IR or Wi-Fi TV remote, your phone's + / − keys change the device's volume (hold to repeat). Switch it off in Settings › Remote buttons.
+- **Glass theme**: soft colours behind see-through cards (Settings › Appearance).
+- **Two new button styles: Glass and 3D** (raised keys that press down).
+- **Layout editor**: tap a button to select it, then move it with arrows, change its width and height, or tap an empty spot to move it there; tap it again to edit.
+- **Settings** is now a short list of categories (each shows what is set) that open their own pages.
+
+## 0.2.3
+
+### New
+- **Volume and channel pills work like a real rocker**: tap the top half for +, the bottom half for −, hold to repeat, or slide a finger up and down to step.
+- **14 more full remotes**: Soniq, Emerson, Element, Dynex, Sceptre and Bauhn TVs; Epson, BenQ and ViewSonic projectors; TechniSat boxes; Yamaha, Bose, Vizio and Philips soundbars. Each key is agreed by at least two independent captures.
+- Search finds **MAG** boxes as "MAG", "MAG TV" or "Infomir", and **yes** as "יס".
+- Fewer buttons: the remote's top bar has just Edit and a menu (favorites, touchpad, style, details); Edit home and Customize moved into the Home menu.
+
 ## 0.2.2
 
 ### New

@@ -34,6 +34,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.ui.input.pointer.pointerInput
+import com.universalir.core.ui.HOLD_REPEAT_MS
+import kotlinx.coroutines.launch
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import com.universalir.core.ui.rememberHoldRepeat
@@ -381,7 +386,13 @@ private fun groupColor(command: String): Color = when {
 }
 
 /** How a style draws a plain (uncoloured) key. */
-private data class KeyLook(val shape: Shape, val bg: Brush?, val fg: Color, val border: Boolean, val shadow: Dp, val scale: Float)
+private data class KeyLook(
+    val shape: Shape, val bg: Brush?, val fg: Color, val border: Boolean, val shadow: Dp, val scale: Float,
+    /** Border colour when it isn't the theme outline (Glass keys use a light rim). */
+    val borderColor: Color? = null,
+    /** 3D keys: colour of the key's side, drawn under the face; the face sinks into it when pressed. */
+    val edge: Color? = null,
+)
 
 @Composable
 private fun lookFor(style: RemoteStyle, b: CustomButton, accent: Color?): KeyLook {
@@ -397,6 +408,21 @@ private fun lookFor(style: RemoteStyle, b: CustomButton, accent: Color?): KeyLoo
             accent?.let { SolidColor(it.copy(alpha = 0.18f)) }, accent ?: scheme.onSurface, false, 0.dp, 1f)
         RemoteStyle.COMPACT -> KeyLook(if (b.shape == KeyShape.PILL) RoundedCornerShape(50) else RoundedCornerShape(14.dp),
             accent?.let { SolidColor(it) } ?: SolidColor(scheme.surfaceContainerHigh), if (accent != null) accentFg else scheme.onSurface, true, 0.dp, 0.8f)
+        RemoteStyle.GLASS -> {
+            val tint = accent ?: Color.White
+            val dark = scheme.background.luminance() < 0.5f || scheme.surface.luminance() < 0.5f
+            KeyLook(if (b.shape == KeyShape.PILL) RoundedCornerShape(50) else RoundedCornerShape(24.dp),
+                Brush.verticalGradient(listOf(tint.copy(alpha = if (accent != null) 0.55f else if (dark) 0.20f else 0.65f),
+                    tint.copy(alpha = if (accent != null) 0.30f else if (dark) 0.07f else 0.35f))),
+                if (accent != null) accentFg else scheme.onSurface, true, 0.dp, 1f,
+                borderColor = Color.White.copy(alpha = if (dark) 0.28f else 0.8f))
+        }
+        RemoteStyle.THREE_D -> {
+            val base = accent ?: scheme.surfaceContainerHighest.copy(alpha = 1f)
+            KeyLook(if (b.shape == KeyShape.PILL) RoundedCornerShape(50) else if (b.shape == KeyShape.ROUND && b.w == b.h) CircleShape else RoundedCornerShape(18.dp),
+                Brush.verticalGradient(listOf(lerp(base, Color.White, 0.16f), lerp(base, Color.Black, 0.06f))),
+                if (accent != null) accentFg else scheme.onSurface, false, 4.dp, 1f, edge = lerp(base, Color.Black, 0.42f))
+        }
         RemoteStyle.VIVID -> {
             val c = accent ?: groupColor(b.commandName)
             KeyLook(if (b.shape == KeyShape.PILL) RoundedCornerShape(50) else RoundedCornerShape(24.dp),
@@ -424,23 +450,27 @@ fun GridKey(
     val feedback = rememberFeedback()
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
-    val scale by animateFloatAsState(if (pressed) 0.9f else 1f, spring(stiffness = Spring.StiffnessMediumLow), label = "key")
     val accent = b.rgb?.let { Color(it) } ?: b.color?.let { keyColors.getOrNull(it) }
     val look = lookFor(style, b, accent)
+    // 3D keys press down into their edge instead of shrinking.
+    val depth = if (look.edge != null && !onPad) 6.dp else 0.dp
+    val scale by animateFloatAsState(if (pressed && depth == 0.dp) 0.9f else 1f, spring(stiffness = Spring.StiffnessMediumLow), label = "key")
+    val sink by androidx.compose.animation.core.animateDpAsState(if (pressed) depth * 0.75f else 0.dp, spring(stiffness = Spring.StiffnessHigh), label = "sink")
     val round = b.w == b.h && (style == RemoteStyle.CLASSIC && b.shape == KeyShape.ROUND || style == RemoteStyle.MINIMAL)
     // Round keys stay circular: the circle uses the smaller side of the cell span.
     val boxW = (if (round) min(width, height) else width) * look.scale
-    val boxH = (if (round) min(width, height) else height) * look.scale
+    val boxH = (if (round) min(width, height) else height) * look.scale - depth
     val icon = buttonIcons[b.icon]
     val fg = if (onPad) MaterialTheme.colorScheme.onSurface else look.fg
     Box(modifier.size(width, height), contentAlignment = Alignment.Center) {
+        if (depth > 0.dp) Box(Modifier.offset(y = depth / 2).size(boxW, boxH).shadow(look.shadow, look.shape, clip = false).clip(look.shape).background(look.edge!!))
         Box(
-            Modifier.size(boxW, boxH)
+            Modifier.offset(y = -depth / 2 + sink).size(boxW, boxH)
                 .graphicsLayer { scaleX = scale; scaleY = scale }
-                .then(if (onPad) Modifier else Modifier.shadow(look.shadow, look.shape, clip = false))
+                .then(if (onPad || depth > 0.dp) Modifier else Modifier.shadow(look.shadow, look.shape, clip = false))
                 .clip(look.shape)
                 .then(if (!onPad && look.bg != null) Modifier.background(look.bg) else Modifier)
-                .then(if (!onPad && look.border) Modifier.border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f), look.shape) else Modifier)
+                .then(if (!onPad && look.border) Modifier.border(1.dp, look.borderColor ?: MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f), look.shape) else Modifier)
                 .combinedClickable(interactionSource = interaction, indication = ripple(), role = Role.Button,
                     onClick = { feedback.click(); onClick() }, onLongClick = com.universalir.core.ui.rememberHoldRepeat(interaction, onLongClick))
                 .semantics { contentDescription = b.label },
@@ -461,7 +491,10 @@ fun GridKey(
 private fun Color.luminance(): Float = 0.2126f * red + 0.7152f * green + 0.0722f * blue
 
 /** A volume/channel rocker found in a layout: one column, up above down, drawn as one tall pill. */
-internal data class Rocker(val col: Int, val top: Int, val bottom: Int, val label: String?, val keys: Set<String>)
+internal data class Rocker(
+    val col: Int, val top: Int, val bottom: Int, val label: String?, val keys: Set<String>,
+    val up: CustomButton, val down: CustomButton,
+)
 
 internal fun findRockers(buttons: List<CustomButton>, volLabel: String, chLabel: String): List<Rocker> =
     listOf(Triple(N.VOL_UP, N.VOL_DOWN, volLabel), Triple(N.CH_UP, N.CH_DOWN, chLabel)).mapNotNull { (u, d, label) ->
@@ -471,7 +504,7 @@ internal fun findRockers(buttons: List<CustomButton>, volLabel: String, chLabel:
         // Only a mute key may sit inside the rocker (it becomes its middle).
         if (between.any { it.commandName != N.MUTE || it.w != 1 || it.h != 1 }) return@mapNotNull null
         val middleFree = down.row - up.row == 2 && between.isEmpty()
-        Rocker(up.col, up.row, down.row, label.takeIf { middleFree }, setOf(up.id, down.id) + between.map { it.id })
+        Rocker(up.col, up.row, down.row, label.takeIf { middleFree }, setOf(up.id, down.id) + between.map { it.id }, up, down)
     }
 
 /** Read-only rendering of a layout (the remote screen), with a one-piece D-pad and rocker pills. */
@@ -521,22 +554,23 @@ fun RemoteGrid(
                 )
             }
             val onRocker = rockers.flatMap { it.keys }.toSet()
+            // The pill itself is the control for its two ends (tap a half, hold, or slide); a middle mute key stays a key.
+            val rockerEnds = rockers.flatMap { listOf(it.up.id, it.down.id) }.toSet()
+            rockers.forEach { rk ->
+                val h = cell * (rk.bottom - rk.top + 1) + gap * (rk.bottom - rk.top)
+                RockerControl(rk, style, onSend, onLong, Modifier.offset(x = x(rk.col), y = y(rk.top)).size(cell, h))
+            }
             val density = androidx.compose.ui.platform.LocalDensity.current
             val firstNew = placed.filter { it.id in highlight }.minByOrNull { it.row }
             androidx.compose.runtime.LaunchedEffect(firstNew?.id) {
                 firstNew?.let { b -> onHighlightRowPx?.invoke(with(density) { y(b.row).toPx() }) }
             }
-            val pulse = androidx.compose.animation.core.rememberInfiniteTransition(label = "new").animateFloat(
-                0.2f, 1f, androidx.compose.animation.core.infiniteRepeatable(androidx.compose.animation.core.tween(600),
-                    androidx.compose.animation.core.RepeatMode.Reverse), label = "pulse")
             placed.forEach { b ->
-                if (b.id in padIds) return@forEach
+                if (b.id in padIds || b.id in rockerEnds) return@forEach
                 val w = cell * b.w + gap * (b.w - 1); val h = cell * b.h + gap * (b.h - 1)
                 if (b.id in highlight) {
                     // Newly added key: a pulsing ring so it's easy to spot after saving the layout.
-                    Box(Modifier.offset(x = x(b.col) - 4.dp, y = y(b.row) - 4.dp).size(w + 8.dp, h + 8.dp)
-                        .graphicsLayer { alpha = pulse.value }
-                        .border(3.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(26.dp)))
+                    PulseRing(Modifier.offset(x = x(b.col) - 4.dp, y = y(b.row) - 4.dp).size(w + 8.dp, h + 8.dp))
                 }
                 GridKey(
                     b, w, h,
@@ -547,6 +581,81 @@ fun RemoteGrid(
         }
     }
 }
+
+/**
+ * Volume / channel pill as one control, like the rocker on a physical remote: tap the top half for "+", the bottom
+ * half for "−", hold to repeat, or slide a finger up/down to step (one step per [ROCKER_STEP]).
+ */
+@Composable
+private fun RockerControl(rk: Rocker, style: RemoteStyle, onSend: (String) -> Unit, onHold: (String) -> Unit, modifier: Modifier) {
+    val feedback = rememberFeedback()
+    val haptics = androidx.compose.ui.platform.LocalHapticFeedback.current
+    var pressed by remember { mutableStateOf(0) }
+    val upCmd = rk.up.commandName; val downCmd = rk.down.commandName
+    val send by androidx.compose.runtime.rememberUpdatedState(onSend)
+    val hold by androidx.compose.runtime.rememberUpdatedState(onHold)
+    val upLabel = rk.up.label; val downLabel = rk.down.label
+    val fg = if (style == RemoteStyle.VIVID) Color.White else MaterialTheme.colorScheme.onSurface
+    val highlight = MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)
+    Box(
+        modifier.clip(RoundedCornerShape(50))
+            .semantics {
+                contentDescription = rk.label ?: "$upLabel / $downLabel"
+                customActions = listOf(
+                    androidx.compose.ui.semantics.CustomAccessibilityAction(upLabel) { send(upCmd); true },
+                    androidx.compose.ui.semantics.CustomAccessibilityAction(downLabel) { send(downCmd); true },
+                )
+            }
+            .pointerInput(upCmd, downCmd) {
+                val step = ROCKER_STEP.toPx()
+                kotlinx.coroutines.coroutineScope {
+                    awaitEachGesture {
+                        val first = awaitFirstDown()
+                        val dir = if (first.position.y < size.height / 2f) 1 else -1
+                        fun cmd(d: Int) = if (d > 0) upCmd else downCmd
+                        pressed = dir
+                        feedback.click(); send(cmd(dir))
+                        var dragging = false
+                        var acc = 0f
+                        val repeat = launch {
+                            kotlinx.coroutines.delay(450)
+                            haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+                            while (true) { hold(cmd(dir)); kotlinx.coroutines.delay(HOLD_REPEAT_MS) }
+                        }
+                        while (true) {
+                            val change = awaitPointerEvent().changes.firstOrNull { it.id == first.id } ?: break
+                            if (!change.pressed) break
+                            acc += change.position.y - change.previousPosition.y
+                            if (!dragging && kotlin.math.abs(acc) > viewConfiguration.touchSlop) { dragging = true; repeat.cancel(); acc = 0f }
+                            if (dragging) {
+                                while (acc <= -step) { acc += step; pressed = 1; send(upCmd); haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove) }
+                                while (acc >= step) { acc -= step; pressed = -1; send(downCmd); haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove) }
+                            }
+                            change.consume()
+                        }
+                        repeat.cancel()
+                        pressed = 0
+                    }
+                }
+            },
+    ) {
+        Column(Modifier.fillMaxSize()) {
+            for (d in listOf(1, -1)) {
+                val b = if (d > 0) rk.up else rk.down
+                Box(Modifier.weight(1f).fillMaxWidth().background(if (pressed == d) highlight else Color.Transparent),
+                    contentAlignment = if (d > 0) Alignment.TopCenter else Alignment.BottomCenter) {
+                    val icon = buttonIcons[b.icon]
+                    Box(Modifier.padding(vertical = 14.dp)) {
+                        if (icon != null) Icon(icon, null, Modifier.size(26.dp), tint = fg)
+                        else Text(if (d > 0) "+" else "−", style = MaterialTheme.typography.headlineSmall, color = fg)
+                    }
+                }
+            }
+        }
+    }
+}
+
+private val ROCKER_STEP = 26.dp
 
 @Composable
 internal fun padBrush(style: RemoteStyle): Brush = when (style) {
@@ -692,4 +801,13 @@ private fun TouchPad(has: (String) -> Boolean, size: Dp, style: RemoteStyle, onS
                 .size(44.dp).clip(CircleShape).background(scheme.primary.copy(alpha = 0.25f)))
         }
     }
+}
+
+/** Pulsing outline for a newly added key; the animation only runs while one is shown. */
+@Composable
+private fun PulseRing(modifier: Modifier) {
+    val pulse = androidx.compose.animation.core.rememberInfiniteTransition(label = "new").animateFloat(
+        0.2f, 1f, androidx.compose.animation.core.infiniteRepeatable(androidx.compose.animation.core.tween(600),
+            androidx.compose.animation.core.RepeatMode.Reverse), label = "pulse")
+    Box(modifier.graphicsLayer { alpha = pulse.value }.border(3.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(26.dp)))
 }

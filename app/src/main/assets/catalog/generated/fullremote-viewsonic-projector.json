@@ -1,0 +1,87 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-viewsonic-projector",
+ "protocolId": "NECext",
+ "category": "PROJECTOR",
+ "brand": "ViewSonic",
+ "models": [
+  "All ViewSonic projectors (common remote)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 62595,
+   "command": 59415
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 62595,
+   "command": 60180
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 62595,
+   "command": 32130
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 62595,
+   "command": 62475
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 62595,
+   "command": 62220
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 62595,
+   "command": 61710
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 62595,
+   "command": 61455
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 62595,
+   "command": 59925
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 captures (3 files) (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 3 Flipper-IRDB file(s). Keys without that agreement are left out.",
+  "Agreeing files per key (* = also in irdb): power 2, mute 2, vol_up 2, up 2, down 2, left 2, right 2, ok 2"
+ ]
+}

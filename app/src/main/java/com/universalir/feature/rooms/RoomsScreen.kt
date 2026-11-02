@@ -160,52 +160,60 @@ private val suggestions = listOf(
     Suggestion(R.string.rooms_s_kids, "kids", 0xFFEC4899),
 )
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun RoomsScreen(onOpenRoom: (Long) -> Unit, onBack: () -> Unit, vm: RoomsViewModel = hiltViewModel()) {
+    AppScaffold(stringResource(R.string.nav_rooms), onBack = onBack) { padding ->
+        RoomsContent(onOpenRoom, Modifier.fillMaxSize().padding(padding), vm)
+    }
+}
+
+/** Room grid with quick-add suggestions and a "New room" tile; long-press a room to edit, move or delete it. */
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+fun RoomsContent(onOpenRoom: (Long) -> Unit, modifier: Modifier = Modifier, vm: RoomsViewModel = hiltViewModel()) {
     val rooms by vm.rooms.collectAsStateWithLifecycle()
     val devices by vm.devices.collectAsStateWithLifecycle()
     var creating by remember { mutableStateOf(false) }
     var editing by remember { mutableStateOf<RoomEntity?>(null) }
     var menuFor by remember { mutableStateOf<RoomEntity?>(null) }
     var deleting by remember { mutableStateOf<RoomEntity?>(null) }
-
-    AppScaffold(stringResource(R.string.nav_rooms), onBack = onBack, floatingActionButton = {
-        ExtendedFloatingActionButton(onClick = { creating = true }, icon = { Icon(Icons.Filled.Add, null) }, text = { Text(stringResource(R.string.rooms_create)) })
-    }) { padding ->
-        val list = rooms ?: return@AppScaffold
-        LazyVerticalGrid(
-            GridCells.Adaptive(160.dp), Modifier.fillMaxSize().padding(padding),
-            contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 104.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            if (list.isEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
-                StatusPanel(Icons.Filled.MeetingRoom, stringResource(R.string.empty_rooms_title), stringResource(R.string.empty_rooms_body),
-                    actionLabel = stringResource(R.string.rooms_create), onAction = { creating = true })
-            }
-            val missing = suggestions.filter { s -> list.none { it.icon == s.icon } }
-            if (missing.isNotEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
-                Column {
-                    Text(stringResource(R.string.rooms_quick_add), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Spacer(Modifier.height(6.dp))
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        missing.forEach { s ->
-                            val name = stringResource(s.label)
-                            SuggestionChip(onClick = { vm.create(name, s.icon, s.color) }, label = { Text(name) },
-                                icon = { Icon(roomIcon(s.icon), null, Modifier.size(18.dp), tint = Color(s.color)) })
-                        }
+    val list = rooms ?: return
+    LazyVerticalGrid(
+        GridCells.Adaptive(160.dp), modifier,
+        contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 40.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        val missing = suggestions.filter { s -> list.none { it.icon == s.icon } }
+        if (missing.isNotEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
+            Column {
+                Text(stringResource(R.string.rooms_quick_add), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Spacer(Modifier.height(6.dp))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    missing.forEach { s ->
+                        val name = stringResource(s.label)
+                        SuggestionChip(onClick = { vm.create(name, s.icon, s.color) }, label = { Text(name) },
+                            icon = { Icon(roomIcon(s.icon), null, Modifier.size(18.dp), tint = Color(s.color)) })
                     }
                 }
             }
-            items(list, key = { it.id }) { r ->
-                RoomCard(r, devices.filter { it.roomId == r.id }, onClick = { onOpenRoom(r.id) }, onLongClick = { menuFor = r }, modifier = Modifier.animateItem())
+        }
+        items(list, key = { it.id }) { r ->
+            RoomCard(r, devices.filter { it.roomId == r.id }, onClick = { onOpenRoom(r.id) }, onLongClick = { menuFor = r }, modifier = Modifier.animateItem())
+        }
+        item(key = "new") {
+            Surface(onClick = { creating = true }, shape = MaterialTheme.shapes.large, color = Color.Transparent,
+                border = androidx.compose.foundation.BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant), modifier = Modifier.height(120.dp)) {
+                Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(Icons.Filled.Add, null, tint = MaterialTheme.colorScheme.primary)
+                    Spacer(Modifier.height(6.dp))
+                    Text(stringResource(R.string.rooms_create), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                }
             }
         }
     }
     if (creating) RoomEditorSheet(null, onSave = { n, i, c -> vm.create(n, i, c) }, onDismiss = { creating = false })
     editing?.let { r -> RoomEditorSheet(r, onSave = { n, i, c -> vm.update(r, n, i, c) }, onDismiss = { editing = null }) }
     menuFor?.let { r ->
-        val list = rooms.orEmpty()
         val i = list.indexOfFirst { it.id == r.id }
         RoomActionsSheet(r, canMoveUp = i > 0, canMoveDown = i in 0 until list.lastIndex,
             onEdit = { menuFor = null; editing = r }, onMoveUp = { vm.move(list, i, i - 1); menuFor = null },

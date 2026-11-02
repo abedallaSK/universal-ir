@@ -74,6 +74,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.universalir.BuildConfig
 import com.universalir.R
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material.icons.filled.BlurOn
 import com.universalir.core.theme.LocalStatusColors
 import com.universalir.core.ui.AppIcons
 import com.universalir.core.ui.AppScaffold
@@ -114,10 +117,12 @@ class SettingsViewModel @Inject constructor(
     fun theme(t: ThemeMode) = viewModelScope.launch { repo.setTheme(t) }
     fun accent(a: com.universalir.data.repository.AccentTheme) = viewModelScope.launch { repo.setAccent(a) }
     fun pureBlack(v: Boolean) = viewModelScope.launch { repo.setPureBlack(v) }
+    fun glass(v: Boolean) = viewModelScope.launch { repo.setGlass(v) }
     fun customAccent(argb: Long) = viewModelScope.launch { repo.setCustomAccent(argb) }
     fun irRepeat(v: Int) = viewModelScope.launch { repo.setIrRepeat(v) }
     fun style(v: com.universalir.domain.model.RemoteStyle) = viewModelScope.launch { repo.setRemoteStyle(v) }
     fun haptics(v: Boolean) = viewModelScope.launch { repo.setHaptics(v) }
+    fun volumeKeys(v: Boolean) = viewModelScope.launch { repo.setVolumeKeys(v) }
     fun sound(v: Boolean) = viewModelScope.launch { repo.setSound(v) }
     fun size(v: ButtonSize) = viewModelScope.launch { repo.setButtonSize(v) }
     fun layout(v: RemoteLayout) = viewModelScope.launch { repo.setRemoteLayout(v) }
@@ -151,10 +156,15 @@ fun SettingsScreen(
     if (languagePicker) LanguageSheet(onDismiss = { languagePicker = false })
     if (stylePicker) com.universalir.feature.remote.RemoteStyleSheet(s.remoteStyle, onPick = { st, _ -> vm.style(st); stylePicker = false }, onDismiss = { stylePicker = false })
 
-    AppScaffold(stringResource(R.string.nav_settings), onBack = onBack) { padding ->
+    // Settings is a short list of categories; each opens its own page (Back returns to the list).
+    var page by rememberSaveable { mutableStateOf<String?>(null) }
+    androidx.activity.compose.BackHandler(enabled = page != null) { page = null }
+    val pages = settingsPages()
+    val title = pages.firstOrNull { it.key == page }?.let { stringResource(it.title) } ?: stringResource(R.string.nav_settings)
+    AppScaffold(title, onBack = { if (page != null) page = null else onBack() }) { padding ->
         LazyColumn(Modifier.fillMaxSize().padding(padding).readableWidth(720.dp), contentPadding = PaddingValues(16.dp, 4.dp, 16.dp, 40.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             // App card: version + update check
-            item {
+            if (page == null) item {
                 Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.surface) {
                     Column(Modifier.fillMaxWidth().padding(18.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -171,8 +181,18 @@ fun SettingsScreen(
                     }
                 }
             }
+            if (page == null) item {
+                Surface(shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surface) {
+                    Column {
+                        pages.forEachIndexed { i, p ->
+                            if (i > 0) Divider()
+                            LinkLine(p.icon, stringResource(p.title), p.summary(s, currentLang)) { page = p.key }
+                        }
+                    }
+                }
+            }
             // Appearance
-            item {
+            if (page == "theme") item {
                 Group(stringResource(R.string.set_appearance), Icons.Filled.Palette) {
                     ThemePreview()
                     Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -183,8 +203,15 @@ fun SettingsScreen(
                     Divider()
                     AccentPicker(s.accent, s.customAccent, onPick = vm::accent, onCustom = { colorPicker = true })
                     Divider()
-                    SwitchLine(Icons.Filled.DarkMode, stringResource(R.string.set_pure_black), s.pureBlack, vm::pureBlack)
-                    Divider()
+                    SwitchLine(Icons.Filled.BlurOn, stringResource(R.string.set_glass), s.glass, vm::glass, stringResource(R.string.set_glass_desc))
+                    if (!s.glass) {
+                        Divider()
+                        SwitchLine(Icons.Filled.DarkMode, stringResource(R.string.set_pure_black), s.pureBlack, vm::pureBlack)
+                    }
+                }
+            }
+            if (page == "buttons") item {
+                Group(stringResource(R.string.set_buttons), AppIcons.Remote) {
                     LinkLine(Icons.Filled.Palette, stringResource(R.string.style_title), stringResource(com.universalir.feature.remote.remoteStyleName(s.remoteStyle))) { stylePicker = true }
                     Divider()
                     Segmented(stringResource(R.string.set_button_size), listOf(ButtonSize.SMALL to R.string.set_small, ButtonSize.MEDIUM to R.string.set_medium,
@@ -192,10 +219,12 @@ fun SettingsScreen(
                     Divider()
                     Segmented(stringResource(R.string.set_layout), listOf(RemoteLayout.COMPACT to R.string.set_compact, RemoteLayout.EXPANDED to R.string.set_expanded),
                         s.remoteLayout) { vm.layout(it) }
+                    Divider()
+                    SwitchLine(AppIcons.VolumeUp, stringResource(R.string.set_volume_keys), s.volumeKeys, vm::volumeKeys, stringResource(R.string.set_volume_keys_desc))
                 }
             }
             // Language
-            item {
+            if (page == "language") item {
                 Group(stringResource(R.string.set_language), Icons.Filled.Language) {
                     val tag = currentAppLanguage()
                     val name = appLanguages.firstOrNull { it.first == tag }?.let { stringResource(it.second) } ?: stringResource(R.string.set_system)
@@ -203,7 +232,7 @@ fun SettingsScreen(
                 }
             }
             // Feedback
-            item {
+            if (page == "feedback") item {
                 Group(stringResource(R.string.set_feedback), Icons.Filled.TouchApp) {
                     SwitchLine(Icons.Filled.Vibration, stringResource(R.string.set_haptics), s.haptics, vm::haptics)
                     Divider()
@@ -211,7 +240,7 @@ fun SettingsScreen(
                 }
             }
             // Remote type: infrared, Wi-Fi or both
-            item {
+            if (page == "connection") item {
                 Group(stringResource(R.string.set_remote_type), AppIcons.Remote) {
                     val ok = vm.hasEmitter
                     Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -250,7 +279,7 @@ fun SettingsScreen(
                 }
             }
             // Air conditioner defaults
-            item {
+            if (page == "ac") item {
                 Group(stringResource(R.string.cat_ac), Icons.Filled.Thermostat) {
                     Segmented(stringResource(R.string.set_units), listOf(TemperatureUnit.CELSIUS to R.string.set_celsius, TemperatureUnit.FAHRENHEIT to R.string.set_fahrenheit_short),
                         s.temperatureUnit) { vm.unit(it) }
@@ -278,7 +307,7 @@ fun SettingsScreen(
                 }
             }
             // Help
-            item {
+            if (page == "help") item {
                 Group(stringResource(R.string.set_help), Icons.Filled.School) {
                     LinkLine(Icons.Filled.School, stringResource(R.string.set_onboarding), onClick = onOnboarding)
                     Divider()
@@ -292,7 +321,7 @@ fun SettingsScreen(
                 }
             }
             // Advanced
-            item {
+            if (page == "advanced") item {
                 Group(stringResource(R.string.set_advanced), Icons.Filled.Code) {
                     LinkLine(Icons.Filled.Storage, stringResource(R.string.nav_database), stringResource(R.string.set_db_hint), onDatabase)
                     Divider()
@@ -307,7 +336,7 @@ fun SettingsScreen(
                 }
             }
             // Developer
-            item { DeveloperCard(onClick = { openUrl(UpdateChecker.DEVELOPER_URL) }) }
+            if (page == null) item { DeveloperCard(onClick = { openUrl(UpdateChecker.DEVELOPER_URL) }) }
         }
     }
 }
@@ -378,11 +407,14 @@ private fun IconTile(icon: ImageVector) {
 }
 
 @Composable
-private fun SwitchLine(icon: ImageVector, label: String, checked: Boolean, onChange: (Boolean) -> Unit) {
+private fun SwitchLine(icon: ImageVector, label: String, checked: Boolean, onChange: (Boolean) -> Unit, subtitle: String? = null) {
     Row(Modifier.fillMaxWidth().clickable { onChange(!checked) }.padding(horizontal = 16.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
         IconTile(icon)
         Spacer(Modifier.width(14.dp))
-        Text(label, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+        Column(Modifier.weight(1f)) {
+            Text(label, style = MaterialTheme.typography.bodyLarge)
+            subtitle?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        }
         Switch(checked, onChange)
     }
 }
@@ -469,3 +501,38 @@ private fun DeveloperCard(onClick: () -> Unit) {
 /** The developer's name stays in Latin letters in every language. */
 const val DEVELOPER_NAME = "Abdullah Sheikh Khalil"
 
+
+/** One category on the Settings list: where it goes, and a one-line summary of what is set there now. */
+private class SettingsPage(val key: String, val title: Int, val icon: ImageVector, val summary: @Composable (com.universalir.data.repository.AppSettings, String) -> String)
+
+@Composable
+private fun settingsPages(): List<SettingsPage> = listOf(
+    SettingsPage("theme", R.string.set_appearance, Icons.Filled.Palette) { st, _ ->
+        listOfNotNull(stringResource(when (st.theme) { ThemeMode.LIGHT -> R.string.set_light; ThemeMode.DARK -> R.string.set_dark; else -> R.string.set_system }),
+            if (st.glass) stringResource(R.string.set_glass) else null).joinToString(" · ")
+    },
+    SettingsPage("buttons", R.string.set_buttons, AppIcons.Remote) { st, _ ->
+        stringResource(com.universalir.feature.remote.remoteStyleName(st.remoteStyle)) + " · " +
+            stringResource(when (st.buttonSize) { ButtonSize.SMALL -> R.string.set_small; ButtonSize.LARGE -> R.string.set_large; else -> R.string.set_medium })
+    },
+    SettingsPage("language", R.string.set_language, Icons.Filled.Language) { _, _ ->
+        val tag = currentAppLanguage()
+        appLanguages.firstOrNull { it.first == tag }?.let { stringResource(it.second) } ?: stringResource(R.string.set_system)
+    },
+    SettingsPage("connection", R.string.set_remote_type, Icons.Filled.Wifi) { st, _ ->
+        stringResource(when (st.connectionMode) {
+            com.universalir.data.repository.ConnectionMode.BOTH -> R.string.rt_both
+            com.universalir.data.repository.ConnectionMode.WIFI_ONLY -> R.string.rt_wifi
+            else -> R.string.rt_auto
+        }) + " · ${st.irRepeat}×"
+    },
+    SettingsPage("ac", R.string.cat_ac, Icons.Filled.Thermostat) { st, _ ->
+        stringResource(modeName(st.defaultAcMode)) + " · " + com.universalir.core.ui.formatTemp(st.defaultAcTemp, st.temperatureUnit)
+    },
+    SettingsPage("feedback", R.string.set_feedback, Icons.Filled.Vibration) { st, _ ->
+        listOfNotNull(if (st.haptics) stringResource(R.string.set_haptics) else null, if (st.sound) stringResource(R.string.set_sound) else null)
+            .joinToString(" · ").ifEmpty { "—" }
+    },
+    SettingsPage("help", R.string.set_help, Icons.Filled.School) { _, _ -> stringResource(R.string.set_onboarding) },
+    SettingsPage("advanced", R.string.set_advanced, Icons.Filled.Code) { _, _ -> stringResource(R.string.nav_database) },
+)

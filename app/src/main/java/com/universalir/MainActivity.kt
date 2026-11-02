@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                 onDispose {}
             }
             CompositionLocalProvider(LocalAppSettings provides settings) {
-                UniversalIrTheme(themeMode = settings.theme, buttonSize = settings.buttonSize, accent = settings.accent, pureBlack = settings.pureBlack, customAccent = settings.customAccent) {
+                UniversalIrTheme(themeMode = settings.theme, buttonSize = settings.buttonSize, accent = settings.accent, pureBlack = settings.pureBlack, customAccent = settings.customAccent, glass = settings.glass) {
                     val pending by openDevice.collectAsStateWithLifecycle()
                     // One themed surface under every screen: sets the default text colour (onBackground),
                     // so screens without their own Scaffold/Surface never fall back to black text in dark mode.
@@ -64,6 +64,20 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    // Phone volume buttons -> the open remote's Volume +/- (when a remote screen registered a handler).
+    override fun onKeyDown(keyCode: Int, event: android.view.KeyEvent): Boolean {
+        val up = when (keyCode) { android.view.KeyEvent.KEYCODE_VOLUME_UP -> true; android.view.KeyEvent.KEYCODE_VOLUME_DOWN -> false; else -> null }
+        val h = com.universalir.core.ui.VolumeKeys.handler
+        if (up != null && h != null && h(up, event.repeatCount > 0)) return true
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: android.view.KeyEvent): Boolean {
+        val vol = keyCode == android.view.KeyEvent.KEYCODE_VOLUME_UP || keyCode == android.view.KeyEvent.KEYCODE_VOLUME_DOWN
+        if (vol && com.universalir.core.ui.VolumeKeys.handler != null) return true
+        return super.onKeyUp(keyCode, event)
     }
 
     override fun onNewIntent(intent: Intent) {

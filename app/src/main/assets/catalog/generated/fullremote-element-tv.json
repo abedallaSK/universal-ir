@@ -1,0 +1,279 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-element-tv",
+ "protocolId": "NECext",
+ "category": "TELEVISION",
+ "brand": "Element",
+ "models": [
+  "All Element TVs (common remote)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 47430
+  },
+  {
+   "name": "input",
+   "label": "Source",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 46155
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 45900
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 62220
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 58905
+  },
+  {
+   "name": "ch_up",
+   "label": "Channel +",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 61455
+  },
+  {
+   "name": "ch_down",
+   "label": "Channel -",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 42330
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 46920
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 45645
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 45390
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 46665
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 46410
+  },
+  {
+   "name": "back",
+   "label": "Back",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 59670
+  },
+  {
+   "name": "exit",
+   "label": "Exit",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 61965
+  },
+  {
+   "name": "menu",
+   "label": "Menu",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 47685
+  },
+  {
+   "name": "info",
+   "label": "Info",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 45135
+  },
+  {
+   "name": "digit_0",
+   "label": "0",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 65280
+  },
+  {
+   "name": "digit_1",
+   "label": "1",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 65025
+  },
+  {
+   "name": "digit_2",
+   "label": "2",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 64770
+  },
+  {
+   "name": "digit_3",
+   "label": "3",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 64515
+  },
+  {
+   "name": "digit_4",
+   "label": "4",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 64260
+  },
+  {
+   "name": "digit_5",
+   "label": "5",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 64005
+  },
+  {
+   "name": "digit_6",
+   "label": "6",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 63750
+  },
+  {
+   "name": "digit_7",
+   "label": "7",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 63495
+  },
+  {
+   "name": "digit_8",
+   "label": "8",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 63240
+  },
+  {
+   "name": "digit_9",
+   "label": "9",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 62985
+  },
+  {
+   "name": "stop",
+   "label": "Stop",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 58650
+  },
+  {
+   "name": "subtitle",
+   "label": "Subtitles",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 43860
+  },
+  {
+   "name": "audio",
+   "label": "Audio",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 44880
+  },
+  {
+   "name": "aspect",
+   "label": "Picture size",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 44370
+  },
+  {
+   "name": "sleep",
+   "label": "Sleep",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 60945
+  },
+  {
+   "name": "list",
+   "label": "Channel list",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 32002,
+   "command": 47940
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 captures (3 files) (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 3 Flipper-IRDB file(s). Keys without that agreement are left out.",
+  "Agreeing files per key (* = also in irdb): power 3, input 3, mute 3, vol_up 3, vol_down 3, ch_up 3, ch_down 3, up 3, down 3, left 3, right 3, ok 3, back 2, exit 3, menu 3, info 3, digit_0 3, digit_1 3, digit_2 3, digit_3 3, digit_4 3, digit_5 3, digit_6 3, digit_7 3, digit_8 3, digit_9 3, stop 2, subtitle 2, audio 3, aspect 3, sleep 3, list 3"
+ ]
+}

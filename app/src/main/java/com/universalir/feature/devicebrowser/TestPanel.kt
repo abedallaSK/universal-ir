@@ -66,12 +66,9 @@ fun TestPanel(
     val status = LocalStatusColors.current
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         // Big send button; a ring pulses while the code goes out.
-        val pulse = rememberInfiniteTransition(label = "send").animateFloat(1f, 1.18f,
-            infiniteRepeatable(tween(520), RepeatMode.Reverse), label = "ring")
         val sendLabel = stringResource(R.string.wizard_send_test)
         Box(Modifier.size(132.dp), contentAlignment = Alignment.Center) {
-            if (sending) Box(Modifier.size(112.dp).graphicsLayer { scaleX = pulse.value; scaleY = pulse.value }
-                .clip(CircleShape).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)))
+            if (sending) SendingRing()
             Box(
                 Modifier.size(104.dp).clip(CircleShape)
                     .background(if (canSend) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
@@ -131,3 +128,10 @@ fun TestPanel(
 fun testKeyChoices(names: Collection<String>, labelOf: (String) -> String): List<Pair<String, String>> =
     listOf(CommandNames.POWER, CommandNames.POWER_ON, CommandNames.MUTE, CommandNames.VOL_UP, CommandNames.CH_UP, CommandNames.HOME, CommandNames.OK)
         .filter { it in names }.take(5).map { it to labelOf(it) }
+
+@Composable
+private fun SendingRing() {
+    val pulse = rememberInfiniteTransition(label = "send").animateFloat(1f, 1.18f, infiniteRepeatable(tween(520), RepeatMode.Reverse), label = "ring")
+    Box(Modifier.size(112.dp).graphicsLayer { scaleX = pulse.value; scaleY = pulse.value }
+        .clip(CircleShape).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)))
+}

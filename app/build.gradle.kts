@@ -26,8 +26,8 @@ android {
         // tooling simple while still covering every phone that ships an IR blaster today.
         minSdk = 26
         targetSdk = 36
-        versionCode = 4
-        versionName = "0.2.2"
+        versionCode = 7
+        versionName = "0.2.5"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

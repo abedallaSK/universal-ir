@@ -367,6 +367,9 @@ fun WifiRemoteScreen(onBack: () -> Unit, vm: WifiRemoteViewModel = hiltViewModel
     LaunchedEffect(ui.messageId) { if (ui.messageId > 0) ui.message?.let { snackbar.showSnackbar(it) } }
     val d = ui.device
 
+    com.universalir.core.ui.VolumeKeyHandler(d != null && !d.protocol.cloud && com.universalir.core.ui.LocalAppSettings.current.volumeKeys) { up, _ ->
+        vm.press(if (up) TvKey.VOL_UP else TvKey.VOL_DOWN)
+    }
     AppScaffold(d?.name ?: WifiText.title, onBack = onBack, snackbar = snackbar) { padding ->
         when {
             ui.loading -> LoadingBox(Modifier.padding(padding))

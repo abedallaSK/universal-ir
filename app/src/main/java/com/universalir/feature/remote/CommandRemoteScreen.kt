@@ -74,6 +74,10 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.ZoomIn
 import androidx.compose.material.icons.filled.ZoomOut
 import androidx.compose.material3.Icon
+import androidx.compose.ui.draw.scale
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -341,17 +345,27 @@ fun CommandRemoteScreen(onBack: () -> Unit, onDesigner: (Long) -> Unit, onDiagno
         ui.device?.displayName ?: "", onBack = onBack, snackbar = snackbar,
         actions = {
             if (ui.set != null) {
-                IconButton(onClick = { picking = !picking }) {
-                    Icon(if (picking) Icons.Filled.Close else AppIcons.Star, stringResource(R.string.fav_pick_key),
-                        tint = if (picking) MaterialTheme.colorScheme.primary else LocalContentColor.current)
-                }
+                // Two actions only: Edit, and a menu for the rest (favorites, touchpad, style, info).
+                if (picking) IconButton(onClick = { picking = false }) { Icon(Icons.Filled.Close, stringResource(R.string.action_cancel), tint = MaterialTheme.colorScheme.primary) }
                 IconButton(onClick = { ui.device?.let { onEditLayout(it.id) } }) { Icon(Icons.Filled.Edit, stringResource(R.string.remote_edit_layout)) }
-                if ((ui.set?.commandNames?.let { names -> listOf("up", "down", "left", "right").count { it in names } } ?: 0) >= 3) {
-                    IconButton(onClick = { vm.setTouchpad(!ui.settings.touchpad) }) {
-                        Icon(if (ui.settings.touchpad) AppIcons.Arrange else AppIcons.Mouse, stringResource(R.string.touchpad_toggle))
+                var menu by remember { mutableStateOf(false) }
+                Box {
+                    IconButton(onClick = { menu = true }) { Icon(Icons.Filled.MoreVert, stringResource(R.string.action_more)) }
+                    DropdownMenu(menu, { menu = false }) {
+                        DropdownMenuItem(text = { Text(stringResource(R.string.fav_pick_key)) }, leadingIcon = { Icon(AppIcons.Star, null) },
+                            onClick = { menu = false; picking = true })
+                        if ((ui.set?.commandNames?.let { names -> listOf("up", "down", "left", "right").count { it in names } } ?: 0) >= 3) {
+                            DropdownMenuItem(text = { Text(stringResource(R.string.touchpad_toggle)) },
+                                leadingIcon = { Icon(if (ui.settings.touchpad) AppIcons.Arrange else AppIcons.Mouse, null) },
+                                trailingIcon = { androidx.compose.material3.Switch(ui.settings.touchpad, null, Modifier.scale(0.8f)) },
+                                onClick = { menu = false; vm.setTouchpad(!ui.settings.touchpad) })
+                        }
+                        DropdownMenuItem(text = { Text(stringResource(R.string.style_title)) }, leadingIcon = { Icon(Icons.Filled.Palette, null) },
+                            onClick = { menu = false; stylePicker = true })
+                        DropdownMenuItem(text = { Text(stringResource(R.string.action_details)) }, leadingIcon = { Icon(AppIcons.Info, null) },
+                            onClick = { menu = false; info = true })
                     }
                 }
-                IconButton(onClick = { stylePicker = true }) { Icon(Icons.Filled.Palette, stringResource(R.string.style_title)) }
             }
         },
     ) { padding ->
@@ -370,10 +384,15 @@ fun CommandRemoteScreen(onBack: () -> Unit, onDesigner: (Long) -> Unit, onDiagno
                     if (picking) { vm.favorite(c, labelOf(c)); picking = false; scope.launch { snackbar.showSnackbar(favAdded) } } else vm.send(c)
                 }
                 val onLong: (String) -> Unit = { c -> if (!picking) vm.hold(c) }
+                val hasVolume = "vol_up" in available || "vol_down" in available
+                com.universalir.core.ui.VolumeKeyHandler(hasVolume && com.universalir.core.ui.LocalAppSettings.current.volumeKeys) { up, repeat ->
+                    val c = if (up) "vol_up" else "vol_down"
+                    if (c in available) { if (repeat) vm.hold(c) else vm.send(c) }
+                }
                 val scroll = rememberScrollState()
                 var gridTop by remember { mutableStateOf(0f) }
                 Column(Modifier.fillMaxSize().padding(padding).verticalScroll(scroll).padding(horizontal = 16.dp).readableWidth(560.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    ui.device?.let { RemoteHeader(it, onClick = { info = true }) }
+                    // No device card: name is in the top bar, details are in the ⋮ menu.
                     ui.upgrade?.let { (_, extra) -> UpgradeBanner(extra, onUpdate = vm::applyUpgrade, onDismiss = vm::dismissUpgrade) }
                     androidx.compose.animation.AnimatedVisibility(picking) {
                         Surface(shape = RoundedCornerShape(16.dp), color = MaterialTheme.colorScheme.secondaryContainer, modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
@@ -575,10 +594,12 @@ fun RemoteHeader(d: SavedDeviceEntity, onClick: (() -> Unit)? = null) {
 private val styleNames = mapOf(
     RemoteStyle.CLASSIC to R.string.style_classic, RemoteStyle.MODERN to R.string.style_modern, RemoteStyle.MINIMAL to R.string.style_minimal,
     RemoteStyle.COMPACT to R.string.style_compact, RemoteStyle.VIVID to R.string.style_vivid,
+    RemoteStyle.GLASS to R.string.style_glass, RemoteStyle.THREE_D to R.string.style_3d,
 )
 private val styleDescriptions = mapOf(
     RemoteStyle.CLASSIC to R.string.style_classic_desc, RemoteStyle.MODERN to R.string.style_modern_desc, RemoteStyle.MINIMAL to R.string.style_minimal_desc,
     RemoteStyle.COMPACT to R.string.style_compact_desc, RemoteStyle.VIVID to R.string.style_vivid_desc,
+    RemoteStyle.GLASS to R.string.style_glass_desc, RemoteStyle.THREE_D to R.string.style_3d_desc,
 )
 
 @androidx.annotation.StringRes

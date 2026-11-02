@@ -94,6 +94,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.universalir.R
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.OpenWith
+import androidx.compose.material.icons.filled.TouchApp
 import com.universalir.core.ui.AppScaffold
 import com.universalir.core.ui.LoadingBox
 import com.universalir.core.ui.LtrText
@@ -286,6 +297,25 @@ class LayoutEditorViewModel @Inject constructor(
         s.copy(buttons = packLayout(next, s.columns))
     }
 
+    /** Moves a key one step (swapping with a neighbour if one is there). */
+    fun nudge(id: String, dRow: Int, dCol: Int) {
+        val b = _state.value.buttons.firstOrNull { it.id == id } ?: return
+        val row = b.row + dRow; val col = b.col + dCol
+        if (row < 0 || col < 0 || col + b.w > _state.value.columns) return
+        moveTo(id, row, col)
+    }
+
+    /** Changes a key's size by one cell; only applied when the new size fits where the key is. Returns false if blocked. */
+    fun resize(id: String, dW: Int, dH: Int): Boolean {
+        val s = _state.value
+        val b = s.buttons.firstOrNull { it.id == id } ?: return false
+        val w = (b.w + dW).coerceIn(1, s.columns - b.col); val h = (b.h + dH).coerceIn(1, 3)
+        if (w == b.w && h == b.h) return false
+        if (!fits(s.buttons, id, b.row, b.col, w, h, s.columns)) return false
+        edit { st -> st.copy(buttons = st.buttons.map { if (it.id == id) it.copy(w = w, h = h) else it }) }
+        return true
+    }
+
     private fun keyAt(buttons: List<CustomButton>, row: Int, col: Int, except: String?) =
         buttons.firstOrNull { it.id != except && row in it.row until it.row + it.h && col in it.col until it.col + it.w }
 
@@ -331,8 +361,13 @@ fun LayoutEditorScreen(onBack: () -> Unit, vm: LayoutEditorViewModel = hiltViewM
     val s by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     var editing by remember { mutableStateOf<KeyEdit?>(null) }
     var profilesOpen by remember { mutableStateOf(false) }
+    // Tap a key to select it; the floating panel then moves, resizes or edits it.
+    var selectedId by remember { mutableStateOf<String?>(null) }
+    val selected = s.buttons.firstOrNull { it.id == selectedId }
+    val blocked = stringResource(R.string.layout_no_room)
     LaunchedEffect(s.outcome) { val o = s.outcome; if (o != null && o !is SendOutcome.Success) snackbar.showSnackbar(describeOutcome(context, o)) }
 
     AppScaffold(stringResource(R.string.layout_title), onBack = onBack, snackbar = snackbar, actions = {
@@ -343,8 +378,9 @@ fun LayoutEditorScreen(onBack: () -> Unit, vm: LayoutEditorViewModel = hiltViewM
         }
     }) { padding ->
         if (s.loading) { LoadingBox(Modifier.padding(padding)); return@AppScaffold }
-        Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).then(Modifier.fillMaxWidth().wrapContentWidth().widthIn(max = 560.dp))) {
-            Text(stringResource(R.string.layout_hint), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Box(Modifier.fillMaxSize().padding(padding)) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).then(Modifier.fillMaxWidth().wrapContentWidth().widthIn(max = 560.dp))) {
+            EditorHints()
             Spacer(Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.layout_columns), style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(end = 12.dp))
@@ -368,14 +404,37 @@ fun LayoutEditorScreen(onBack: () -> Unit, vm: LayoutEditorViewModel = hiltViewM
                 style = s.style ?: com.universalir.core.ui.LocalAppSettings.current.remoteStyle,
                 s.buttons, s.columns,
                 onEmpty = { r, c ->
-                    val first = s.commands.firstOrNull { cmd -> s.buttons.none { it.commandName == cmd.name } } ?: s.commands.firstOrNull()
-                    if (first != null) editing = KeyEdit(CustomButton("new", first.label, suggestIcon(first.name), first.name, r, c), isNew = true)
+                    val sel = selected
+                    if (sel != null) vm.moveTo(sel.id, r, c)
+                    else {
+                        val first = s.commands.firstOrNull { cmd -> s.buttons.none { it.commandName == cmd.name } } ?: s.commands.firstOrNull()
+                        if (first != null) editing = KeyEdit(CustomButton("new", first.label, suggestIcon(first.name), first.name, r, c), isNew = true)
+                    }
                 },
-                onKey = { editing = KeyEdit(it, isNew = false) },
-                onMove = vm::moveTo,
+                onKey = { if (it.id == selectedId) editing = KeyEdit(it, isNew = false) else selectedId = it.id },
+                onMove = { id, r, c -> selectedId = id; vm.moveTo(id, r, c) },
                 onDeleteRow = vm::deleteRow,
+                selectedId = selectedId,
             )
-            Spacer(Modifier.height(32.dp))
+            // Room for the floating panel so the last rows can scroll above it.
+            Spacer(Modifier.height(if (selected != null) 220.dp else 32.dp))
+        }
+        androidx.compose.animation.AnimatedVisibility(selected != null, Modifier.align(Alignment.BottomCenter),
+            enter = androidx.compose.animation.slideInVertically { it } + androidx.compose.animation.fadeIn(),
+            exit = androidx.compose.animation.slideOutVertically { it } + androidx.compose.animation.fadeOut()) {
+            // Keep showing the last selection while the panel animates out.
+            var last by remember { mutableStateOf(selected) }
+            if (selected != null) last = selected
+            last?.let { b ->
+                SelectionPanel(b, s.columns,
+                    onNudge = { dr, dc -> vm.nudge(b.id, dr, dc) },
+                    onResize = { dw, dh -> if (!vm.resize(b.id, dw, dh)) scope.launch { snackbar.showSnackbar(blocked) } },
+                    onEdit = { editing = KeyEdit(b, isNew = false) },
+                    onDuplicate = { vm.duplicate(b) },
+                    onDelete = { vm.remove(b.id); selectedId = null },
+                    onClose = { selectedId = null })
+            }
+        }
         }
     }
     if (profilesOpen) ProfilesSheet(s.profiles, onSave = vm::saveProfile, onLoad = { vm.loadProfile(it); profilesOpen = false },
@@ -387,7 +446,7 @@ fun LayoutEditorScreen(onBack: () -> Unit, vm: LayoutEditorViewModel = hiltViewM
             onInsertRow = { vm.insertRow(e.button.row); editing = null },
             onDeleteRow = { vm.deleteRow(e.button.row); editing = null },
             onSave = { b -> if (e.isNew) vm.addAt(b.row, b.col, b) else vm.update(b); editing = null },
-            onDelete = { vm.remove(e.button.id); editing = null },
+            onDelete = { vm.remove(e.button.id); editing = null; selectedId = null },
             onDismiss = { editing = null })
     }
 }
@@ -399,6 +458,7 @@ private fun EditorGrid(
     buttons: List<CustomButton>, columns: Int,
     onEmpty: (Int, Int) -> Unit, onKey: (CustomButton) -> Unit, onMove: (String, Int, Int) -> Unit,
     onDeleteRow: ((Int) -> Unit)? = null,
+    selectedId: String? = null,
 ) {
     val haptics = LocalHapticFeedback.current
     val density = LocalDensity.current
@@ -500,7 +560,10 @@ private fun EditorGrid(
                             )
                         },
                 ) {
-                    GridKey(b, cell * b.w + gap * (b.w - 1), cell * b.h + gap * (b.h - 1), onClick = { onKey(b) }, style = style, onPad = b.id in onPad)
+                    val kw = cell * b.w + gap * (b.w - 1); val kh = cell * b.h + gap * (b.h - 1)
+                    if (b.id == selectedId) Box(Modifier.offset((-5).dp, (-5).dp).size(kw + 10.dp, kh + 10.dp)
+                        .border(3.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(26.dp)))
+                    GridKey(b, kw, kh, onClick = { onKey(b) }, style = style, onPad = b.id in onPad)
                 }
             }
         }
@@ -711,5 +774,101 @@ private fun ProfilesSheet(
                 }
             }
         }
+    }
+}
+
+/** Three short how-to chips instead of a sentence. */
+@Composable
+private fun EditorHints() {
+    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        listOf(
+            Icons.Filled.TouchApp to R.string.layout_hint_select,
+            Icons.Filled.OpenWith to R.string.layout_hint_drag,
+            Icons.Filled.Add to R.string.layout_hint_add,
+        ).forEach { (icon, text) ->
+            Surface(shape = RoundedCornerShape(50), color = MaterialTheme.colorScheme.secondaryContainer) {
+                Row(Modifier.padding(horizontal = 12.dp, vertical = 7.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(icon, null, Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer)
+                    Spacer(Modifier.width(6.dp))
+                    Text(stringResource(text), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSecondaryContainer)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Floating panel for the selected key: where it is, one-step moves, width/height steppers and the key actions.
+ * Arrows are absolute (not mirrored in RTL) because they move the key on the grid.
+ */
+@Composable
+private fun SelectionPanel(
+    b: CustomButton, columns: Int, onNudge: (Int, Int) -> Unit, onResize: (Int, Int) -> Unit,
+    onEdit: () -> Unit, onDuplicate: () -> Unit, onDelete: () -> Unit, onClose: () -> Unit,
+) {
+    Surface(shape = RoundedCornerShape(28.dp), color = MaterialTheme.colorScheme.surfaceContainerHigh, shadowElevation = 12.dp,
+        modifier = Modifier.padding(12.dp).widthIn(max = 560.dp).fillMaxWidth()) {
+        Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.size(40.dp).clip(RoundedCornerShape(12.dp)).background(MaterialTheme.colorScheme.primaryContainer), contentAlignment = Alignment.Center) {
+                    val icon = buttonIcons[b.icon]
+                    if (icon != null) Icon(icon, null, Modifier.size(22.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer)
+                    else Text(shortLabel(b.commandName, b.label).take(3), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                }
+                Spacer(Modifier.width(12.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(b.label, style = MaterialTheme.typography.titleMedium, maxLines = 1)
+                    com.universalir.core.ui.LtrText(stringResource(R.string.layout_selected_pos, b.row + 1, b.col + 1, b.w, b.h),
+                        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                IconButton(onClick = onClose) { Icon(Icons.Filled.Close, stringResource(R.string.action_close)) }
+            }
+            Spacer(Modifier.height(10.dp))
+            androidx.compose.runtime.CompositionLocalProvider(androidx.compose.ui.platform.LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Ltr) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Move: a small cross of arrows.
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Nudge(Icons.Filled.KeyboardArrowUp, R.string.btn_up, b.row > 0) { onNudge(-1, 0) }
+                        Row {
+                            Nudge(Icons.Filled.KeyboardArrowLeft, R.string.btn_left, b.col > 0) { onNudge(0, -1) }
+                            Spacer(Modifier.size(40.dp))
+                            Nudge(Icons.Filled.KeyboardArrowRight, R.string.btn_right, b.col + b.w < columns) { onNudge(0, 1) }
+                        }
+                        Nudge(Icons.Filled.KeyboardArrowDown, R.string.btn_down, true) { onNudge(1, 0) }
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        SizeStepper(stringResource(R.string.layout_width), b.w, b.w > 1, b.col + b.w < columns) { onResize(it, 0) }
+                        SizeStepper(stringResource(R.string.layout_height), b.h, b.h > 1, b.h < 3) { onResize(0, it) }
+                    }
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = onEdit, Modifier.weight(1f)) {
+                    Icon(Icons.Filled.Edit, null, Modifier.size(18.dp)); Spacer(Modifier.width(6.dp)); Text(stringResource(R.string.layout_edit_key), maxLines = 1)
+                }
+                FilledTonalIconButton(onClick = onDuplicate) { Icon(Icons.Filled.ContentCopy, stringResource(R.string.action_duplicate)) }
+                FilledTonalIconButton(onClick = onDelete, colors = IconButtonDefaults.filledTonalIconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer, contentColor = MaterialTheme.colorScheme.onErrorContainer)) {
+                    Icon(Icons.Filled.DeleteOutline, stringResource(R.string.action_delete))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Nudge(icon: androidx.compose.ui.graphics.vector.ImageVector, label: Int, enabled: Boolean, onClick: () -> Unit) {
+    FilledTonalIconButton(onClick = onClick, enabled = enabled, modifier = Modifier.size(40.dp)) { Icon(icon, stringResource(label)) }
+}
+
+@Composable
+private fun SizeStepper(label: String, value: Int, canDown: Boolean, canUp: Boolean, onStep: (Int) -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(label, style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f))
+        OutlinedIconButton(onClick = { onStep(-1) }, enabled = canDown, modifier = Modifier.size(36.dp)) { Icon(Icons.Filled.Remove, "$label −", Modifier.size(18.dp)) }
+        Text("$value", style = MaterialTheme.typography.titleMedium, modifier = Modifier.width(28.dp), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+        OutlinedIconButton(onClick = { onStep(1) }, enabled = canUp, modifier = Modifier.size(36.dp)) { Icon(Icons.Filled.Add, "$label +", Modifier.size(18.dp)) }
     }
 }

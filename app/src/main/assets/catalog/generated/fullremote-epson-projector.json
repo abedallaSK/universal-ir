@@ -1,0 +1,223 @@
+{
+ "formatVersion": 1,
+ "id": "fullremote-epson-projector",
+ "protocolId": "NECext",
+ "category": "PROJECTOR",
+ "brand": "Epson",
+ "models": [
+  "All Epson projectors (common remote)"
+ ],
+ "commands": [
+  {
+   "name": "power",
+   "label": "Power",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 28560
+  },
+  {
+   "name": "power_off",
+   "label": "Power off",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 28305
+  },
+  {
+   "name": "mute",
+   "label": "Mute",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 27795
+  },
+  {
+   "name": "vol_up",
+   "label": "Volume +",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 26520
+  },
+  {
+   "name": "vol_down",
+   "label": "Volume -",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 26265
+  },
+  {
+   "name": "up",
+   "label": "Up",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 20400
+  },
+  {
+   "name": "down",
+   "label": "Down",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 19890
+  },
+  {
+   "name": "left",
+   "label": "Left",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 19635
+  },
+  {
+   "name": "right",
+   "label": "Right",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 20145
+  },
+  {
+   "name": "ok",
+   "label": "OK",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 31365
+  },
+  {
+   "name": "home",
+   "label": "Home",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 27285
+  },
+  {
+   "name": "menu",
+   "label": "Menu",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 26010
+  },
+  {
+   "name": "digit_0",
+   "label": "0",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 21675
+  },
+  {
+   "name": "digit_1",
+   "label": "1",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 49215
+  },
+  {
+   "name": "digit_2",
+   "label": "2",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 23970
+  },
+  {
+   "name": "digit_3",
+   "label": "3",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 56355
+  },
+  {
+   "name": "digit_4",
+   "label": "4",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 48195
+  },
+  {
+   "name": "digit_5",
+   "label": "5",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 48705
+  },
+  {
+   "name": "digit_6",
+   "label": "6",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 40800
+  },
+  {
+   "name": "digit_7",
+   "label": "7",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 24990
+  },
+  {
+   "name": "digit_9",
+   "label": "9",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 28815
+  },
+  {
+   "name": "play",
+   "label": "Play",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 41310
+  },
+  {
+   "name": "pause",
+   "label": "Pause",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 42075
+  },
+  {
+   "name": "stop",
+   "label": "Stop",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 42585
+  },
+  {
+   "name": "aspect",
+   "label": "Picture size",
+   "kind": "parsed",
+   "protocol": "NECext",
+   "address": 21891,
+   "command": 30090
+  }
+ ],
+ "source": {
+  "repository": "Universal IR protocol table",
+  "url": "https://github.com/Lucaslhm/Flipper-IRDB/tree/main/TVs",
+  "license": "Factual protocol values",
+  "attribution": "Flipper-IRDB d126fb1 captures (15 files); probonopd/irdb 11aa5eb codes/Epson (4 files) (factual values only, files not bundled)"
+ },
+ "verification": "SOURCE_DISCOVERED",
+ "notes": [
+  "Every key is agreed by at least two independent remote captures (identical copies counted once) and outvotes any other value at least 2:1: 15 Flipper-IRDB file(s) and 4 probonopd/irdb file(s). Keys without that agreement are left out.",
+  "Agreeing files per key (* = also in irdb): power 18*, power_off 2*, mute 3*, vol_up 12*, vol_down 8*, up 13*, down 13*, left 13*, right 13*, ok 11*, home 5, menu 15*, digit_0 2, digit_1 3, digit_2 2, digit_3 2, digit_4 3, digit_5 3, digit_6 2, digit_7 2, digit_9 2, play 2, pause 2, stop 2, aspect 6*"
+ ]
+}

@@ -177,7 +177,7 @@ fun HomeScreen(nav: NavController, vm: HomeViewModel = hiltViewModel()) {
     val hardware by vm.hardware.collectAsStateWithLifecycle()
     var filter by rememberSaveable { mutableStateOf("all") }
     var searching by rememberSaveable { mutableStateOf(false) }
-    var customizing by rememberSaveable { mutableStateOf(false) }
+    var editTab by rememberSaveable { mutableStateOf(0) }
     var arranging by rememberSaveable { mutableStateOf(false) }
     var pendingOrder by remember { mutableStateOf<List<Long>?>(null) }
     var selected by remember { mutableStateOf<SavedDeviceEntity?>(null) }
@@ -211,7 +211,8 @@ fun HomeScreen(nav: NavController, vm: HomeViewModel = hiltViewModel()) {
     ) { padding ->
         val all = devices
         val shownAll = all.orEmpty().filter { it.settings().showOnHome }
-        if (arranging && all != null) {
+        if (arranging) {
+            val all = all.orEmpty()
             Column(Modifier.fillMaxSize().padding(padding)) {
                 Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 16.dp, top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(R.string.home_edit), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
@@ -219,6 +220,14 @@ fun HomeScreen(nav: NavController, vm: HomeViewModel = hiltViewModel()) {
                         Icon(Icons.Filled.Check, null, Modifier.size(18.dp)); Spacer(Modifier.width(6.dp)); Text(stringResource(R.string.action_done))
                     }
                 }
+                // Everything about the home page in one place: devices, look, rooms.
+                androidx.compose.material3.SecondaryTabRow(selectedTabIndex = editTab, containerColor = Color.Transparent, modifier = Modifier.padding(top = 4.dp)) {
+                    listOf(R.string.home_tab_devices, R.string.home_tab_look, R.string.nav_rooms).forEachIndexed { i, t ->
+                        androidx.compose.material3.Tab(editTab == i, { editTab = i }, text = { Text(stringResource(t), maxLines = 1) })
+                    }
+                }
+                if (editTab == 1) { LookEditor(settings, vm); return@Column }
+                if (editTab == 2) { com.universalir.feature.rooms.RoomsContent(onOpenRoom = { nav.navigate(Routes.room(it)) }, Modifier.fillMaxSize()); return@Column }
                 // How-to as icon chips instead of a sentence.
                 Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 10.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -254,16 +263,15 @@ fun HomeScreen(nav: NavController, vm: HomeViewModel = hiltViewModel()) {
                     IconButton(onClick = { searching = !searching; if (!searching) vm.query.value = "" }) {
                         Icon(if (searching) Icons.Filled.Close else Icons.Filled.Search, stringResource(R.string.action_search))
                     }
-                    if (!devices.isNullOrEmpty()) IconButton(onClick = { arranging = true }) { Icon(Icons.Filled.Edit, stringResource(R.string.home_edit)) }
-                    IconButton(onClick = { customizing = true }) { Icon(Icons.Filled.Tune, stringResource(R.string.home_customize)) }
                     Box {
                         IconButton(onClick = { menu = true }) { Icon(Icons.Filled.MoreVert, stringResource(R.string.action_more)) }
                         DropdownMenu(menu, { menu = false }) {
+                            // Short menu: one Edit for the whole page (devices, look, rooms); adding lives on the + button.
+                            DropdownMenuItem(text = { Text(stringResource(R.string.home_edit)) },
+                                leadingIcon = { Icon(Icons.Filled.Edit, null) }, onClick = { menu = false; editTab = 0; arranging = true })
+                            androidx.compose.material3.HorizontalDivider(Modifier.padding(vertical = 4.dp))
                             listOf(
-                                Triple(R.string.nav_devices, Icons.Filled.ViewList, Routes.DEVICES),
-                                Triple(R.string.nav_rooms, Icons.Filled.MeetingRoom, Routes.ROOMS),
                                 Triple(R.string.fav_commands, Icons.Filled.Favorite, Routes.FAVORITES),
-                                Triple(R.string.nav_wifi, Icons.Filled.Wifi, Routes.WIFI),
                                 Triple(R.string.nav_settings, Icons.Filled.Settings, Routes.SETTINGS),
                                 Triple(R.string.nav_about, Icons.Filled.Info, Routes.ABOUT),
                             ).forEach { (label, icon, route) ->
@@ -386,7 +394,6 @@ fun HomeScreen(nav: NavController, vm: HomeViewModel = hiltViewModel()) {
     wifiSelected?.let { d -> WifiDeviceSheet(d, onOpen = { wifiSelected = null; nav.navigate(Routes.wifiRemote(d.id)) },
         onRename = { vm.renameWifi(d.id, it) }, onRemove = { vm.removeWifi(d.id) }, onDismiss = { wifiSelected = null }) }
     if (adding) AddSheet(onPick = { adding = false; nav.navigate(it) }, onDismiss = { adding = false })
-    if (customizing) CustomizeHomeSheet(settings, devices.orEmpty(), vm, onArrange = { customizing = false; arranging = true }) { customizing = false }
 }
 
 private fun greeting(): Int = when (LocalTime.now().hour) {
@@ -445,49 +452,26 @@ private fun QuickChip(d: SavedDeviceEntity, onClick: () -> Unit) {
     }
 }
 
-/** "Your home" editor: title, layout, which sections and which devices appear. */
-@OptIn(ExperimentalMaterial3Api::class)
+/** "Look" tab of Edit home: page title, grid or list, and which sections show. Saves as you go. */
 @Composable
-private fun CustomizeHomeSheet(settings: AppSettings, devices: List<SavedDeviceEntity>, vm: HomeViewModel, onArrange: () -> Unit, onDismiss: () -> Unit) {
+private fun LookEditor(settings: AppSettings, vm: HomeViewModel) {
     var title by rememberSaveable { mutableStateOf(settings.homeTitle) }
-    ModalBottomSheet(onDismissRequest = { vm.setTitle(title); onDismiss() }, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
-        Column(Modifier.verticalScroll(rememberScrollState()).navigationBarsPadding().padding(horizontal = 20.dp).padding(bottom = 20.dp)) {
-            Text(stringResource(R.string.home_customize), style = MaterialTheme.typography.titleLarge)
-            Spacer(Modifier.height(16.dp))
-            OutlinedTextField(title, { title = it }, Modifier.fillMaxWidth(), singleLine = true, label = { Text(stringResource(R.string.home_title_field)) },
-                placeholder = { Text(stringResource(R.string.home_title_default)) })
-            Spacer(Modifier.height(20.dp))
-            Text(stringResource(R.string.home_layout), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Spacer(Modifier.height(8.dp))
-            val layouts = listOf(HomeLayout.GRID to R.string.layout_grid, HomeLayout.LIST to R.string.layout_list)
-            SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-                layouts.forEachIndexed { i, (v, res) ->
-                    SegmentedButton(settings.homeLayout == v, { vm.setLayout(v) }, SegmentedButtonDefaults.itemShape(i, layouts.size)) { Text(stringResource(res)) }
-                }
-            }
-            Spacer(Modifier.height(20.dp))
-            Text(stringResource(R.string.home_sections), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            SwitchLine(stringResource(R.string.home_favorites), settings.homeShowFavorites) { vm.setSections(settings.copy(homeShowFavorites = it)) }
-            SwitchLine(stringResource(R.string.home_show_rooms), settings.homeShowRooms) { vm.setSections(settings.copy(homeShowRooms = it)) }
-            if (devices.isNotEmpty()) {
-                Spacer(Modifier.height(12.dp))
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                Spacer(Modifier.height(12.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(stringResource(R.string.home_devices_on_home), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))
-                    TextButton(onClick = onArrange) { Text(stringResource(R.string.home_arrange_short)) }
-                }
-                devices.forEach { d ->
-                    val s = remember(d.customSettings) { d.settings() }
-                    Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-                        DeviceAvatar(d.look(), size = 36.dp)
-                        Spacer(Modifier.width(12.dp))
-                        Text(d.displayName, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        Switch(s.showOnHome, { vm.setShowOnHome(d.id, it) })
-                    }
-                }
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 16.dp)) {
+        OutlinedTextField(title, { title = it; vm.setTitle(it) }, Modifier.fillMaxWidth(), singleLine = true, label = { Text(stringResource(R.string.home_title_field)) },
+            placeholder = { Text(stringResource(R.string.home_title_default)) })
+        Spacer(Modifier.height(20.dp))
+        Text(stringResource(R.string.home_layout), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Spacer(Modifier.height(8.dp))
+        val layouts = listOf(HomeLayout.GRID to R.string.layout_grid, HomeLayout.LIST to R.string.layout_list)
+        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+            layouts.forEachIndexed { i, (v, res) ->
+                SegmentedButton(settings.homeLayout == v, { vm.setLayout(v) }, SegmentedButtonDefaults.itemShape(i, layouts.size)) { Text(stringResource(res)) }
             }
         }
+        Spacer(Modifier.height(20.dp))
+        Text(stringResource(R.string.home_sections), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        SwitchLine(stringResource(R.string.home_favorites), settings.homeShowFavorites) { vm.setSections(settings.copy(homeShowFavorites = it)) }
+        SwitchLine(stringResource(R.string.home_show_rooms), settings.homeShowRooms) { vm.setSections(settings.copy(homeShowRooms = it)) }
     }
 }
 

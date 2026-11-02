@@ -1,5 +1,8 @@
 package com.universalir.core.theme
 
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
@@ -209,6 +212,7 @@ fun UniversalIrTheme(
     accent: AccentTheme = AccentTheme.BLUE,
     pureBlack: Boolean = false,
     customAccent: Long = 0xFF2F6BFF,
+    glass: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val dark = themeMode.isDark()
@@ -220,6 +224,58 @@ fun UniversalIrTheme(
         ButtonSize.LARGE -> RemoteMetrics(76.dp, 252.dp, 30.dp)
     }
     CompositionLocalProvider(LocalStatusColors provides status, LocalSpacing provides Spacing(), LocalRemoteMetrics provides metrics) {
-        MaterialTheme(colorScheme = appColorScheme(dark, accent, pureBlack, Color(customAccent)), typography = AppTypography, shapes = AppShapes, content = content)
+        val scheme = appColorScheme(dark, accent, pureBlack && !glass, Color(customAccent)).let { if (glass) it.glass(dark) else it }
+        MaterialTheme(colorScheme = scheme, typography = AppTypography, shapes = AppShapes) {
+            if (glass) GlassBackdrop(dark, content) else content()
+        }
     }
+}
+
+/** True while the Glass theme is on (surfaces are see-through over [GlassBackdrop]). */
+val LocalGlass = androidx.compose.runtime.staticCompositionLocalOf { false }
+
+/**
+ * Glass theme: the page background becomes transparent (the backdrop shows through) and surfaces turn
+ * translucent. Sheets, dialogs and menus (the higher containers) stay nearly opaque so text on them is readable.
+ */
+private fun ColorScheme.glass(dark: Boolean): ColorScheme {
+    // Only cards sitting on the page (surface, surfaceContainerLowest) are see-through. Menus, sheets, dialogs and
+    // other containers (Low..Highest) stay almost solid so their text is always readable.
+    val tint = if (dark) Color(0xFF161D2E) else Color(0xFFFFFFFF)
+    fun solid(c: Color) = c.copy(alpha = 0.97f)
+    return copy(
+        background = Color.Transparent,
+        surface = tint.copy(alpha = if (dark) 0.68f else 0.74f),
+        surfaceContainerLowest = tint.copy(alpha = if (dark) 0.58f else 0.66f),
+        surfaceContainerLow = solid(if (dark) Color(0xFF1A2235) else Color(0xFFF7F9FE)),
+        surfaceContainer = solid(if (dark) Color(0xFF1E2639) else Color(0xFFF2F5FC)),
+        surfaceContainerHigh = solid(if (dark) Color(0xFF242C40) else Color(0xFFECF0F9)),
+        surfaceContainerHighest = solid(if (dark) Color(0xFF2B3449) else Color(0xFFE6EBF6)),
+        surfaceVariant = solid(if (dark) Color(0xFF242C40) else Color(0xFFECF0F9)),
+        surfaceBright = solid(if (dark) Color(0xFF2B3449) else Color(0xFFFFFFFF)),
+        surfaceDim = solid(if (dark) Color(0xFF111725) else Color(0xFFE2E7F2)),
+        outlineVariant = (if (dark) Color.White else Color(0xFF7C88A6)).copy(alpha = 0.28f),
+    )
+}
+
+/** Soft colour blobs from the accent behind everything, so the translucent surfaces read as frosted glass. */
+@Composable
+private fun GlassBackdrop(dark: Boolean, content: @Composable () -> Unit) {
+    val primary = MaterialTheme.colorScheme.primary
+    val tertiary = MaterialTheme.colorScheme.tertiary
+    val base = if (dark) Color(0xFF0A0E1A) else Color(0xFFE9EEFA)
+    androidx.compose.foundation.layout.Box(
+        androidx.compose.ui.Modifier.fillMaxSize().background(base).drawBehind {
+            val r = size.maxDimension
+            drawCircle(androidx.compose.ui.graphics.Brush.radialGradient(listOf(primary.copy(alpha = if (dark) 0.32f else 0.22f), Color.Transparent),
+                center = androidx.compose.ui.geometry.Offset(size.width * 0.1f, size.height * 0.08f), radius = r * 0.6f),
+                radius = r * 0.6f, center = androidx.compose.ui.geometry.Offset(size.width * 0.1f, size.height * 0.08f))
+            drawCircle(androidx.compose.ui.graphics.Brush.radialGradient(listOf(tertiary.copy(alpha = if (dark) 0.24f else 0.18f), Color.Transparent),
+                center = androidx.compose.ui.geometry.Offset(size.width * 0.95f, size.height * 0.55f), radius = r * 0.55f),
+                radius = r * 0.55f, center = androidx.compose.ui.geometry.Offset(size.width * 0.95f, size.height * 0.55f))
+            drawCircle(androidx.compose.ui.graphics.Brush.radialGradient(listOf(primary.copy(alpha = if (dark) 0.18f else 0.14f), Color.Transparent),
+                center = androidx.compose.ui.geometry.Offset(size.width * 0.3f, size.height * 1.0f), radius = r * 0.5f),
+                radius = r * 0.5f, center = androidx.compose.ui.geometry.Offset(size.width * 0.3f, size.height * 1.0f))
+        },
+    ) { androidx.compose.runtime.CompositionLocalProvider(LocalGlass provides true) { content() } }
 }
